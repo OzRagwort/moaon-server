@@ -1,0 +1,179 @@
+{{>layout/admin/header}}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">List</h1>
+    <p class="mb-4">description</p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <select name="dataTables_entries" class="custom-select custom-select-lg form-control form-control-lg container-fluid"
+                                    id="selete-video-maxResult">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <input type="text" class="form-control form-control-lg container-fluid"
+                                   placeholder="idx" id="txt-video-idx">
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <input type="text" class="form-control form-control-lg container-fluid"
+                                   placeholder="video Id" id="txt-video-id">
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <input type="text" class="form-control form-control-lg container-fluid"
+                                   placeholder="channel Id" id="txt-channel-idx">
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <input type="text" class="form-control form-control-lg container-fluid"
+                                   placeholder="category Id" id="txt-category-idx">
+                        </label>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <label class="container-fluid">
+                            <button type="button" class="btn btn-primary btn-lg container-fluid" id="btn-video-list">
+                                <span class="text">조회</span>
+                            </button>
+                        </label>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>no</th>
+                            <th>cate/chan</th>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>description</th>
+                            <th>etc</th>
+                            <th>tags</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th>no</th>
+                            <th>cate/chan</th>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>description</th>
+                            <th>etc</th>
+                            <th>tags</th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
+                        {{#videoList}}
+                            <tr>
+                                <td>{{idx}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-cc-{{idx}}">
+                                        Read
+                                    </button>
+                                    <div class="modal fade" id="myModal-cc-{{idx}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    categoriesIdx : {{categoriesIdx}}<br>
+                                                    channelId : {{channelId}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{videoId}}</td>
+                                <td>{{videoName}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-description-{{idx}}">
+                                        description
+                                    </button>
+                                    <div class="modal fade" id="myModal-description-{{idx}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    {{videoDescription}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-etc-{{idx}}">
+                                        etc
+                                    </button>
+                                    <div class="modal fade" id="myModal-etc-{{idx}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    videoThumbnail : {{videoThumbnail}}<br>
+                                                    videoPublishedDate : {{videoPublishedDate}}<br>
+                                                    videoDuration : {{#videoDuration}}{{videoDuration}}{{/videoDuration}}
+                                                    {{^videoDuration}}{{/videoDuration}}<br>
+                                                    videoPublicStatsViewable : {{#videoPublicStatsViewable}}{{videoPublicStatsViewable}}{{/videoPublicStatsViewable}}
+                                                    {{^videoPublicStatsViewable}}{{/videoPublicStatsViewable}}<br>
+                                                    viewCount : {{#viewCount}}{{viewCount}}{{/viewCount}}
+                                                    {{^viewCount}}{{/viewCount}}<br>
+                                                    likeCount : {{#likeCount}}{{likeCount}}{{/likeCount}}
+                                                    {{^likeCount}}{{/likeCount}}<br>
+                                                    dislikeCount : {{#dislikeCount}}{{dislikeCount}}{{/dislikeCount}}
+                                                    {{^dislikeCount}}{{/dislikeCount}}<br>
+                                                    commentCount : {{#commentCount}}{{commentCount}}{{/commentCount}}
+                                                    {{^commentCount}}{{/commentCount}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-tags-{{idx}}">
+                                        Tags
+                                    </button>
+                                    <div class="modal fade" id="myModal-tags-{{idx}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    tags : {{#tags}}<br>{{.}}{{/tags}}
+                                                    {{^tags}}{{/tags}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {{/videoList}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+{{>layout/admin/footer}}
+{{>layout/admin/footer_js}}
