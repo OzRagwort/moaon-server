@@ -41,8 +41,8 @@ public class findTest {
         CategoriesResponseDto categoriesResponseDto;
 
         //when
-        categoriesService.save(categoriesSaveRequestDto);
-        categoriesResponseDto = categoriesService.findById(1L);
+        Long id = categoriesService.save(categoriesSaveRequestDto);
+        categoriesResponseDto = categoriesService.findById(id);
 
         //then
         Categories categories = categoriesRepository.findAll().get(0);

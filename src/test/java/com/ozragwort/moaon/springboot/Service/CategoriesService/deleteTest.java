@@ -41,7 +41,7 @@ public class deleteTest {
                 .build();
 
         //when
-        categoriesService.save(categoriesSaveRequestDto);
+        idx = categoriesService.save(categoriesSaveRequestDto);
         categoriesService.delete(idx);
 
         //then
