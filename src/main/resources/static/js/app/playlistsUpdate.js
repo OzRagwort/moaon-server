@@ -39,6 +39,7 @@ var main = {
             }
         }
 
+        alert("OK");
         $('#returnText').val(failList);
 
     },
