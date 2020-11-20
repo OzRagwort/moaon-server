@@ -40,9 +40,8 @@ var main = {
             if ( j == 0 ) {
                 failList.push(playlistIdsArray[i]);
             }
-            console.log(j);
             count += j;
-            console.log(count);
+            console.log(playlistIdsArray[i]);
         }
 
         $('#returnText').val(failList);
