@@ -76,8 +76,12 @@ public class ChannelDeserializer {
         ChannelStatistics channelStatistics = new ChannelStatistics();
 
         channelStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
-        channelStatistics.setSubscriberCount(new BigInteger((String) statistic.get("subscriberCount")));
         channelStatistics.setVideoCount(new BigInteger((String) statistic.get("videoCount")));
+        try {
+            channelStatistics.setSubscriberCount(new BigInteger((String) statistic.get("subscriberCount")));
+        } catch (NullPointerException e) {
+            channelStatistics.setSubscriberCount(BigInteger.ZERO);
+        }
 
         return channelStatistics;
     }
