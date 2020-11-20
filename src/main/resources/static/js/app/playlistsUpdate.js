@@ -31,7 +31,7 @@ var main = {
     multiple_playlists : function() {
         var playlistIds = $('#updateMultiPlaylistId').val();
         var playlistIdsArray = playlistIds.split(',');
-        var failList = [];
+        var failList = ["OK"];
         var count = 0;
 
         for(var i = 0 ; i < playlistIdsArray.length ; i++) {
@@ -41,7 +41,6 @@ var main = {
                 failList.push(playlistIdsArray[i]);
             }
             count += j;
-            console.log(playlistIdsArray[i]);
         }
 
         $('#returnText').val(failList);
