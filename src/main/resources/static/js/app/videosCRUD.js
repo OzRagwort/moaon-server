@@ -59,7 +59,7 @@ var main = {
 
         if (idx) {url = url + '&no=' + idx;}
         if (vid) {url = url + '&id=' + vid;}
-        if (cid) {url = url + '&channel' + cid;}
+        if (cid) {url = url + '&channel=' + cid;}
         if (category) {url = url + '&category=' + category;}
 
         window.location.href = url;
