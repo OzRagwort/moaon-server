@@ -1,16 +1,14 @@
-package com.ozragwort.moaon.springboot.Service.Videos;
+package com.ozragwort.moaon.springboot.Service.VideosServiceTest;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.PostVideosRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.VideosSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class updateTest {
+public class deleteTest {
 
     @Autowired
     VideosService videosService;
@@ -70,7 +68,7 @@ public class updateTest {
     }
 
     @Test
-    public void Videos_Service_update_Test() {
+    public void Videos_Service_delete_Test() {
         //given
         Long idx;
         String videoId = "8vAsg37pyC8";
@@ -81,11 +79,10 @@ public class updateTest {
 
         //when
         idx = videosService.save(postVideosRequestDto);
-        videosService.update(idx);
+        videosService.delete(idx);
 
         //then
-        Videos Videos = videosRepository.findAll().get(0);
-        assertThat(Videos.getVideoName()).isNotNull();
+        assertThat(videosRepository.findAll().size()).isEqualTo(0);
     }
 
 }

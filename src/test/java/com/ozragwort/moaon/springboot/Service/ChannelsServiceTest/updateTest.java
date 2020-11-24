@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.Service.ChannelsService;
+package com.ozragwort.moaon.springboot.Service.ChannelsServiceTest;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -6,7 +6,6 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.PostChannelsSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class saveTest {
+public class updateTest {
 
     @Autowired
     ChannelsService channelsService;
@@ -46,8 +45,9 @@ public class saveTest {
     }
 
     @Test
-    public void Channels_Service_save_Test() {
+    public void Channels_Service_update_Test() {
         //given
+        Long idx;
         String channelId = "UCETBLykCDpfP6L0awBd7Vwg";
 
         PostChannelsSaveRequestDto postChannelsSaveRequestDto = PostChannelsSaveRequestDto.builder()
@@ -56,11 +56,12 @@ public class saveTest {
                 .build();
 
         //when
-        channelsService.save(postChannelsSaveRequestDto);
+        idx = channelsService.save(postChannelsSaveRequestDto);
+        channelsService.update(idx);
 
         //then
         Channels Channels = channelsRepository.findAll().get(0);
-        assertThat(Channels.getChannelId()).isEqualTo(channelId);
+        assertThat(Channels.getChannelName()).isNotNull();
     }
 
 }

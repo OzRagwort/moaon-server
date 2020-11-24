@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.Service.Videos;
+package com.ozragwort.moaon.springboot.Service.VideosServiceTest;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -6,9 +6,10 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
-import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.service.VideosService;
-import com.ozragwort.moaon.springboot.web.dto.*;
+import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.PostVideosRequestDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class findTest {
+public class updateTest {
 
     @Autowired
     VideosService videosService;
@@ -70,7 +69,7 @@ public class findTest {
     }
 
     @Test
-    public void Videos_Service_find_Test() {
+    public void Videos_Service_update_Test() {
         //given
         Long idx;
         String videoId = "8vAsg37pyC8";
@@ -81,11 +80,11 @@ public class findTest {
 
         //when
         idx = videosService.save(postVideosRequestDto);
-        List<VideosResponseDto> videosResponseDto = videosService.findById(idx);
+        videosService.update(idx);
 
         //then
-        Videos videos = videosRepository.findAll().get(0);
-        assertThat(videos.getVideoId()).isEqualTo(videosResponseDto.get(0).getVideoId());
+        Videos Videos = videosRepository.findAll().get(0);
+        assertThat(Videos.getVideoName()).isNotNull();
     }
 
 }

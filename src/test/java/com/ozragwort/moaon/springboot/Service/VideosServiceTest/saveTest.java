@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.Service.Videos;
+package com.ozragwort.moaon.springboot.Service.VideosServiceTest;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -6,11 +6,9 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
-import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.PostChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.PostVideosRequestDto;
 import org.junit.After;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.Service.CategoriesService;
+package com.ozragwort.moaon.springboot.Service.CategoriesServiceTest;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
