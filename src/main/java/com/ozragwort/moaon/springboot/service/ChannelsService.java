@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -99,6 +100,23 @@ public class ChannelsService {
         return channelsRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
                 .map(ChannelsResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ChannelsResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
+        List<ChannelsResponseDto> list = channelsRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get()).stream()
+                .map(ChannelsResponseDto::new)
+                .collect(Collectors.toList());
+        int listLength = list.size();
+
+        Random random = new Random();
+        List<ChannelsResponseDto> randList = new ArrayList<>();
+
+        for (int i = 0 ; i < count ; i++) {
+            randList.add(list.get(random.nextInt(listLength)));
+        }
+
+        return randList;
     }
 
     @Transactional

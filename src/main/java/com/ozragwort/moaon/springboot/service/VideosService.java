@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -151,10 +152,44 @@ public class VideosService {
     }
 
     @Transactional
+    public List<VideosResponseDto> findByChannelIdRand(String channelId, int count) {
+        List<VideosResponseDto> list = videosRepository.findByChannelId(channelsRepository.findByChannelId(channelId)).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+        int listLength = list.size();
+
+        Random random = new Random();
+        List<VideosResponseDto> randList = new ArrayList<>();
+
+        for (int i = 0 ; i < count ; i++) {
+            randList.add(list.get(random.nextInt(listLength)));
+        }
+
+        return randList;
+    }
+
+    @Transactional
     public List<VideosResponseDto> findByCategoryIdx(Long categoryIdx, Pageable pageable) {
         return videosRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<VideosResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
+        List<VideosResponseDto> list = videosRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get()).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+        int listLength = list.size();
+
+        Random random = new Random();
+        List<VideosResponseDto> randList = new ArrayList<>();
+
+        for (int i = 0 ; i < count ; i++) {
+            randList.add(list.get(random.nextInt(listLength)));
+        }
+
+        return randList;
     }
 
     @Transactional

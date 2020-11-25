@@ -52,6 +52,20 @@ public class VideosApiController {
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
     }
 
+    @GetMapping("/videos/rand")
+    public List<VideosResponseDto> findRand(
+            @RequestParam(value = "channel", required = false) String channelId,
+            @RequestParam(value = "category", required = false) Long categoryId,
+            @RequestParam(value = "count", defaultValue = "10") int count
+    ) {
+        if (channelId != null)
+            return videosService.findByChannelIdRand(channelId, count);
+        else if (categoryId != null)
+            return videosService.findByCategoryIdxRand(categoryId, count);
+        else
+            return null;
+    }
+
     @DeleteMapping("/videos/{idx}")
     public Long delete(@PathVariable Long idx) {
         return videosService.delete(idx);

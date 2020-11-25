@@ -21,7 +21,13 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     Videos findByVideoId(@Param("videoId") String videoId);
 
     @Query("SELECT p FROM Videos p WHERE p.channels = :channels")
+    List<Videos> findByChannelId(@Param("channels") Channels channels);
+
+    @Query("SELECT p FROM Videos p WHERE p.channels = :channels")
     List<Videos> findByChannelId(@Param("channels") Channels channels, Pageable pageable);
+
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
+    List<Videos> findByCategoryIdx(@Param("categories") Categories categories);
 
     @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);

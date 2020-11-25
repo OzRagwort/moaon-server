@@ -44,6 +44,17 @@ public class ChannelsApiController {
             return channelsService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
     }
 
+    @GetMapping("/channels/rand")
+    public List<ChannelsResponseDto> findRand(
+            @RequestParam(value = "category", required = false) Long categoryId,
+            @RequestParam(value = "count", defaultValue = "10") int count
+    ) {
+        if (categoryId != null)
+            return channelsService.findByCategoryIdxRand(categoryId, count);
+        else
+            return null;
+    }
+
     @DeleteMapping("/channels/{idx}")
     public Long delete(@PathVariable Long idx) {
         return channelsService.delete(idx);

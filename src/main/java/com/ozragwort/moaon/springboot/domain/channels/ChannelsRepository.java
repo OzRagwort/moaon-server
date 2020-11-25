@@ -20,6 +20,9 @@ public interface ChannelsRepository extends JpaRepository<Channels, Long> {
     Channels findByChannelId(@Param("channelId") String channelId);
 
     @Query("SELECT p FROM Channels p WHERE p.categories = :categories")
+    List<Channels> findByCategoryIdx(@Param("categories") Categories categories);
+
+    @Query("SELECT p FROM Channels p WHERE p.categories = :categories")
     List<Channels> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
 }
