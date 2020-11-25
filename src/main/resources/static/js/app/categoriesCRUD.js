@@ -53,7 +53,7 @@ var main = {
         });
     },
     list : function() {
-        var maxResult = $('#selete-category-maxResult').val();
+        var maxResult = $('#select-category-maxResult').val();
         var page = 1;
         var idx = $('#txt-category-idx').val();
 

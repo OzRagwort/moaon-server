@@ -47,7 +47,7 @@ var main = {
         });
     },
     list : function() {
-        var maxResult = $('#selete-channel-maxResult').val();
+        var maxResult = $('#select-channel-maxResult').val();
         var page = 1;
         var idx = $('#txt-channel-idx').val();
         var cid = $('#txt-channel-id').val();

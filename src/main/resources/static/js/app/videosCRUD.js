@@ -46,7 +46,7 @@ var main = {
         });
     },
     list : function() {
-        var maxResult = $('#selete-video-maxResult').val();
+        var maxResult = $('#select-video-maxResult').val();
         var page = 1;
         var idx = $('#txt-video-idx').val();
         var vid = $('#txt-video-id').val();
