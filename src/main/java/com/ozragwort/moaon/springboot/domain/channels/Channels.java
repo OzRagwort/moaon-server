@@ -31,10 +31,6 @@ public class Channels extends BaseTimeEntity {
     @JoinColumn(name = "categories_idx")
     private Categories categories;
 
-//    @JsonManagedReference
-//    @OneToMany(mappedBy = "channels", fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Videos.class)
-//    private List<Videos> videos = new ArrayList<>();
-
     @Column(name = "channel_id", unique = true)
     private String channelId;
 

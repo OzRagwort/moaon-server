@@ -19,7 +19,7 @@ public class VideosResponseDto {
 
     private Long categoriesIdx;
 
-    private String channelId;
+    private Channels channels;
 
     private String videoId;
 
@@ -48,7 +48,7 @@ public class VideosResponseDto {
     public VideosResponseDto(Videos videos) {
         this.idx = videos.getIdx();
         this.categoriesIdx = videos.getChannels().getCategories().getIdx();
-        this.channelId = videos.getChannels().getChannelId();
+        this.channels = videos.getChannels();
         this.videoId = videos.getVideoId();
         this.videoName = videos.getVideoName();
         this.videoThumbnail = videos.getVideoThumbnail();
