@@ -167,7 +167,7 @@ public class VideosService {
 
     @Transactional
     public List<VideosResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
-        return videosRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get().getIdx(), count).stream()
+        return videosRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), count).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
