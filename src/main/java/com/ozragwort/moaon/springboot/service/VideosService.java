@@ -153,19 +153,9 @@ public class VideosService {
 
     @Transactional
     public List<VideosResponseDto> findByChannelIdRand(String channelId, int count) {
-        List<VideosResponseDto> list = videosRepository.findByChannelId(channelsRepository.findByChannelId(channelId)).stream()
+        return videosRepository.findRandByChannelId(channelsRepository.findByChannelId(channelId), count).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
-        int listLength = list.size();
-
-        Random random = new Random();
-        List<VideosResponseDto> randList = new ArrayList<>();
-
-        for (int i = 0 ; i < count ; i++) {
-            randList.add(list.get(random.nextInt(listLength)));
-        }
-
-        return randList;
     }
 
     @Transactional
@@ -177,19 +167,9 @@ public class VideosService {
 
     @Transactional
     public List<VideosResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
-        List<VideosResponseDto> list = videosRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get()).stream()
+        return videosRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get().getIdx(), count).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
-        int listLength = list.size();
-
-        Random random = new Random();
-        List<VideosResponseDto> randList = new ArrayList<>();
-
-        for (int i = 0 ; i < count ; i++) {
-            randList.add(list.get(random.nextInt(listLength)));
-        }
-
-        return randList;
     }
 
     @Transactional
