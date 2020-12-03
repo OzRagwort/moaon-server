@@ -31,8 +31,6 @@ public class Videos extends BaseTimeEntity {
     @JoinColumn(name = "channels_idx")
     private Channels channels;
 
-    private String categoriesIdx;
-
     @Column(name = "video_id", unique = true)
     private String videoId;
 
