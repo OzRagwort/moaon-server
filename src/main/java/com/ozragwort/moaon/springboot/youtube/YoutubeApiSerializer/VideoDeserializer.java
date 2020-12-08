@@ -92,8 +92,8 @@ public class VideoDeserializer {
         VideoStatus videoStatus = new VideoStatus();
 
         try {
-            videoStatus.setPublicStatsViewable((Boolean) status.get("publicStatsViewable"));
             videoStatus.setEmbeddable((Boolean) status.get("embeddable"));
+            videoStatus.setPublicStatsViewable((Boolean) status.get("publicStatsViewable"));
             videoStatus.setUploadStatus((String) status.get("uploadStatus"));
             videoStatus.setPrivacyStatus((String) status.get("privacyStatus"));
             videoStatus.setMadeForKids((Boolean) status.get("madeForKids"));

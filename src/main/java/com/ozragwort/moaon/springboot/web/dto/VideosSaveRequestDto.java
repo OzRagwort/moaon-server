@@ -28,7 +28,7 @@ public class VideosSaveRequestDto {
 
     private String videoDuration;
 
-    private boolean videoPublicStatsViewable;
+    private boolean videoEmbeddable;
 
     private int viewCount;
 
@@ -48,7 +48,7 @@ public class VideosSaveRequestDto {
                                 String videoDescription,
                                 String videoPublishedDate,
                                 String videoDuration,
-                                boolean videoPublicStatsViewable,
+                                boolean videoEmbeddable,
                                 int viewCount,
                                 int likeCount,
                                 int dislikeCount,
@@ -61,7 +61,7 @@ public class VideosSaveRequestDto {
         this.videoDescription = videoDescription;
         this.videoPublishedDate = videoPublishedDate;
         this.videoDuration = videoDuration;
-        this.videoPublicStatsViewable = videoPublicStatsViewable;
+        this.videoEmbeddable = videoEmbeddable;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
@@ -78,7 +78,7 @@ public class VideosSaveRequestDto {
                 .videoDescription(videoDescription)
                 .videoPublishedDate(videoPublishedDate)
                 .videoDuration(videoDuration)
-                .videoPublicStatsViewable(videoPublicStatsViewable)
+                .videoEmbeddable(videoEmbeddable)
                 .viewCount(viewCount)
                 .likeCount(likeCount)
                 .dislikeCount(dislikeCount)

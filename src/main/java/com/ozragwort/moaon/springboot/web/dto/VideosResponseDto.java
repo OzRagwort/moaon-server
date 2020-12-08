@@ -33,7 +33,7 @@ public class VideosResponseDto {
 
     private String videoDuration;
 
-    private boolean videoPublicStatsViewable;
+    private boolean videoEmbeddable;
 
     private int viewCount;
 
@@ -55,7 +55,7 @@ public class VideosResponseDto {
         this.videoDescription = videos.getVideoDescription();
         this.videoPublishedDate = videos.getVideoPublishedDate();
         this.videoDuration = videos.getVideoDuration();
-        this.videoPublicStatsViewable = videos.isVideoPublicStatsViewable();
+        this.videoEmbeddable = videos.isVideoEmbeddable();
         this.viewCount = videos.getViewCount();
         this.likeCount = videos.getLikeCount();
         this.dislikeCount = videos.getDislikeCount();

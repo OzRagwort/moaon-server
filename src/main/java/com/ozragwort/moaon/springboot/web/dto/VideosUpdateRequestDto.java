@@ -20,7 +20,7 @@ public class VideosUpdateRequestDto {
 
     private String videoDuration;
 
-    private boolean videoPublicStatsViewable;
+    private boolean videoEmbeddable;
 
     private int viewCount;
 
@@ -38,7 +38,7 @@ public class VideosUpdateRequestDto {
                                   String videoDescription,
                                   String videoPublishedDate,
                                   String videoDuration,
-                                  boolean videoPublicStatsViewable,
+                                  boolean videoEmbeddable,
                                   int viewCount,
                                   int likeCount,
                                   int dislikeCount,
@@ -49,7 +49,7 @@ public class VideosUpdateRequestDto {
         this.videoDescription = videoDescription;
         this.videoPublishedDate = videoPublishedDate;
         this.videoDuration = videoDuration;
-        this.videoPublicStatsViewable = videoPublicStatsViewable;
+        this.videoEmbeddable = videoEmbeddable;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;

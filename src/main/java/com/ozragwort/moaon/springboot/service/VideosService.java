@@ -49,7 +49,7 @@ public class VideosService {
                 .videoDescription(videoListResponse.getItems().get(0).getSnippet().getDescription())
                 .videoPublishedDate(videoListResponse.getItems().get(0).getSnippet().getPublishedAt())
                 .videoDuration(videoListResponse.getItems().get(0).getContentDetails().getDuration())
-                .videoPublicStatsViewable(videoListResponse.getItems().get(0).getStatus().getPublicStatsViewable())
+                .videoEmbeddable(videoListResponse.getItems().get(0).getStatus().getEmbeddable())
                 .viewCount(videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue())
                 .likeCount(videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue())
                 .dislikeCount(videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue())
@@ -118,7 +118,7 @@ public class VideosService {
                 videoListResponse.getItems().get(0).getSnippet().getDescription(),
                 videoListResponse.getItems().get(0).getSnippet().getPublishedAt(),
                 videoListResponse.getItems().get(0).getContentDetails().getDuration(),
-                videoListResponse.getItems().get(0).getStatus().getPublicStatsViewable(),
+                videoListResponse.getItems().get(0).getStatus().getEmbeddable(),
                 videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
