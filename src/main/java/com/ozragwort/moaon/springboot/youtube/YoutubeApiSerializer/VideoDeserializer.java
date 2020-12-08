@@ -80,10 +80,15 @@ public class VideoDeserializer {
         VideoStatistics videoStatistics = new VideoStatistics();
 
         videoStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
-        videoStatistics.setLikeCount(new BigInteger((String) statistic.get("likeCount")));
-        videoStatistics.setDislikeCount(new BigInteger((String) statistic.get("dislikeCount")));
-        videoStatistics.setFavoriteCount(new BigInteger((String) statistic.get("favoriteCount")));
         videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
+        videoStatistics.setFavoriteCount(new BigInteger((String) statistic.get("favoriteCount")));
+        if(statistic.get("likeCount") != null) {
+            videoStatistics.setLikeCount(new BigInteger((String) statistic.get("likeCount")));
+            videoStatistics.setDislikeCount(new BigInteger((String) statistic.get("dislikeCount")));
+        } else {
+            videoStatistics.setLikeCount(BigInteger.ZERO);
+            videoStatistics.setDislikeCount(BigInteger.ZERO);
+        }
 
         return videoStatistics;
     }
