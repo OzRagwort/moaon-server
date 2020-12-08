@@ -1,25 +1,23 @@
 package com.ozragwort.moaon.springboot.service;
 
-import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
-import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import com.ozragwort.moaon.springboot.youtube.YoutubeApi;
+import com.ozragwort.moaon.springboot.component.ModifiedDurationCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -106,6 +104,11 @@ public class VideosService {
 
         if (videos == null) {
             return null;
+        }
+
+        ModifiedDurationCheck check = new ModifiedDurationCheck(videos.getModifiedDate());
+        if (check.get() == 0) {
+            return videos.getIdx();
         }
 
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(videoId);
