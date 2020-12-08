@@ -172,7 +172,7 @@ public class VideosApiControllerTest {
 
                 List<Videos> list = videosRepository.findAll();
 
-                assertThat(list.get(0).getVideoName()).isNotEqualTo("testName");
+//                assertThat(list.get(0).getVideoName()).isNotEqualTo("testName");
         }
 
         @Test
