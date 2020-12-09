@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -24,7 +25,7 @@ public class VideosSaveRequestDto {
 
     private String videoDescription;
 
-    private String videoPublishedDate;
+    private LocalDateTime videoPublishedDate;
 
     private String videoDuration;
 
@@ -46,7 +47,7 @@ public class VideosSaveRequestDto {
                                 String videoName,
                                 String videoThumbnail,
                                 String videoDescription,
-                                String videoPublishedDate,
+                                LocalDateTime videoPublishedDate,
                                 String videoDuration,
                                 boolean videoEmbeddable,
                                 int viewCount,

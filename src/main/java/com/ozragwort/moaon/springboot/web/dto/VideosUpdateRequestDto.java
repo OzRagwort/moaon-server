@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class VideosUpdateRequestDto {
 
     private String videoDescription;
 
-    private String videoPublishedDate;
+    private LocalDateTime videoPublishedDate;
 
     private String videoDuration;
 
@@ -36,7 +37,7 @@ public class VideosUpdateRequestDto {
     public VideosUpdateRequestDto(String videoName,
                                   String videoThumbnail,
                                   String videoDescription,
-                                  String videoPublishedDate,
+                                  LocalDateTime videoPublishedDate,
                                   String videoDuration,
                                   boolean videoEmbeddable,
                                   int viewCount,

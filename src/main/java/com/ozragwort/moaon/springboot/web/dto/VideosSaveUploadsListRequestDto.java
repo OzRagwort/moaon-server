@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 public class VideosSaveUploadsListRequestDto {
@@ -20,7 +22,7 @@ public class VideosSaveUploadsListRequestDto {
 
     private String videoDescription;
 
-    private String videoPublishedDate;
+    private LocalDateTime videoPublishedDate;
 
     @Builder
     public VideosSaveUploadsListRequestDto(Channels channels,
@@ -28,7 +30,7 @@ public class VideosSaveUploadsListRequestDto {
                                            String videoName,
                                            String videoThumbnail,
                                            String videoDescription,
-                                           String videoPublishedDate) {
+                                           LocalDateTime videoPublishedDate) {
         this.channels = channels;
         this.videoId = videoId;
         this.videoName = videoName;

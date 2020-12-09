@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String videoDescription;
 
-    private String videoPublishedDate;
+    private LocalDateTime videoPublishedDate;
 
     private String videoDuration;
 
@@ -68,7 +69,7 @@ public class Videos extends BaseTimeEntity {
                   String videoName,
                   String videoThumbnail,
                   String videoDescription,
-                  String videoPublishedDate,
+                  LocalDateTime videoPublishedDate,
                   String videoDuration,
                   boolean videoEmbeddable,
                   int viewCount,
@@ -97,7 +98,7 @@ public class Videos extends BaseTimeEntity {
                   String videoName,
                   String videoThumbnail,
                   String videoDescription,
-                  String videoPublishedDate) {
+                  LocalDateTime videoPublishedDate) {
         this.channels = channels;
         this.videoId = videoId;
         this.videoName = videoName;
@@ -109,7 +110,7 @@ public class Videos extends BaseTimeEntity {
     public void update(String videoName,
                        String videoThumbnail,
                        String videoDescription,
-                       String videoPublishedDate,
+                       LocalDateTime videoPublishedDate,
                        String videoDuration,
                        boolean videoEmbeddable,
                        int viewCount,

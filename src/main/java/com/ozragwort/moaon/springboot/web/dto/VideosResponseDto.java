@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -29,7 +30,7 @@ public class VideosResponseDto {
 
     private String videoDescription;
 
-    private String videoPublishedDate;
+    private LocalDateTime videoPublishedDate;
 
     private String videoDuration;
 
