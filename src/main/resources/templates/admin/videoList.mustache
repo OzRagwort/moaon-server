@@ -129,12 +129,14 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-body">
-                                                    videoThumbnail : {{videoThumbnail}}<br>
-                                                    videoPublishedDate : {{videoPublishedDate}}<br>
+                                                    videoThumbnail : {{#videoThumbnail}}{{videoThumbnail}}{{/videoThumbnail}}
+                                                    {{^videoThumbnail}}{{/videoThumbnail}}<br>
+                                                    videoPublishedDate : {{#videoPublishedDate}}{{videoPublishedDate}}{{/videoPublishedDate}}
+                                                    {{^videoPublishedDate}}{{/videoPublishedDate}}<br>
                                                     videoDuration : {{#videoDuration}}{{videoDuration}}{{/videoDuration}}
                                                     {{^videoDuration}}{{/videoDuration}}<br>
-                                                    videoPublicStatsViewable : {{#videoPublicStatsViewable}}{{videoPublicStatsViewable}}{{/videoPublicStatsViewable}}
-                                                    {{^videoPublicStatsViewable}}{{/videoPublicStatsViewable}}<br>
+                                                    videoPublicStatsViewable : {{#videoEmbeddable}}{{videoEmbeddable}}{{/videoEmbeddable}}
+                                                    {{^videoEmbeddable}}{{/videoEmbeddable}}<br>
                                                     viewCount : {{#viewCount}}{{viewCount}}{{/viewCount}}
                                                     {{^viewCount}}{{/viewCount}}<br>
                                                     likeCount : {{#likeCount}}{{likeCount}}{{/likeCount}}

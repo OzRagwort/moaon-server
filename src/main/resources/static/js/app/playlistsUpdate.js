@@ -9,8 +9,6 @@ var main = {
         });
     },
     playlist : function() {
-        this.playlistDo($('#updatePlaylistId').val());
-
         var data = {
             channelId : $('#updatePlaylistId').val()
         };
