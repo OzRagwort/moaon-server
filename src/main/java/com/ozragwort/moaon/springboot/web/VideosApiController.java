@@ -38,16 +38,23 @@ public class VideosApiController {
             @RequestParam(value = "channel", required = false) String channelId,
             @RequestParam(value = "category", required = false) Long categoryId,
             @RequestParam(value = "maxResult", defaultValue = "10") int size,
-            @RequestParam(value = "page", defaultValue = "1") int pageCount
+            @RequestParam(value = "page", defaultValue = "1") int pageCount,
+            @RequestParam(value = "timeSort", required = false) String sort
     ) {
         if (idx != null)
             return videosService.findById(idx);
         else if (videoId != null)
             return videosService.findByVideoId(videoId);
-        else if (channelId != null)
-            return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-        else if (categoryId != null)
+        else if (channelId != null) {
+            if (sort != null)
+                return videosService.findByChannelIdSortDate(channelId, sort, PageRequest.of(pageCount - 1, size));
+            else
+                return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+        }
+        // sort 기능 추가 예정
+        else if (categoryId != null) {
             return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+        }
         else
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
     }

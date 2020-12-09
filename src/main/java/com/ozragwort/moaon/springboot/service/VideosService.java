@@ -159,6 +159,22 @@ public class VideosService {
     }
 
     @Transactional
+    public List<VideosResponseDto> findByChannelIdSortDate(String channelId, String sort, Pageable pageable) {
+        if (sort.equals("asc")) {
+            return videosRepository.findByChannelIdSortDateAsc(channelsRepository.findByChannelId(channelId), pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        } else if (sort.equals("desc")) {
+            return videosRepository.findByChannelIdSortDateDesc(channelsRepository.findByChannelId(channelId), pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            return null;
+        }
+
+    }
+
+    @Transactional
     public List<VideosResponseDto> findByChannelIdRand(String channelId, int count) {
         return videosRepository.findRandByChannelId(channelsRepository.findByChannelId(channelId), count).stream()
                 .map(VideosResponseDto::new)
