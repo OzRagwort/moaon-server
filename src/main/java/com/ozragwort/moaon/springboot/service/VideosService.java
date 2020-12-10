@@ -1,8 +1,8 @@
 package com.ozragwort.moaon.springboot.service;
 
-import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
@@ -15,10 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +47,7 @@ public class VideosService {
                 .videoName(videoListResponse.getItems().get(0).getSnippet().getTitle())
                 .videoThumbnail(videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
                 .videoDescription(videoListResponse.getItems().get(0).getSnippet().getDescription())
-                .videoPublishedDate(StringToUTCDateTime(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()))
+                .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()))
                 .videoDuration(videoListResponse.getItems().get(0).getContentDetails().getDuration())
                 .videoEmbeddable(videoListResponse.getItems().get(0).getStatus().getEmbeddable())
                 .viewCount(videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue())
@@ -84,7 +80,7 @@ public class VideosService {
                         .videoName(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getTitle())
                         .videoThumbnail(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getThumbnails().getMedium().getUrl())
                         .videoDescription(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getDescription())
-                        .videoPublishedDate(StringToUTCDateTime(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getPublishedAt()))
+                        .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getPublishedAt()))
                         .build();
 
                 list.add(videosRepository.save(videosSaveUploadsListRequestDto.toEntity()).getIdx());
@@ -120,7 +116,7 @@ public class VideosService {
         videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
                 videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 videoListResponse.getItems().get(0).getSnippet().getDescription(),
-                LocalDateTime.parse(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()),
+                ConvertUtcDateTime.StringToUTCDateTime(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()),
                 videoListResponse.getItems().get(0).getContentDetails().getDuration(),
                 videoListResponse.getItems().get(0).getStatus().getEmbeddable(),
                 videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue(),
@@ -216,14 +212,6 @@ public class VideosService {
         videosRepository.delete(videos);
 
         return idx;
-    }
-
-    private LocalDateTime StringToUTCDateTime(String time) {
-        return LocalDateTime.from(
-                Instant.from(
-                        DateTimeFormatter.ISO_DATE_TIME.parse(time)
-                ).atZone(ZoneId.of("UTC"))
-        );
     }
 
 }
