@@ -22,12 +22,14 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.videoId = :videoId")
     Videos findByVideoId(@Param("videoId") String videoId);
 
+    // 미사용
     @Query("SELECT p FROM Videos p WHERE p.channels = :channels")
     List<Videos> findByChannelId(@Param("channels") Channels channels);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels = :channels")
-    List<Videos> findByChannelId(@Param("channels") Channels channels, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
+    List<Videos> findByChannelId(@Param("channels") List<Channels> channels, Pageable pageable);
 
+    // 미사용
     @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories);
 
@@ -42,10 +44,7 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, @Param("count") int count);
 
     // find Sorting
-    @Query("SELECT p FROM Videos p WHERE p.channels = :channels ORDER BY p.videoPublishedDate ASC")
-    List<Videos> findByChannelIdSortDateAsc(@Param("channels") Channels channels, Pageable pageable);
-
-    @Query("SELECT p FROM Videos p WHERE p.channels = :channels ORDER BY p.videoPublishedDate DESC")
-    List<Videos> findByChannelIdSortDateDesc(@Param("channels") Channels channels, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
+    List<Videos> findByChannelIdSortDate(@Param("channels") List<Channels> channels, Pageable pageable);
 
 }

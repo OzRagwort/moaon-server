@@ -4,6 +4,7 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
+import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
@@ -149,25 +150,18 @@ public class VideosService {
 
     @Transactional
     public List<VideosResponseDto> findByChannelId(String channelId, Pageable pageable) {
-        return videosRepository.findByChannelId(channelsRepository.findByChannelId(channelId), pageable).stream()
+        List<Channels> channelsList = StringToListChannels(channelId);
+        return videosRepository.findByChannelId(channelsList, pageable).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<VideosResponseDto> findByChannelIdSortDate(String channelId, String sort, Pageable pageable) {
-        if (sort.equals("asc")) {
-            return videosRepository.findByChannelIdSortDateAsc(channelsRepository.findByChannelId(channelId), pageable).stream()
-                    .map(VideosResponseDto::new)
-                    .collect(Collectors.toList());
-        } else if (sort.equals("desc")) {
-            return videosRepository.findByChannelIdSortDateDesc(channelsRepository.findByChannelId(channelId), pageable).stream()
-                    .map(VideosResponseDto::new)
-                    .collect(Collectors.toList());
-        } else {
-            return null;
-        }
-
+    public List<VideosResponseDto> findByChannelIdSortDate(String channelId, Pageable pageable) {
+        List<Channels> channelsList = StringToListChannels(channelId);
+        return videosRepository.findByChannelIdSortDate(channelsList, pageable).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -212,6 +206,17 @@ public class VideosService {
         videosRepository.delete(videos);
 
         return idx;
+    }
+
+    private List<Channels> StringToListChannels(String channelId) {
+        List<Channels> list = new ArrayList<>();
+        String[] arr = channelId.split(",");
+
+        for(int i = 0 ; i < arr.length ; i++) {
+            list.add(channelsRepository.findByChannelId(arr[i]));
+        }
+
+        return list;
     }
 
 }
