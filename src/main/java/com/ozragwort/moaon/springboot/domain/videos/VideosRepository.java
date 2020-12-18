@@ -37,10 +37,10 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
     // find random(native)
-    @Query(value = "SELECT videos.* FROM moaon.videos, moaon.channels WHERE moaon.channels.channels_idx = moaon.videos.channels_idx and moaon.channels.channels_idx = :channels Order by rand() LIMIT :count", nativeQuery = true)
+    @Query(value = "SELECT videos.* FROM videos, channels WHERE channels.channels_idx = videos.channels_idx and channels.channels_idx = :channels Order by rand() LIMIT :count", nativeQuery = true)
     List<Videos> findRandByChannelId(@Param("channels") Channels channels, @Param("count") int count);
 
-    @Query(value = "SELECT videos.* FROM moaon.videos, moaon.channels WHERE moaon.channels.channels_idx = moaon.videos.channels_idx and moaon.channels.categories_idx = :categories Order by rand() LIMIT :count", nativeQuery = true)
+    @Query(value = "SELECT videos.* FROM videos, channels WHERE channels.channels_idx = videos.channels_idx and channels.categories_idx = :categories Order by rand() LIMIT :count", nativeQuery = true)
     List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, @Param("count") int count);
 
     // find Sorting
