@@ -2,24 +2,24 @@ package com.ozragwort.moaon.springboot.domain.videos;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ozragwort.moaon.springboot.domain.BaseTimeEntity;
-import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "videos")
+@Indexed
 public class Videos extends BaseTimeEntity {
 
     @Id
@@ -35,10 +35,12 @@ public class Videos extends BaseTimeEntity {
     @Column(name = "video_id", unique = true)
     private String videoId;
 
+    @Field
     private String videoName;
 
     private String videoThumbnail;
 
+    @Field
     @Column(columnDefinition = "TEXT")
     private String videoDescription;
 

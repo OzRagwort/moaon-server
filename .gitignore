@@ -6,3 +6,4 @@
 /build/classes/java/test/
 application-oauth.properties
 /src/main/resources/json/
+/indexes/*
