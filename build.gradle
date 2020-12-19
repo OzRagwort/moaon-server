@@ -48,6 +48,12 @@ dependencies {
 
     // hibernate lucene
     compile('org.hibernate:hibernate-search-orm:5.11.7.Final')
+//    compile('org.apache.lucene:lucene-analyzers-opennlp:8.7.0')
+//    compile("org.apache.lucene:lucene-core:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-queryparser:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-common:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-icu:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-opennlp:${luceneVersion}")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
