@@ -62,6 +62,8 @@ public class VideosApiController {
         }
         else if (keyword != null) {
             return searchService.searchVideos(keyword);
+//            fulltext search 임시 보류
+//            return videosService.searchVideos(keyword, size);
         }
         else
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));

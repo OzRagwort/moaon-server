@@ -47,7 +47,8 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
     List<Videos> findByChannelIdSortDate(@Param("channels") List<Channels> channels, Pageable pageable);
 
-    @Query(value = "SELECT * FROM videos WHERE match(video_name, video_description) against(':keyword') LIMIT :count", nativeQuery = true)
-    List<Videos> searchVideos(@Param("keyword") String keyword, @Param("count") int count);
+//    fulltext search 임시 보류
+//    @Query(value = "SELECT * FROM videos WHERE match(video_name, video_description) against(':keyword') LIMIT :count", nativeQuery = true)
+//    List<Videos> searchVideos(@Param("keyword") String keyword, @Param("count") int count);
 
 }

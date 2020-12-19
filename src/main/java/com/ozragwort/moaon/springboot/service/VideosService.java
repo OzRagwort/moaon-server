@@ -200,13 +200,14 @@ public class VideosService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<VideosResponseDto> searchVideos(String keyword, int count) {
-        List<VideosResponseDto> list = videosRepository.searchVideos(keyword, count).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-        return list;
-    }
+//    fulltext search 임시 보류
+//    @Transactional
+//    public List<VideosResponseDto> searchVideos(String keyword, int count) {
+//        List<VideosResponseDto> list = videosRepository.searchVideos(keyword, count).stream()
+//                .map(VideosResponseDto::new)
+//                .collect(Collectors.toList());
+//        return list;
+//    }
 
     @Transactional
     public Long delete(Long idx) {
