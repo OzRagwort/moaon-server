@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.domain.videos;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ozragwort.moaon.springboot.domain.BaseTimeEntity;
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,13 +36,14 @@ public class Videos extends BaseTimeEntity {
     @Column(name = "video_id", unique = true)
     private String videoId;
 
+    @Column(name = "video_name")
     @Field
     private String videoName;
 
     private String videoThumbnail;
 
+    @Column(name = "video_description", columnDefinition = "TEXT")
     @Field
-    @Column(columnDefinition = "TEXT")
     private String videoDescription;
 
     private LocalDateTime videoPublishedDate;
@@ -62,7 +64,7 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private List<String> tags;
 
     @Builder

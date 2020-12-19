@@ -56,9 +56,8 @@ public class VideosApiController {
                 return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending()));
             else
                 return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending()));
-        }
-        // sort 기능 추가 예정
-        else if (categoryId != null) {
+            // sort 기능 추가 예정
+        } else if (categoryId != null) {
             return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         }
         else if (keyword != null) {
