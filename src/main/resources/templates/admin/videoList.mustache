@@ -130,21 +130,21 @@
                                             <div class="modal-content">
                                                 <div class="modal-body">
                                                     videoThumbnail : {{#videoThumbnail}}{{videoThumbnail}}{{/videoThumbnail}}
-                                                    {{^videoThumbnail}}{{/videoThumbnail}}<br>
+                                                    {{^videoThumbnail}}NULL{{/videoThumbnail}}<br>
                                                     videoPublishedDate : {{#videoPublishedDate}}{{videoPublishedDate}}{{/videoPublishedDate}}
-                                                    {{^videoPublishedDate}}{{/videoPublishedDate}}<br>
+                                                    {{^videoPublishedDate}}NULL{{/videoPublishedDate}}<br>
                                                     videoDuration : {{#videoDuration}}{{videoDuration}}{{/videoDuration}}
-                                                    {{^videoDuration}}{{/videoDuration}}<br>
+                                                    {{^videoDuration}}NULL{{/videoDuration}}<br>
                                                     videoPublicStatsViewable : {{#videoEmbeddable}}{{videoEmbeddable}}{{/videoEmbeddable}}
-                                                    {{^videoEmbeddable}}{{/videoEmbeddable}}<br>
+                                                    {{^videoEmbeddable}}NULL{{/videoEmbeddable}}<br>
                                                     viewCount : {{#viewCount}}{{viewCount}}{{/viewCount}}
-                                                    {{^viewCount}}{{/viewCount}}<br>
+                                                    {{^viewCount}}NULL{{/viewCount}}<br>
                                                     likeCount : {{#likeCount}}{{likeCount}}{{/likeCount}}
-                                                    {{^likeCount}}{{/likeCount}}<br>
+                                                    {{^likeCount}}NULL{{/likeCount}}<br>
                                                     dislikeCount : {{#dislikeCount}}{{dislikeCount}}{{/dislikeCount}}
-                                                    {{^dislikeCount}}{{/dislikeCount}}<br>
+                                                    {{^dislikeCount}}NULL{{/dislikeCount}}<br>
                                                     commentCount : {{#commentCount}}{{commentCount}}{{/commentCount}}
-                                                    {{^commentCount}}{{/commentCount}}
+                                                    {{^commentCount}}NULL{{/commentCount}}
                                                 </div>
                                             </div>
                                         </div>
@@ -159,7 +159,7 @@
                                             <div class="modal-content">
                                                 <div class="modal-body">
                                                     tags : {{#tags}}<br>{{.}}{{/tags}}
-                                                    {{^tags}}{{/tags}}
+                                                    {{^tags}}NULL{{/tags}}
                                                 </div>
                                             </div>
                                         </div>

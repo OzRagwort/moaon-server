@@ -11,9 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -35,11 +33,12 @@ public class Videos extends BaseTimeEntity {
     @Column(name = "video_id", unique = true)
     private String videoId;
 
+    @Column(name = "video_name")
     private String videoName;
 
     private String videoThumbnail;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "video_description", columnDefinition = "TEXT")
     private String videoDescription;
 
     private LocalDateTime videoPublishedDate;
@@ -60,7 +59,7 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 
     @Builder
