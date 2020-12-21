@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -157,9 +158,9 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findByChannelIdSortDate(String channelId, Pageable pageable) {
+    public List<VideosResponseDto> findByChannelIdSort(String channelId, Pageable pageable) {
         List<Channels> channelsList = StringToListChannels(channelId);
-        return videosRepository.findByChannelIdSortDate(channelsList, pageable).stream()
+        return videosRepository.findByChannelIdSort(channelsList, pageable).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -218,5 +219,4 @@ public class VideosService {
 
         return list;
     }
-
 }

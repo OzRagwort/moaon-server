@@ -1,5 +1,6 @@
 package com.ozragwort.moaon.springboot.web;
 
+import com.ozragwort.moaon.springboot.service.SearchService;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.List;
 public class VideosApiController {
 
     private final VideosService videosService;
+
+    private final SearchService searchService;
 
     @PostMapping("/videos")
     public Long save(@RequestBody PostVideosRequestDto requestDto) {
@@ -39,23 +42,29 @@ public class VideosApiController {
             @RequestParam(value = "category", required = false) Long categoryId,
             @RequestParam(value = "maxResult", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
-            @RequestParam(value = "timeSort", required = false) String sort
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "search", required = false) String keyword
     ) {
         if (idx != null)
             return videosService.findById(idx);
         else if (videoId != null)
             return videosService.findByVideoId(videoId);
         else if (channelId != null) {
-            if (sort == null || !(sort.equals("asc") || sort.equals("desc")))
+            if (sort == null)
                 return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-            if (sort.equals("asc"))
-                return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending()));
+            else if (sort.equals("asc"))
+                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending()));
+            else if (sort.equals("desc"))
+                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending()));
+            else if (sort.equals("popular"))
+                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("viewCount").descending()));
             else
-                return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending()));
-        }
-        // sort 기능 추가 예정
-        else if (categoryId != null) {
+                return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            // sort 기능 추가 예정
+        } else if (categoryId != null) {
             return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+        } else if (keyword != null) {
+            return searchService.searchVideos(keyword, (pageCount - 1) * size, size);
         }
         else
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
