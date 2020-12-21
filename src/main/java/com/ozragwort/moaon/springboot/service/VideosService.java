@@ -199,15 +199,6 @@ public class VideosService {
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
-//    fulltext search 임시 보류
-//    @Transactional
-//    public List<VideosResponseDto> searchVideos(String keyword, int count) {
-//        List<VideosResponseDto> list = videosRepository.searchVideos(keyword, count).stream()
-//                .map(VideosResponseDto::new)
-//                .collect(Collectors.toList());
-//        return list;
-
-//    }
 
     @Transactional
     public Long delete(Long idx) {
