@@ -8,18 +8,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "videos")
+@Indexed
 public class Videos extends BaseTimeEntity {
 
     @Id
@@ -35,11 +36,14 @@ public class Videos extends BaseTimeEntity {
     @Column(name = "video_id", unique = true)
     private String videoId;
 
+    @Column(name = "video_name")
+    @Field
     private String videoName;
 
     private String videoThumbnail;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "video_description", columnDefinition = "TEXT")
+    @Field
     private String videoDescription;
 
     private LocalDateTime videoPublishedDate;
@@ -60,7 +64,7 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private List<String> tags;
 
     @Builder

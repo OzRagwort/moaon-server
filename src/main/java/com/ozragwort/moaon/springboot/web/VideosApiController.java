@@ -1,5 +1,6 @@
 package com.ozragwort.moaon.springboot.web;
 
+import com.ozragwort.moaon.springboot.service.SearchService;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.List;
 public class VideosApiController {
 
     private final VideosService videosService;
+
+    private final SearchService searchService;
 
     @PostMapping("/videos")
     public Long save(@RequestBody PostVideosRequestDto requestDto) {
@@ -39,7 +42,8 @@ public class VideosApiController {
             @RequestParam(value = "category", required = false) Long categoryId,
             @RequestParam(value = "maxResult", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
-            @RequestParam(value = "timeSort", required = false) String sort
+            @RequestParam(value = "timeSort", required = false) String sort,
+            @RequestParam(value = "search", required = false) String keyword
     ) {
         if (idx != null)
             return videosService.findById(idx);
@@ -52,10 +56,14 @@ public class VideosApiController {
                 return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending()));
             else
                 return videosService.findByChannelIdSortDate(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending()));
-        }
-        // sort 기능 추가 예정
-        else if (categoryId != null) {
+            // sort 기능 추가 예정
+        } else if (categoryId != null) {
             return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+        }
+        else if (keyword != null) {
+            return searchService.searchVideos(keyword, (pageCount - 1) * size, size);
+//            fulltext search 임시 보류
+//            return videosService.searchVideos(keyword, size);
         }
         else
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -198,6 +199,15 @@ public class VideosService {
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+//    fulltext search 임시 보류
+//    @Transactional
+//    public List<VideosResponseDto> searchVideos(String keyword, int count) {
+//        List<VideosResponseDto> list = videosRepository.searchVideos(keyword, count).stream()
+//                .map(VideosResponseDto::new)
+//                .collect(Collectors.toList());
+//        return list;
+//    }
 
     @Transactional
     public Long delete(Long idx) {

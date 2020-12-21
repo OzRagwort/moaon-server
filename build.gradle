@@ -28,7 +28,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.projectlombok:lombok')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('com.h2database:h2')
+//    compile('com.h2database:h2')
+    compile('org.mariadb.jdbc:mariadb-java-client')
     compile('org.springframework.boot:spring-boot-starter-mustache')
     compile('org.springframework.boot:spring-boot-starter-oauth2-client')
     compile('org.springframework.session:spring-session-jdbc')
@@ -45,6 +46,15 @@ dependencies {
     compile('com.google.oauth-client:google-oauth-client-jetty:1.30.3')
 
     compile('com.googlecode.json-simple:json-simple:1.1')
+
+    // hibernate lucene
+    compile('org.hibernate:hibernate-search-orm:5.11.7.Final')
+//    compile('org.apache.lucene:lucene-analyzers-opennlp:8.7.0')
+//    compile("org.apache.lucene:lucene-core:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-queryparser:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-common:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-icu:${luceneVersion}")
+//    compile("org.apache.lucene:lucene-analyzers-opennlp:${luceneVersion}")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
