@@ -27,11 +27,11 @@ public class SearchService {
     // 전체 인덱싱
     // com..component.StartupApplication.onApplicationEvent
 
-    public List<VideosResponseDto> searchVideos(String keyword) {
-        return getVideos(keyword);
+    public List<VideosResponseDto> searchVideos(String keyword, int page, int size) {
+        return getVideos(keyword, page, size);
     }
 
-    private List<VideosResponseDto> getVideos(String keyword) {
+    private List<VideosResponseDto> getVideos(String keyword, int page, int size) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
                 .forEntity(Videos.class)
@@ -40,6 +40,8 @@ public class SearchService {
         Query query = getWildcardQuery(queryBuilder, keyword);
 
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Videos.class);
+        fullTextQuery.setFirstResult(page);
+        fullTextQuery.setMaxResults(size);
         List<Videos> videosResponse = (List<Videos>) fullTextQuery.getResultList();
 
         return videosResponse.stream()
