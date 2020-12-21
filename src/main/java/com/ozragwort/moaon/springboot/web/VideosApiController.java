@@ -63,11 +63,8 @@ public class VideosApiController {
             // sort 기능 추가 예정
         } else if (categoryId != null) {
             return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-        }
-        else if (keyword != null) {
+        } else if (keyword != null) {
             return searchService.searchVideos(keyword, (pageCount - 1) * size, size);
-//            fulltext search 임시 보류
-//            return videosService.searchVideos(keyword, size);
         }
         else
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));

@@ -24,9 +24,6 @@ public class SearchService {
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
 
-    // 전체 인덱싱
-    // com..component.StartupApplication.onApplicationEvent
-
     public List<VideosResponseDto> searchVideos(String keyword, int page, int size) {
         return getVideos(keyword, page, size);
     }
@@ -71,14 +68,6 @@ public class SearchService {
 
     // 유사한것들 찾기 (~, ~0.8) default = 0.5
     private Query getFuzzyQuery(QueryBuilder queryBuilder, String keyword) {
-        return queryBuilder.keyword().fuzzy()
-                .onFields("videoName").boostedTo(2f)
-                .andField("videoDescription")
-                .matching(keyword)
-                .createQuery();
-    }
-
-    private Query getTestQuery(QueryBuilder queryBuilder, String keyword) {
         return queryBuilder.keyword().fuzzy()
                 .onFields("videoName").boostedTo(2f)
                 .andField("videoDescription")
