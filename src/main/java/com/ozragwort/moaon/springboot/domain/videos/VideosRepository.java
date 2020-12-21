@@ -45,7 +45,7 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
 
     // find Sorting
     @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
-    List<Videos> findByChannelIdSortDate(@Param("channels") List<Channels> channels, Pageable pageable);
+    List<Videos> findByChannelIdSort(@Param("channels") List<Channels> channels, Pageable pageable);
 
 //    fulltext search 임시 보류
 //    @Query(value = "SELECT * FROM videos WHERE match(video_name, video_description) against(':keyword') LIMIT :count", nativeQuery = true)
