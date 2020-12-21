@@ -199,7 +199,6 @@ public class VideosService {
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
-
 //    fulltext search 임시 보류
 //    @Transactional
 //    public List<VideosResponseDto> searchVideos(String keyword, int count) {
@@ -207,6 +206,7 @@ public class VideosService {
 //                .map(VideosResponseDto::new)
 //                .collect(Collectors.toList());
 //        return list;
+
 //    }
 
     @Transactional
@@ -228,5 +228,4 @@ public class VideosService {
 
         return list;
     }
-
 }
