@@ -12,9 +12,7 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,26 +20,31 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
 
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
-    private EntityManager entityManager;
+    @PersistenceUnit
+    EntityManagerFactory entityManagerFactory;
 
-    @Transactional
     public List<VideosResponseDto> searchVideos(String keyword, int page, int size) {
         return getVideos(keyword, page, size);
     }
 
     private List<VideosResponseDto> getVideos(String keyword, int page, int size) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+        entityManager.getTransaction().begin();
+
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
                 .forEntity(Videos.class)
                 .get();
-
         Query query = getWildcardQuery(queryBuilder, keyword);
 
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Videos.class);
         fullTextQuery.setFirstResult(page);
         fullTextQuery.setMaxResults(size);
         List<Videos> videosResponse = (List<Videos>) fullTextQuery.getResultList();
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
 
         return videosResponse.stream()
                 .map(VideosResponseDto::new)
