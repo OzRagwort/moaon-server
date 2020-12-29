@@ -6,19 +6,18 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.*;
 
 @Component
 public class StartupApplication implements ApplicationListener<ContextRefreshedEvent> {
 
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
-    private EntityManager entityManager;
+    @PersistenceUnit
+    EntityManagerFactory entityManagerFactory;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         try {
             fullTextEntityManager.createIndexer().startAndWait();
