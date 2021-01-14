@@ -31,28 +31,21 @@ public class ChannelsApiController {
             @RequestParam(value = "no", required = false) Long idx,
             @RequestParam(value = "id", required = false) String channelId,
             @RequestParam(value = "category", required = false) Long categoryId,
-            @RequestParam(value = "maxResult", defaultValue = "10") int size,
+            @RequestParam(value = "randomCategory", required = false) Long randomCategoryId,
+            @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount
     ) {
-        if (idx != null)
+        if (idx != null) {
             return channelsService.findById(idx);
-        else if (channelId != null)
+        } else if (channelId != null) {
             return channelsService.findByChannelId(channelId);
-        else if (categoryId != null)
+        } else if (categoryId != null) {
             return channelsService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-        else
+        } else if (randomCategoryId != null) {
+            return channelsService.findByCategoryIdxRand(randomCategoryId, size);
+        } else {
             return channelsService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-    }
-
-    @GetMapping("/channels/rand")
-    public List<ChannelsResponseDto> findRand(
-            @RequestParam(value = "category", required = false) Long categoryId,
-            @RequestParam(value = "count", defaultValue = "10") int count
-    ) {
-        if (categoryId != null)
-            return channelsService.findByCategoryIdxRand(categoryId, count);
-        else
-            return null;
+        }
     }
 
     @DeleteMapping("/channels/{idx}")
