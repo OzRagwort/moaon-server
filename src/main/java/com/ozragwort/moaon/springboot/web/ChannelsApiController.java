@@ -21,9 +21,19 @@ public class ChannelsApiController {
         return channelsService.save(requestDto);
     }
 
-    @PutMapping("/channels/{channelId}")
-    public Long update(@PathVariable String channelId) {
+    @PutMapping("/channels/{idx}")
+    public Long update(@PathVariable Long idx, @RequestBody ChannelsUpdateRequestDto requestDto) {
+        return channelsService.update(idx, requestDto);
+    }
+
+    @PutMapping("/channels")
+    public Long update(@RequestParam(value = "id") String channelId) {
         return channelsService.update(channelId);
+    }
+
+    @GetMapping("/channels/{idx}")
+    public List<ChannelsResponseDto> findById(@PathVariable Long idx) {
+        return channelsService.findById(idx);
     }
 
     @GetMapping("/channels")

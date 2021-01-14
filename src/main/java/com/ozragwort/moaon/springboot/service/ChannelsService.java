@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -48,12 +47,17 @@ public class ChannelsService {
         return channelsRepository.save(channelsSaveRequestDto.toEntity()).getIdx();
     }
 
-    //need update
     @Transactional
-    public Long update(Long idx) {
-        Optional<Channels> byId = channelsRepository.findById(idx);
+    public Long update(Long idx, ChannelsUpdateRequestDto requestDto) {
+        Channels channels = channelsRepository.findById(idx)
+                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
 
-        return update(byId.get().getChannelId());
+        channels.update(requestDto.getChannelName(),
+                requestDto.getChannelThumbnail(),
+                requestDto.getUploadsList(),
+                requestDto.getSubscribers());
+
+        return idx;
     }
 
     @Transactional

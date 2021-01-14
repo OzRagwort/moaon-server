@@ -29,9 +29,19 @@ public class VideosApiController {
         return videosService.saveUploadsListVideos(uploadsListDto);
     }
 
-    @PutMapping("/videos/{videoId}")
-    public Long update(@PathVariable String videoId) {
+    @PutMapping("/videos/{idx}")
+    public Long update(@PathVariable Long idx, @RequestBody VideosUpdateRequestDto requestDto) {
+        return videosService.update(idx, requestDto);
+    }
+
+    @PutMapping("/videos")
+    public Long update(@RequestParam(value = "id") String videoId) {
         return videosService.update(videoId);
+    }
+
+    @GetMapping("/videos/{idx}")
+    public List<VideosResponseDto> findById(@PathVariable Long idx) {
+        return videosService.findById(idx);
     }
 
     @GetMapping("/videos")

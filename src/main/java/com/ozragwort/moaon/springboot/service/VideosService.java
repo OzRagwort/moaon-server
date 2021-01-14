@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -93,10 +91,23 @@ public class VideosService {
     }
 
     @Transactional
-    public Long update(Long idx) {
-        Optional<Videos> byId = videosRepository.findById(idx);
+    public Long update(Long idx, VideosUpdateRequestDto requestDto) {
+        Videos videos = videosRepository.findById(idx)
+                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
 
-        return update(byId.get().getVideoId());
+        videos.update(requestDto.getVideoName(),
+                requestDto.getVideoThumbnail(),
+                requestDto.getVideoDescription(),
+                requestDto.getVideoPublishedDate(),
+                requestDto.getVideoDuration(),
+                requestDto.isVideoEmbeddable(),
+                requestDto.getViewCount(),
+                requestDto.getLikeCount(),
+                requestDto.getDislikeCount(),
+                requestDto.getCommentCount(),
+                requestDto.getTags());
+
+        return idx;
     }
 
     @Transactional

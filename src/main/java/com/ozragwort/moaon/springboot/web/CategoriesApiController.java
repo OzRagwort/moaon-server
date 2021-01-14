@@ -26,6 +26,11 @@ public class CategoriesApiController {
         return categoriesService.update(idx, requestDto);
     }
 
+    @GetMapping("/categories/{idx}")
+    public CategoriesResponseDto findById(@PathVariable Long idx) {
+        return categoriesService.findById(idx);
+    }
+
     @GetMapping("/categories")
     public List<CategoriesResponseDto> findAll(
             @RequestParam(value = "id", required = false) Long idx,
@@ -33,11 +38,6 @@ public class CategoriesApiController {
             @RequestParam(value = "maxResult", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount) {
         return categoriesService.findAll();
-    }
-
-    @GetMapping("/categories/{idx}")
-    public CategoriesResponseDto findById(@PathVariable Long idx) {
-        return categoriesService.findById(idx);
     }
 
     @DeleteMapping("/categories/{idx}")
