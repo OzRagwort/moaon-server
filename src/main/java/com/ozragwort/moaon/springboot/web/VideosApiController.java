@@ -24,11 +24,6 @@ public class VideosApiController {
         return videosService.save(requestDto);
     }
 
-    @PostMapping("/videos/uploadslist")
-    public List<Long> saveUploadsListVideos(@RequestBody PostChannelUploadsListDto uploadsListDto) {
-        return videosService.saveUploadsListVideos(uploadsListDto);
-    }
-
     @PutMapping("/videos/{idx}")
     public Long update(@PathVariable Long idx, @RequestBody VideosUpdateRequestDto requestDto) {
         return videosService.update(idx, requestDto);
