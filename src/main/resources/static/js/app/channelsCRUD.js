@@ -38,23 +38,23 @@ var main = {
 
         $.ajax({
             type: 'PUT',
-            url: '/api/moaon/v1/channels/'+channelId
+            url: '/api/moaon/v1/channels?id='+channelId
         }).done(function() {
-            alert('글이 수정되었습니다.');
+            alert('채널 정보를 최신화하였습니다.');
             window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
     },
     list : function() {
-        var maxResult = $('#select-channel-maxResult').val();
+        var maxResults = $('#select-channel-maxResults').val();
         var page = 1;
         var idx = $('#txt-channel-idx').val();
         var cid = $('#txt-channel-id').val();
         var category = $('#txt-category-idx').val();
 
         var url = '/admin/channels/list' +
-        '?maxResult=' + maxResult +
+        '?maxResults=' + maxResults +
         '&page=' + page;
 
         if (idx) {url = url + '&no=' + idx;}
@@ -72,7 +72,7 @@ var main = {
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         }).done(function() {
-            alert('글이 삭제되었습니다.');
+            alert(id + ' 채널 정보가 삭제되었습니다.');
             window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
