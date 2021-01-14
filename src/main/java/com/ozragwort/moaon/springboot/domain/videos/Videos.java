@@ -65,6 +65,9 @@ public class Videos extends BaseTimeEntity {
     private int commentCount;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_videos_idx","tags"})
+    )
     private List<String> tags;
 
     @Builder
