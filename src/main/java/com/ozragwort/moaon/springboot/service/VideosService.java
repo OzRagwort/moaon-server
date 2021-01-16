@@ -124,10 +124,11 @@ public class VideosService {
         if (videos == null) {
             return null;
         }
-        ModifiedDurationCheck check = new ModifiedDurationCheck(videos.getModifiedDate());
-        if (check.get() == 0) {
+        ModifiedDurationCheck check = new ModifiedDurationCheck();
+        if (!check.ModifiedDurationTimeCheck(videos.getModifiedDate())) {
             return videos.getVideoId();
         }
+
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(videoId);
         videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
                 videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),

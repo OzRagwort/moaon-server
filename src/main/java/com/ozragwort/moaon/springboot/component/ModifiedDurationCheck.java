@@ -5,24 +5,22 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 @Component
 public class ModifiedDurationCheck {
 
-    private LocalDateTime modifiedDate;
-
-    public ModifiedDurationCheck(LocalDateTime modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
-    public int get() {
-
+    public boolean ModifiedDurationTimeCheck(LocalDateTime modifiedDate) {
         LocalDateTime now = LocalDateTime.now();
-
         Period period = Period.between(modifiedDate.toLocalDate(), now.toLocalDate());
+        long minutes = ChronoUnit.MINUTES.between(modifiedDate.toLocalTime(), now.toLocalTime());
 
-        return period.getDays();
+        if (period.isZero() && minutes > 10) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
