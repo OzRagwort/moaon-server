@@ -17,17 +17,17 @@ public class ChannelsApiController {
     private final ChannelsService channelsService;
 
     @PostMapping("/channels")
-    public Long save(@RequestBody PostChannelsSaveRequestDto requestDto) {
+    public String save(@RequestBody PostChannelsSaveRequestDto requestDto) {
         return channelsService.save(requestDto);
     }
 
     @PutMapping("/channels/{channelId}")
-    public Long update(@PathVariable String channelId, @RequestBody ChannelsUpdateRequestDto requestDto) {
+    public String update(@PathVariable String channelId, @RequestBody ChannelsUpdateRequestDto requestDto) {
         return channelsService.update(channelId, requestDto);
     }
 
     @PutMapping("/channels/{channelId}/refresh")
-    public Long update(@PathVariable String channelId) {
+    public String update(@PathVariable String channelId) {
         return channelsService.refresh(channelId);
     }
 
@@ -59,7 +59,7 @@ public class ChannelsApiController {
     }
 
     @DeleteMapping("/channels/{channelId}")
-    public Long delete(@PathVariable String channelId) {
+    public String delete(@PathVariable String channelId) {
         return channelsService.delete(channelId);
     }
 

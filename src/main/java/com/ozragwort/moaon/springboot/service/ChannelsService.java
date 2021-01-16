@@ -26,10 +26,10 @@ public class ChannelsService {
     private final YoutubeApi youtubeApi;
 
     @Transactional
-    public Long save(PostChannelsSaveRequestDto requestDto) {
+    public String save(PostChannelsSaveRequestDto requestDto) {
 
         if (channelsRepository.findByChannelId(requestDto.getChannelId()) != null) {
-            return 0L;
+            return null;
         }
 
         ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId());
@@ -43,11 +43,11 @@ public class ChannelsService {
                 .subscribers(channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue())
                 .build();
 
-        return channelsRepository.save(channelsSaveRequestDto.toEntity()).getIdx();
+        return channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
     }
 
     @Transactional
-    public Long update(String channelId, ChannelsUpdateRequestDto requestDto) {
+    public String update(String channelId, ChannelsUpdateRequestDto requestDto) {
         Channels channels = channelsRepository.findByChannelId(channelId);
 
         channels.update(requestDto.getChannelName(),
@@ -55,11 +55,11 @@ public class ChannelsService {
                 requestDto.getUploadsList(),
                 requestDto.getSubscribers());
 
-        return channels.getIdx();
+        return channels.getChannelId();
     }
 
     @Transactional
-    public Long refresh(String channelId) {
+    public String refresh(String channelId) {
         Channels channels = channelsRepository.findByChannelId(channelId);
         if (channels == null) {
             return null;
@@ -69,7 +69,7 @@ public class ChannelsService {
                 channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads(),
                 channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue());
-        return channels.getIdx();
+        return channels.getChannelId();
     }
 
     @Transactional
@@ -121,16 +121,15 @@ public class ChannelsService {
     }
 
     @Transactional
-    public Long deleteAll() {
+    public void deleteAll() {
         channelsRepository.deleteAll();
-        return 0L;
     }
 
     @Transactional
-    public Long delete(String channelId) {
+    public String delete(String channelId) {
         Channels channels = channelsRepository.findByChannelId(channelId);
         channelsRepository.delete(channels);
-        return channels.getIdx();
+        return channels.getChannelId();
     }
 
 }

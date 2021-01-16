@@ -20,27 +20,27 @@ public class VideosApiController {
     private final SearchService searchService;
 
     @PostMapping("/videos")
-    public Long save(@RequestBody PostVideosRequestDto requestDto) {
+    public String save(@RequestBody PostVideosRequestDto requestDto) {
         return videosService.save(requestDto);
     }
 
     @PostMapping("/videos/{videoId}/relations")
-    public Long saveRelations(@PathVariable String videoId, @RequestBody RelatedVideosSaveRequestDto requestDto) {
+    public String saveRelations(@PathVariable String videoId, @RequestBody RelatedVideosSaveRequestDto requestDto) {
         return videosService.saveRelations(videoId, requestDto);
     }
 
     @PutMapping("/videos/{videoId}")
-    public Long update(@PathVariable String videoId, @RequestBody VideosUpdateRequestDto requestDto) {
+    public String update(@PathVariable String videoId, @RequestBody VideosUpdateRequestDto requestDto) {
         return videosService.update(videoId, requestDto);
     }
 
     @PutMapping("/videos/{videoId}/refresh")
-    public Long update(@PathVariable String videoId) {
+    public String update(@PathVariable String videoId) {
         return videosService.refresh(videoId);
     }
 
     @PutMapping("/videos/{videoId}/relations")
-    public Long addRelations(@PathVariable String videoId, @RequestBody RelatedVideosUpdateRequestDto requestDto) {
+    public String addRelations(@PathVariable String videoId, @RequestBody RelatedVideosUpdateRequestDto requestDto) {
         return videosService.addRelations(videoId, requestDto);
     }
 
@@ -98,12 +98,12 @@ public class VideosApiController {
     }
 
     @DeleteMapping("/videos/{videoId}")
-    public Long delete(@PathVariable String videoId) {
+    public String delete(@PathVariable String videoId) {
         return videosService.delete(videoId);
     }
 
     @DeleteMapping("/videos/{videoId}/relations")
-    public Long deleteRelations(@PathVariable String videoId) {
+    public String deleteRelations(@PathVariable String videoId) {
         return videosService.deleteRelations(videoId);
     }
 
