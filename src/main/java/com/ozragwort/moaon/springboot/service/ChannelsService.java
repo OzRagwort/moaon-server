@@ -29,7 +29,7 @@ public class ChannelsService {
     public Long save(PostChannelsSaveRequestDto requestDto) {
 
         if (channelsRepository.findByChannelId(requestDto.getChannelId()) != null) {
-            return update(requestDto.getChannelId());
+            return 0L;
         }
 
         ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId());
@@ -47,34 +47,28 @@ public class ChannelsService {
     }
 
     @Transactional
-    public Long update(Long idx, ChannelsUpdateRequestDto requestDto) {
-        Channels channels = channelsRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
+    public Long update(String channelId, ChannelsUpdateRequestDto requestDto) {
+        Channels channels = channelsRepository.findByChannelId(channelId);
 
         channels.update(requestDto.getChannelName(),
                 requestDto.getChannelThumbnail(),
                 requestDto.getUploadsList(),
                 requestDto.getSubscribers());
 
-        return idx;
+        return channels.getIdx();
     }
 
     @Transactional
-    public Long update(String channelId) {
-
+    public Long refresh(String channelId) {
         Channels channels = channelsRepository.findByChannelId(channelId);
-
         if (channels == null) {
             return null;
         }
-
         ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(channelId);
-
         channels.update(channelListResponse.getItems().get(0).getSnippet().getTitle(),
                 channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads(),
                 channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue());
-
         return channels.getIdx();
     }
 
@@ -127,12 +121,16 @@ public class ChannelsService {
     }
 
     @Transactional
-    public Long delete(Long idx) {
-        Channels channels = channelsRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
-        channelsRepository.delete(channels);
+    public Long deleteAll() {
+        channelsRepository.deleteAll();
+        return 0L;
+    }
 
-        return idx;
+    @Transactional
+    public Long delete(String channelId) {
+        Channels channels = channelsRepository.findByChannelId(channelId);
+        channelsRepository.delete(channels);
+        return channels.getIdx();
     }
 
 }

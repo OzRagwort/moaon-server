@@ -21,19 +21,19 @@ public class ChannelsApiController {
         return channelsService.save(requestDto);
     }
 
-    @PutMapping("/channels/{idx}")
-    public Long update(@PathVariable Long idx, @RequestBody ChannelsUpdateRequestDto requestDto) {
-        return channelsService.update(idx, requestDto);
+    @PutMapping("/channels/{channelId}")
+    public Long update(@PathVariable String channelId, @RequestBody ChannelsUpdateRequestDto requestDto) {
+        return channelsService.update(channelId, requestDto);
     }
 
-    @PutMapping("/channels")
-    public Long update(@RequestParam(value = "id") String channelId) {
-        return channelsService.update(channelId);
+    @PutMapping("/channels/{channelId}/refresh")
+    public Long update(@PathVariable String channelId) {
+        return channelsService.refresh(channelId);
     }
 
-    @GetMapping("/channels/{idx}")
-    public List<ChannelsResponseDto> findById(@PathVariable Long idx) {
-        return channelsService.findById(idx);
+    @GetMapping("/channels/{channelId}")
+    public List<ChannelsResponseDto> findByChannelId(@PathVariable String channelId) {
+        return channelsService.findByChannelId(channelId);
     }
 
     @GetMapping("/channels")
@@ -58,9 +58,9 @@ public class ChannelsApiController {
         }
     }
 
-    @DeleteMapping("/channels/{idx}")
-    public Long delete(@PathVariable Long idx) {
-        return channelsService.delete(idx);
+    @DeleteMapping("/channels/{channelId}")
+    public Long delete(@PathVariable String channelId) {
+        return channelsService.delete(channelId);
     }
 
 }
