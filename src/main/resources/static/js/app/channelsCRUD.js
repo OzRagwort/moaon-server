@@ -23,11 +23,10 @@ var main = {
         $.ajax({
             type: 'POST',
             url: '/api/moaon/v1/channels',
-            dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
-        }).done(function() {
-            alert('등록되었습니다.');
+        }).done(function(response) {
+            alert(response + ' 등록되었습니다.');
             window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
@@ -69,10 +68,9 @@ var main = {
         $.ajax({
             type: 'DELETE',
             url: '/api/moaon/v1/channels/'+id,
-            dataType: 'json',
             contentType: 'application/json; charset=utf-8'
-        }).done(function() {
-            alert(id + ' 채널 정보가 삭제되었습니다.');
+        }).done(function(response) {
+            alert(response + ' 채널 정보가 삭제되었습니다.');
             window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
