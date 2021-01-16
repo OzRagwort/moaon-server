@@ -24,6 +24,11 @@ public class VideosApiController {
         return videosService.save(requestDto);
     }
 
+    @PostMapping("/videos/{videoId}/relations")
+    public Long saveRelations(@PathVariable String videoId, @RequestBody RelatedVideosSaveRequestDto requestDto) {
+        return videosService.saveRelations(videoId, requestDto);
+    }
+
     @PutMapping("/videos/{videoId}")
     public Long update(@PathVariable String videoId, @RequestBody VideosUpdateRequestDto requestDto) {
         return videosService.update(videoId, requestDto);
@@ -34,9 +39,19 @@ public class VideosApiController {
         return videosService.refresh(videoId);
     }
 
+    @PutMapping("/videos/{videoId}/relations")
+    public Long addRelations(@PathVariable String videoId, @RequestBody RelatedVideosUpdateRequestDto requestDto) {
+        return videosService.addRelations(videoId, requestDto);
+    }
+
     @GetMapping("/videos/{videoId}")
     public List<VideosResponseDto> findById(@PathVariable String videoId) {
         return videosService.findByVideoId(videoId);
+    }
+
+    @GetMapping("/videos/{videoId}/relations")
+    public List<RelatedVideosResponseDto> findRelationsByVideoId(@PathVariable String videoId) {
+        return videosService.findRelationsByVideoId(videoId);
     }
 
     @GetMapping("/videos")
@@ -85,6 +100,11 @@ public class VideosApiController {
     @DeleteMapping("/videos/{videoId}")
     public Long delete(@PathVariable String videoId) {
         return videosService.delete(videoId);
+    }
+
+    @DeleteMapping("/videos/{videoId}/relations")
+    public Long deleteRelations(@PathVariable String videoId) {
+        return videosService.deleteRelations(videoId);
     }
 
 }

@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.service;
 
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.ozragwort.moaon.springboot.component.CheckIdType;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
@@ -58,6 +59,14 @@ public class VideosService {
                 .build();
 
         return videosRepository.save(videosSaveRequestDto.toEntity()).getIdx();
+    }
+
+    @Transactional
+    public Long saveRelations(String videoId, RelatedVideosSaveRequestDto requestDto) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.setRelatedVideos(requestDto.getRelatedVideo());
+
+        return videos.getIdx();
     }
 
     // need update
@@ -135,6 +144,20 @@ public class VideosService {
     }
 
     @Transactional
+    public Long addRelations(String videoId, RelatedVideosUpdateRequestDto requestDto) {
+        CheckIdType checkIdType = new CheckIdType();
+        for (String relatedVideo : requestDto.getRelatedVideo()) {
+            if (!checkIdType.checkVideoId(relatedVideo)) {
+                return -1L;
+            }
+        }
+
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.addRelations(requestDto.getRelatedVideo());
+        return videos.getIdx();
+    }
+
+    @Transactional
     public List<VideosResponseDto> findById(Long idx) {
         Videos videos = videosRepository.findById(idx)
                 .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
@@ -205,6 +228,22 @@ public class VideosService {
     }
 
     @Transactional
+    public List<RelatedVideosResponseDto> findRelationsByVideoId(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        List<String> relatedVideos = videos.getRelatedVideos().stream().map(String::new).collect(Collectors.toList());
+        List<RelatedVideosResponseDto> relatedVideosResponseDtos = new ArrayList<>();
+
+        for (String relatedVideo : relatedVideos) {
+            Videos v = videosRepository.findByVideoId(relatedVideo);
+            if (v != null && videos.getChannels().getCategories().getIdx() == v.getChannels().getCategories().getIdx()){
+                relatedVideosResponseDtos.add(new RelatedVideosResponseDto(v));
+            }
+        }
+
+        return relatedVideosResponseDtos;
+    }
+
+    @Transactional
     public Long deleteAll() {
         videosRepository.deleteAll();
         return 0L;
@@ -214,6 +253,14 @@ public class VideosService {
     public Long delete(String videoId) {
         Videos videos = videosRepository.findByVideoId(videoId);
         videosRepository.delete(videos);
+
+        return videos.getIdx();
+    }
+
+    @Transactional
+    public Long deleteRelations(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.getRelatedVideos().clear();
 
         return videos.getIdx();
     }

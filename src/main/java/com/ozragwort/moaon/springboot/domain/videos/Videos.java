@@ -2,7 +2,6 @@ package com.ozragwort.moaon.springboot.domain.videos;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ozragwort.moaon.springboot.domain.BaseTimeEntity;
-import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import lombok.Builder;
 import lombok.Getter;
@@ -73,6 +72,15 @@ public class Videos extends BaseTimeEntity {
     @Column(name = "videos_tags_tags")
     private List<String> tags;
 
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "videos_relations",
+            joinColumns = @JoinColumn(name = "videos_relations_videos_idx"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_relations_videos_idx","videos_relations_related_videos"})
+    )
+    @Column(name = "videos_relations_related_videos")
+    private List<String> relatedVideos;
+
     @Builder
     public Videos(Channels channels,
                   String videoId,
@@ -138,7 +146,12 @@ public class Videos extends BaseTimeEntity {
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
+        this.tags.clear();
         this.tags = tags;
+    }
+
+    public void addRelations(List<String> relatedVideos) {
+        this.relatedVideos.addAll(relatedVideos);
     }
 
 }

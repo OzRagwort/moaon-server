@@ -4,17 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class RelatedVideosUpdateRequestDto {
 
-    private String videoId;
-
-    private String relatedVideo;
+    private List<String> relatedVideo;
 
     @Builder
-    public RelatedVideosUpdateRequestDto(String videoId, String relatedVideo) {
-        this.videoId = videoId;
+    public RelatedVideosUpdateRequestDto(List<String> relatedVideo) {
         this.relatedVideo = relatedVideo;
     }
 
