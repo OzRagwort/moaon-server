@@ -37,7 +37,7 @@ var main = {
 
         $.ajax({
             type: 'PUT',
-            url: '/api/moaon/v1/videos?id='+videoId
+            url: '/api/moaon/v1/videos/'+videoId+'/refresh'
         }).done(function() {
             alert('영상 정보가 최신화되었습니다.');
             window.location.href = '/admin/videos/crud';

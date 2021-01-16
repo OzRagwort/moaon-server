@@ -38,7 +38,7 @@ var main = {
 
         $.ajax({
             type: 'PUT',
-            url: '/api/moaon/v1/channels?id='+channelId
+            url: '/api/moaon/v1/channels/'+channelId+'/refresh'
         }).done(function() {
             alert('채널 정보를 최신화하였습니다.');
             window.location.href = '/admin/channels/crud';
