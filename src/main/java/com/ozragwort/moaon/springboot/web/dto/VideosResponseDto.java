@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -57,7 +58,7 @@ public class VideosResponseDto {
         this.likeCount = videos.getLikeCount();
         this.dislikeCount = videos.getDislikeCount();
         this.commentCount = videos.getCommentCount();
-        this.tags = videos.getTags();
+        this.tags = videos.getTags().stream().map(String::new).collect(Collectors.toList());
     }
 
 }

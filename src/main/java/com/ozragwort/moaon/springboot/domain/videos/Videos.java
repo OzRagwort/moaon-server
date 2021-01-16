@@ -64,10 +64,13 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(
-            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_videos_idx","tags"})
+            name = "videos_tags",
+            joinColumns = @JoinColumn(name = "videos_tags_videos_idx"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_tags_videos_idx","videos_tags_tags"})
     )
+    @Column(name = "videos_tags_tags")
     private List<String> tags;
 
     @Builder
