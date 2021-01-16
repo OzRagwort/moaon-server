@@ -44,7 +44,7 @@ public class AdminController {
     public String adminCategoryList(Model model,
                                     @LoginUser SessionUser user,
                                     @RequestParam(value = "no", required = false) Long idx,
-                                    @RequestParam(value = "maxResult", defaultValue = "10") int size,
+                                    @RequestParam(value = "maxResults", defaultValue = "10") int size,
                                     @RequestParam(value = "page", defaultValue = "1") int pageCount) {
 
         if (user != null) {
@@ -79,7 +79,7 @@ public class AdminController {
                                    @RequestParam(value = "no", required = false) Long idx,
                                    @RequestParam(value = "id", required = false) String channelId,
                                    @RequestParam(value = "category", required = false) Long categoryId,
-                                   @RequestParam(value = "maxResult", defaultValue = "10") int size,
+                                   @RequestParam(value = "maxResults", defaultValue = "10") int size,
                                    @RequestParam(value = "page", defaultValue = "1") int pageCount) {
 
         if(user != null) {
@@ -120,7 +120,7 @@ public class AdminController {
                                  @RequestParam(value = "id", required = false) String videoId,
                                  @RequestParam(value = "channel", required = false) String channelId,
                                  @RequestParam(value = "category", required = false) Long categoryId,
-                                 @RequestParam(value = "maxResult", defaultValue = "10") int size,
+                                 @RequestParam(value = "maxResults", defaultValue = "10") int size,
                                  @RequestParam(value = "page", defaultValue = "1") int pageCount) {
 
         if(user != null) {
