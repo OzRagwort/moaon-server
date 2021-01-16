@@ -36,7 +36,7 @@ public class VideosService {
     public Long save(PostVideosRequestDto requestDto) {
 
         if (videosRepository.findByVideoId(requestDto.getVideoId()) != null) {
-            return update(requestDto.getVideoId());
+            return refresh(requestDto.getVideoId());
         }
 
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(requestDto.getVideoId());
@@ -91,9 +91,8 @@ public class VideosService {
     }
 
     @Transactional
-    public Long update(Long idx, VideosUpdateRequestDto requestDto) {
-        Videos videos = videosRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
+    public Long update(String videoId, VideosUpdateRequestDto requestDto) {
+        Videos videos = videosRepository.findByVideoId(videoId);
 
         videos.update(requestDto.getVideoName(),
                 requestDto.getVideoThumbnail(),
@@ -107,25 +106,20 @@ public class VideosService {
                 requestDto.getCommentCount(),
                 requestDto.getTags());
 
-        return idx;
+        return videos.getIdx();
     }
 
     @Transactional
-    public Long update(String videoId) {
-
+    public Long refresh(String videoId) {
         Videos videos = videosRepository.findByVideoId(videoId);
-
         if (videos == null) {
             return null;
         }
-
         ModifiedDurationCheck check = new ModifiedDurationCheck(videos.getModifiedDate());
         if (check.get() == 0) {
             return videos.getIdx();
         }
-
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(videoId);
-
         videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
                 videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 videoListResponse.getItems().get(0).getSnippet().getDescription(),
@@ -137,7 +131,6 @@ public class VideosService {
                 videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue(),
                 videoListResponse.getItems().get(0).getSnippet().getTags());
-
         return videos.getIdx();
     }
 
@@ -212,12 +205,17 @@ public class VideosService {
     }
 
     @Transactional
-    public Long delete(Long idx) {
-        Videos videos = videosRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
+    public Long deleteAll() {
+        videosRepository.deleteAll();
+        return 0L;
+    }
+
+    @Transactional
+    public Long delete(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
         videosRepository.delete(videos);
 
-        return idx;
+        return videos.getIdx();
     }
 
     private List<Channels> StringToListChannels(String channelId) {
