@@ -79,8 +79,8 @@ public class findTest {
                 .build();
 
         //when
-        idx = videosService.save(postVideosRequestDto);
-        List<VideosResponseDto> videosResponseDto = videosService.findById(idx);
+        videosService.save(postVideosRequestDto);
+        List<VideosResponseDto> videosResponseDto = videosService.findByVideoId(videoId);
 
         //then
         Videos videos = videosRepository.findAll().get(0);

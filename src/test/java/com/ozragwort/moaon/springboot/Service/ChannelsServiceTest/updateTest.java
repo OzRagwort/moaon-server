@@ -6,6 +6,8 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.ChannelsResponseDto;
+import com.ozragwort.moaon.springboot.web.dto.ChannelsUpdateRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.PostChannelsSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
@@ -49,19 +51,30 @@ public class updateTest {
         //given
         Long idx;
         String channelId = "UCETBLykCDpfP6L0awBd7Vwg";
+        String channelName = "channelName";
+        String channelThumbnail = "channelThumbnail";
+        String uploadsList = "uploadsList";
+        int subscribers = 123;
 
         PostChannelsSaveRequestDto postChannelsSaveRequestDto = PostChannelsSaveRequestDto.builder()
                 .channelId(channelId)
                 .categoryId(categories.getIdx())
                 .build();
 
+        ChannelsUpdateRequestDto dto = new ChannelsUpdateRequestDto(
+                channelName,
+                channelThumbnail,
+                uploadsList,
+                subscribers
+        );
+
         //when
-        idx = channelsService.save(postChannelsSaveRequestDto);
-        channelsService.update(idx);
+        channelsService.save(postChannelsSaveRequestDto);
+        channelsService.update(channelId, dto);
 
         //then
         Channels Channels = channelsRepository.findAll().get(0);
-        assertThat(Channels.getChannelName()).isNotNull();
+        assertThat(Channels.getChannelName()).isEqualTo(channelName);
     }
 
 }

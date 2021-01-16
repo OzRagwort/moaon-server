@@ -47,7 +47,7 @@ public class ChannelsApiControllerTest {
         private CategoriesRepository categoriesRepository;
 
         @Before
-        public void setup() throws JsonProcessingException {
+        public void setup() {
 
                 CategoriesSaveRequestDto categoriesSaveRequestDto = new CategoriesSaveRequestDto("categoryName");
 
@@ -99,8 +99,7 @@ public class ChannelsApiControllerTest {
                         )
                         //then
                         .andDo(print())
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                        .andExpect(status().isOk());
 
                 Channels channels = channelsRepository.findByChannelId(channelId);
 
@@ -129,14 +128,28 @@ public class ChannelsApiControllerTest {
         @Test
         public void 채널_api_put() throws Exception {
                 //given
+                String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
+                String channelName = "channelName";
+                String channelThumbnail = "channelThumbnail";
+                String uploadsList = "uploadsList";
+                int subscribers = 123;
+
+                ChannelsUpdateRequestDto dto = new ChannelsUpdateRequestDto(
+                        channelName,
+                        channelThumbnail,
+                        uploadsList,
+                        subscribers
+                );
+
+                String content = objectMapper.writeValueAsString(dto);
 
                 //when
                 mvc
-                        .perform(put("/api/moaon/v1/channels/UCnjyiWHGEyww-p8QYSftx2A")
+                        .perform(put("/api/moaon/v1/channels/"+channelId)
+                                .content(content)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                         //then
                         .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                         .andDo(MockMvcResultHandlers.print());
 
                 List<Channels> list = channelsRepository.findAll();
@@ -152,20 +165,19 @@ public class ChannelsApiControllerTest {
                         .channelName("channelName")
                         .build();
 
-                Long idx = channelsRepository.save(channelsSaveRequestDto.toEntity()).getIdx();
+                String channelId = channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
 
                 //when
                 mvc
-                        .perform(delete("/api/moaon/v1/channels/"+idx)
+                        .perform(delete("/api/moaon/v1/channels/"+channelId)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                         //then
                         .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                         .andDo(MockMvcResultHandlers.print());
 
-                Optional<Channels> channels = channelsRepository.findById(idx);
+                Channels channels = channelsRepository.findByChannelId(channelId);
 
-                assertThat(channels).isEmpty();
+                assertThat(channels).isNull();
         }
 
 }

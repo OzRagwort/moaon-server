@@ -55,8 +55,8 @@ public class deleteTest {
                 .build();
 
         //when
-        idx = channelsService.save(postChannelsSaveRequestDto);
-        channelsService.delete(idx);
+        channelsService.save(postChannelsSaveRequestDto);
+        channelsService.delete(channelId);
 
         //then
         assertThat(channelsRepository.findAll().size()).isEqualTo(0);

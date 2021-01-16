@@ -59,8 +59,8 @@ public class findTest {
                 .build();
 
         //when
-        idx = channelsService.save(postChannelsSaveRequestDto);
-        List<ChannelsResponseDto> channelsResponseDto = channelsService.findById(idx);
+        channelsService.save(postChannelsSaveRequestDto);
+        List<ChannelsResponseDto> channelsResponseDto = channelsService.findByChannelId(channelId);
 
         //then
         Channels Channels = channelsRepository.findAll().get(0);

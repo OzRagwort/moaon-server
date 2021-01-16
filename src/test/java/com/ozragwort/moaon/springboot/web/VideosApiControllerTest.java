@@ -19,6 +19,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,8 +105,7 @@ public class VideosApiControllerTest {
                         )
                         //then
                         .andDo(print())
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                        .andExpect(status().isOk());
 
                 Videos videos = videosRepository.findByVideoId(videoId);
 
@@ -124,7 +125,7 @@ public class VideosApiControllerTest {
 
                 //when
                 mvc
-                        .perform(post("/api/moaon/v1/videos/uploadslist")
+                        .perform(post("/api/moaon/v1/uploads-list")
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                         )
@@ -160,19 +161,47 @@ public class VideosApiControllerTest {
         @Test
         public void 영상_api_put() throws Exception {
                 //given
+                String videoId = "mGuYJ4wc-xw";
+                String videoName = "videoName";
+                String videoThumbnail = "videoThumbnail";
+                String videoDescription = "videoDescription";
+                LocalDateTime videoPublishedDate = LocalDateTime.of(2020,1,1,0,0,0);
+                String videoDuration = "videoDuration";
+                boolean videoEmbeddable = true;
+                int viewCount = 0;
+                int likeCount = 0;
+                int dislikeCount = 0;
+                int commentCount = 0;
+                List<String> tags = new ArrayList<>();
+
+                VideosUpdateRequestDto dto = new VideosUpdateRequestDto(
+                        videoName,
+                        videoThumbnail,
+                        videoDescription,
+                        videoPublishedDate,
+                        videoDuration,
+                        videoEmbeddable,
+                        viewCount,
+                        likeCount,
+                        dislikeCount,
+                        commentCount,
+                        tags
+                );
+
+                String content = objectMapper.writeValueAsString(dto);
 
                 //when
                 mvc
-                        .perform(put("/api/moaon/v1/videos/mGuYJ4wc-xw")
+                        .perform(put("/api/moaon/v1/videos/"+videoId)
+                                .content(content)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                         //then
                         .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                         .andDo(MockMvcResultHandlers.print());
 
                 List<Videos> list = videosRepository.findAll();
 
-//                assertThat(list.get(0).getVideoName()).isNotEqualTo("testName");
+                assertThat(list.get(0).getVideoName()).isNotEqualTo("testName");
         }
 
         @Test
@@ -182,20 +211,19 @@ public class VideosApiControllerTest {
                         .videoId("testId")
                         .videoName("testName")
                         .build();
-                Long idx = videosRepository.save(videosSaveRequestDto.toEntity()).getIdx();
+                String videoId = videosRepository.save(videosSaveRequestDto.toEntity()).getVideoId();
 
                 //when
                 mvc
-                        .perform(delete("/api/moaon/v1/videos/" + idx)
+                        .perform(delete("/api/moaon/v1/videos/" + videoId)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                         //then
                         .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                         .andDo(MockMvcResultHandlers.print());
 
-                Optional<Videos> videos = videosRepository.findById(idx);
+                Videos videos = videosRepository.findByVideoId(videoId);
 
-                assertThat(videos).isEmpty();
+                assertThat(videos).isNull();
         }
 
 

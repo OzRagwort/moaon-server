@@ -78,8 +78,8 @@ public class deleteTest {
                 .build();
 
         //when
-        idx = videosService.save(postVideosRequestDto);
-        videosService.delete(idx);
+        videosService.save(postVideosRequestDto);
+        videosService.delete(videoId);
 
         //then
         assertThat(videosRepository.findAll().size()).isEqualTo(0);
