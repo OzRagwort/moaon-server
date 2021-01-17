@@ -51,4 +51,8 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
 //    @Query(value = "SELECT * FROM videos WHERE match(video_name, video_description) against(':keyword') LIMIT :count", nativeQuery = true)
 //    List<Videos> searchVideos(@Param("keyword") String keyword, @Param("count") int count);
 
+    // 특정 tag 를 가진 비디오 가져오기
+    @Query(value = "SELECT videos.* FROM videos where videos_idx in (select distinct videos_tags_videos_idx from videos_tags)", nativeQuery = true)
+    List<Videos> findTagByKeyword(@Param("keywords") String keywords, Pageable pageable);
+
 }

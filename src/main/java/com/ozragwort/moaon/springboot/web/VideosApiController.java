@@ -65,8 +65,9 @@ public class VideosApiController {
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
             @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "search", required = false) String keyword
-    ) {
+            @RequestParam(value = "search", required = false) String keyword,
+            @RequestParam(value = "tags", required = false) String tags
+            ) {
         if (idx != null) {
             return videosService.findById(idx);
         } else if (videoId != null) {
@@ -91,6 +92,8 @@ public class VideosApiController {
             return videosService.findByCategoryIdxRand(randomCategoryId, size);
         } else if (keyword != null) {
             return searchService.searchVideosByKeyword(keyword, (pageCount - 1) * size, size);
+        } else if (tags != null) {
+            return searchService.searchVideosByTags(tags, PageRequest.of(pageCount - 1, size));
         }
         else {
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));

@@ -1,6 +1,7 @@
 package com.ozragwort.moaon.springboot.service;
 
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.web.dto.VideosResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.Query;
@@ -9,6 +10,7 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +22,25 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
 
+    private final VideosRepository videosRepository;
+
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
     public List<VideosResponseDto> searchVideosByKeyword(String keyword, int page, int size) {
         return getVideos(keyword, page, size);
+    }
+
+    @Transactional
+    public List<VideosResponseDto> searchVideosByTags(String key, PageRequest pageRequest) {
+        String keywords = key;
+        List<Videos> v = videosRepository.findTagByKeyword(keywords, pageRequest);
+
+        List<VideosResponseDto> list = v.stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+
+        return list;
     }
 
     private List<VideosResponseDto> getVideos(String keyword, int page, int size) {
