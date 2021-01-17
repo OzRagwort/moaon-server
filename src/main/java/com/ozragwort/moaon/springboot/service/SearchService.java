@@ -23,7 +23,7 @@ public class SearchService {
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
-    public List<VideosResponseDto> searchVideos(String keyword, int page, int size) {
+    public List<VideosResponseDto> searchVideosByKeyword(String keyword, int page, int size) {
         return getVideos(keyword, page, size);
     }
 
