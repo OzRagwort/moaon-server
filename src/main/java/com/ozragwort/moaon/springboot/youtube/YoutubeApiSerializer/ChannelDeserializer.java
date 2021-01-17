@@ -16,7 +16,7 @@ part :  O   id
         O   statistics
         X   status
         X   auditDetails
-        X   brandingSettings
+        O   brandingSettings (just image.bannerExternalUrl)
         X   contentOwnerDetails
         X   localizations
         X   topicDetails
@@ -62,6 +62,7 @@ public class ChannelDeserializer {
                 channel.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
                 channel.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
                 channel.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
+                channel.setBrandingSettings(buildBrandingSettings((JSONObject) ob.get("brandingSettings")));
             } catch (NullPointerException e) {
                 e.getMessage();
             }
@@ -70,6 +71,22 @@ public class ChannelDeserializer {
         }
 
         return channelList;
+    }
+
+    private ChannelBrandingSettings buildBrandingSettings(JSONObject brandingSettings) {
+        ChannelBrandingSettings channelBrandingSettings = new ChannelBrandingSettings();
+
+        channelBrandingSettings.setImage(buildImageSettings((JSONObject) brandingSettings.get("image")));
+
+        return channelBrandingSettings;
+    }
+
+    private ImageSettings buildImageSettings(JSONObject image) {
+        ImageSettings imageSettings = new ImageSettings();
+
+        imageSettings.setBannerExternalUrl((String) image.get("bannerExternalUrl"));
+
+        return imageSettings;
     }
 
     private ChannelStatistics buildStatistic(JSONObject statistic) {

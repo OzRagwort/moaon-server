@@ -59,6 +59,7 @@ public class ChannelsApiControllerTest {
 //                String uploadsList = "UUnjyiWHGEyww-p8QYSftx2A"; orig
                 String uploadsList = "testUploadsList";
                 int subscribers = 1180000;
+                String bannerExternalUrl = "bannerExternalUrl";
 
                 ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
                         categories,
@@ -66,7 +67,8 @@ public class ChannelsApiControllerTest {
                         channelName,
                         channelThumbnail,
                         uploadsList,
-                        subscribers);
+                        subscribers,
+                        bannerExternalUrl);
 
                 channelsRepository.save(channelsSaveRequestDto.toEntity());
         }
@@ -133,12 +135,14 @@ public class ChannelsApiControllerTest {
                 String channelThumbnail = "channelThumbnail";
                 String uploadsList = "uploadsList";
                 int subscribers = 123;
+                String bannerExternalUrl = "bannerExternalUrl";
 
                 ChannelsUpdateRequestDto dto = new ChannelsUpdateRequestDto(
                         channelName,
                         channelThumbnail,
                         uploadsList,
-                        subscribers
+                        subscribers,
+                        bannerExternalUrl
                 );
 
                 String content = objectMapper.writeValueAsString(dto);

@@ -22,6 +22,8 @@ public class ChannelsResponseDto {
 
     private int subscribers;
 
+    private String bannerExternalUrl;
+
     public ChannelsResponseDto(Channels channels) {
         this.idx = channels.getIdx();
         this.categories = channels.getCategories().getIdx();
@@ -30,6 +32,7 @@ public class ChannelsResponseDto {
         this.channelThumbnail = channels.getChannelThumbnail();
         this.uploadsList = channels.getUploadsList();
         this.subscribers = channels.getSubscribers();
+        this.bannerExternalUrl = channels.getBannerExternalUrl();
     }
 
 }

@@ -55,6 +55,7 @@ public class updateTest {
         String channelThumbnail = "channelThumbnail";
         String uploadsList = "uploadsList";
         int subscribers = 123;
+        String bannerExternalUrl = "bannerExternalUrl";
 
         PostChannelsSaveRequestDto postChannelsSaveRequestDto = PostChannelsSaveRequestDto.builder()
                 .channelId(channelId)
@@ -65,7 +66,8 @@ public class updateTest {
                 channelName,
                 channelThumbnail,
                 uploadsList,
-                subscribers
+                subscribers,
+                bannerExternalUrl
         );
 
         //when

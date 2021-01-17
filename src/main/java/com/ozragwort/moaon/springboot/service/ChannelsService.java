@@ -41,6 +41,7 @@ public class ChannelsService {
                 .channelThumbnail(channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
                 .uploadsList(channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads())
                 .subscribers(channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue())
+                .bannerExternalUrl(channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl())
                 .build();
 
         return channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
@@ -53,7 +54,8 @@ public class ChannelsService {
         channels.update(requestDto.getChannelName(),
                 requestDto.getChannelThumbnail(),
                 requestDto.getUploadsList(),
-                requestDto.getSubscribers());
+                requestDto.getSubscribers(),
+                requestDto.getBannerExternalUrl());
 
         return channels.getChannelId();
     }
@@ -68,7 +70,8 @@ public class ChannelsService {
         channels.update(channelListResponse.getItems().get(0).getSnippet().getTitle(),
                 channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads(),
-                channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue());
+                channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue(),
+                channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl());
         return channels.getChannelId();
     }
 
