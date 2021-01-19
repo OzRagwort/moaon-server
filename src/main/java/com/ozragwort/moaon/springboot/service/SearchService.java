@@ -27,23 +27,7 @@ public class SearchService {
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
-    public List<VideosResponseDto> searchVideosByKeyword(String keyword, int page, int size) {
-        return getVideos(keyword, page, size);
-    }
-
-    @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String key, PageRequest pageRequest) {
-        String keywords = key;
-        List<Videos> v = videosRepository.findTagByKeyword(keywords, pageRequest);
-
-        List<VideosResponseDto> list = v.stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-
-        return list;
-    }
-
-    private List<VideosResponseDto> getVideos(String keyword, int page, int size) {
+    public List<VideosResponseDto> searchVideosByKeywords(String keyword, int page, int size) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
@@ -63,6 +47,14 @@ public class SearchService {
         entityManager.close();
 
         return videosResponse.stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<VideosResponseDto> searchVideosByTags(String keywords, PageRequest pageRequest) {
+        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, pageRequest);
+        return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }

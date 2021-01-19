@@ -91,7 +91,7 @@ public class VideosApiController {
         } else if (randomCategoryId != null) {
             return videosService.findByCategoryIdxRand(randomCategoryId, size);
         } else if (keyword != null) {
-            return searchService.searchVideosByKeyword(keyword, (pageCount - 1) * size, size);
+            return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
         } else if (tags != null) {
             return searchService.searchVideosByTags(tags, PageRequest.of(pageCount - 1, size));
         }
