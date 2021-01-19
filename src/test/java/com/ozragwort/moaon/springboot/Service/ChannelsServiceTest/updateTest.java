@@ -72,10 +72,10 @@ public class updateTest {
 
         //when
         channelsService.save(postChannelsSaveRequestDto);
-        channelsService.update(channelId, dto);
+        String result = channelsService.update(channelId, dto);
 
         //then
-        Channels Channels = channelsRepository.findAll().get(0);
+        Channels Channels = channelsRepository.findByChannelId(result);
         assertThat(Channels.getChannelName()).isEqualTo(channelName);
     }
 

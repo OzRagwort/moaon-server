@@ -81,11 +81,11 @@ public class findTest {
                 .build();
 
         //when
-        videosService.save(postVideosRequestDto);
+        String result = videosService.save(postVideosRequestDto);
+        Videos videos = videosRepository.findByVideoId(result);
         List<VideosResponseDto> videosResponseDto = videosService.findByVideoId(videoId);
 
         //then
-        Videos videos = videosRepository.findAll().get(0);
         assertThat(videos.getVideoId()).isEqualTo(videosResponseDto.get(0).getVideoId());
     }
 

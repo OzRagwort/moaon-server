@@ -45,8 +45,8 @@ public class updateTest {
         categoriesService.update(idx, new CategoriesUpdateRequestDto(categoryNameUpdate));
 
         //then
-        Categories categories = categoriesRepository.findAll().get(0);
-        assertThat(categories.getCategoryName()).isEqualTo(categoryNameUpdate);
+        assertThat(categoriesRepository.findById(idx)).isPresent();
+        assertThat(categoriesRepository.findById(idx).get().getCategoryName()).isEqualTo(categoryNameUpdate);
     }
 
 }

@@ -112,11 +112,11 @@ public class updateTest {
 
         //when
         videosService.save(postVideosRequestDto);
-        videosService.update(videoId, dto);
+        String result = videosService.update(videoId, dto);
 
         //then
-        Videos Videos = videosRepository.findAll().get(0);
-        assertThat(Videos.getVideoName()).isEqualTo(videoName);
+        Videos videos = videosRepository.findByVideoId(result);
+        assertThat(videos.getVideoName()).isEqualTo(videoName);
     }
 
 }

@@ -30,7 +30,7 @@ public class deleteTest {
     @Test
     public void Categories_Service_delete_Test() {
         //given
-        Long idx = 1L;
+        Long idx;
         String categoryName = "categoryName";
         String categoryNameUpdate = "categoryNameUpdate";
 
@@ -43,7 +43,7 @@ public class deleteTest {
         categoriesService.delete(idx);
 
         //then
-        assertThat(categoriesRepository.findAll().size()).isEqualTo(0);
+        assertThat(categoriesRepository.findById(idx)).isNotPresent();
     }
 
 }

@@ -80,11 +80,11 @@ public class deleteTest {
                 .build();
 
         //when
-        videosService.save(postVideosRequestDto);
+        String result = videosService.save(postVideosRequestDto);
         videosService.delete(videoId);
 
         //then
-        assertThat(videosRepository.findAll().size()).isEqualTo(0);
+        assertThat(videosRepository.findByVideoId(result)).isNull();
     }
 
 }

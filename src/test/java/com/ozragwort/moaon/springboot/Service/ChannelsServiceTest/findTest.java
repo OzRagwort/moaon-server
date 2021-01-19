@@ -59,11 +59,11 @@ public class findTest {
                 .build();
 
         //when
-        channelsService.save(postChannelsSaveRequestDto);
+        String result = channelsService.save(postChannelsSaveRequestDto);
         List<ChannelsResponseDto> channelsResponseDto = channelsService.findByChannelId(channelId);
 
         //then
-        Channels Channels = channelsRepository.findAll().get(0);
+        Channels Channels = channelsRepository.findByChannelId(result);
         assertThat(Channels.getChannelId()).isEqualTo(channelsResponseDto.get(0).getChannelId());
     }
 

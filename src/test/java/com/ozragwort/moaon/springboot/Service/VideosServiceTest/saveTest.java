@@ -80,10 +80,10 @@ public class saveTest {
                 .build();
 
         //when
-        videosService.save(postVideosRequestDto);
+        String result = videosService.save(postVideosRequestDto);
 
         //then
-        Videos videos = videosRepository.findAll().get(0);
+        Videos videos = videosRepository.findByVideoId(result);
         assertThat(videos.getVideoId()).isEqualTo(videoId);
     }
 
