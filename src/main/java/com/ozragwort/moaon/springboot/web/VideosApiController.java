@@ -85,15 +85,17 @@ public class VideosApiController {
                 return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
             }
         } else if (categoryId != null) {
-            return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            if (tags != null) {
+                return searchService.searchVideosByTags(tags, categoryId, PageRequest.of(pageCount - 1, size));
+            } else {
+                return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            }
         } else if (randomChannelId != null) {
             return videosService.findByChannelIdRand(randomChannelId, size);
         } else if (randomCategoryId != null) {
             return videosService.findByCategoryIdxRand(randomCategoryId, size);
         } else if (keyword != null) {
             return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
-        } else if (tags != null) {
-            return searchService.searchVideosByTags(tags, PageRequest.of(pageCount - 1, size));
         }
         else {
             return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));

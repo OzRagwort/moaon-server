@@ -52,8 +52,8 @@ public class SearchService {
     }
 
     @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String keywords, PageRequest pageRequest) {
-        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, pageRequest);
+    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, PageRequest pageRequest) {
+        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageRequest);
         return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
