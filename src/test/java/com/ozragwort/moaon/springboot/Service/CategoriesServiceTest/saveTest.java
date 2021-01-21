@@ -38,11 +38,11 @@ public class saveTest {
                 .build();
 
         //when
-        categoriesService.save(categoriesSaveRequestDto);
+        Long idx = categoriesService.save(categoriesSaveRequestDto);
 
         //then
-        Categories categories = categoriesRepository.findAll().get(0);
-        assertThat(categories.getCategoryName()).isEqualTo(categoryName);
+        assertThat(categoriesRepository.findById(idx)).isPresent();
+        assertThat(categoriesRepository.findById(idx).get().getCategoryName()).isEqualTo(categoryName);
     }
 
 }

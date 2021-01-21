@@ -1,6 +1,7 @@
 package com.ozragwort.moaon.springboot.service;
 
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.web.dto.VideosResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.Query;
@@ -9,6 +10,7 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +22,12 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
 
+    private final VideosRepository videosRepository;
+
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
-    public List<VideosResponseDto> searchVideos(String keyword, int page, int size) {
-        return getVideos(keyword, page, size);
-    }
-
-    private List<VideosResponseDto> getVideos(String keyword, int page, int size) {
+    public List<VideosResponseDto> searchVideosByKeywords(String keyword, int page, int size) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
@@ -47,6 +47,14 @@ public class SearchService {
         entityManager.close();
 
         return videosResponse.stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, PageRequest pageRequest) {
+        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageRequest);
+        return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }

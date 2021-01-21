@@ -48,6 +48,7 @@ public class deleteTest {
         String channelThumbnail = "https://yt3.ggpht.com/a/AATXAJyt1PtqMTt0Mz3TZSX4Y5RuZICAt08dDf675_eNLg=s240-c-k-c0x00ffffff-no-rj";
         String uploadsList = "UUnjyiWHGEyww-p8QYSftx2A";
         int subscribers = 1180000;
+        String bannerExternalUrl = "bannerExternalUrl";
 
         ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
                 categories,
@@ -55,7 +56,8 @@ public class deleteTest {
                 channelName,
                 channelThumbnail,
                 uploadsList,
-                subscribers);
+                subscribers,
+                bannerExternalUrl);
 
         channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
     }
@@ -78,11 +80,11 @@ public class deleteTest {
                 .build();
 
         //when
-        idx = videosService.save(postVideosRequestDto);
-        videosService.delete(idx);
+        String result = videosService.save(postVideosRequestDto);
+        videosService.delete(videoId);
 
         //then
-        assertThat(videosRepository.findAll().size()).isEqualTo(0);
+        assertThat(videosRepository.findByVideoId(result)).isNull();
     }
 
 }

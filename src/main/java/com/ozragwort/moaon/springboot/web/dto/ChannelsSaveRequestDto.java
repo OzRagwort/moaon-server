@@ -22,19 +22,23 @@ public class ChannelsSaveRequestDto {
 
     private int subscribers;
 
+    private String bannerExternalUrl;
+
     @Builder
     public ChannelsSaveRequestDto(Categories categories,
                                   String channelId,
                                   String channelName,
                                   String channelThumbnail,
                                   String uploadsList,
-                                  int subscribers) {
+                                  int subscribers,
+                                  String bannerExternalUrl) {
         this.categories = categories;
         this.channelId = channelId;
         this.channelName = channelName;
         this.channelThumbnail = channelThumbnail;
         this.uploadsList = uploadsList;
         this.subscribers = subscribers;
+        this.bannerExternalUrl = bannerExternalUrl;
     }
 
     public Channels toEntity() {
@@ -45,6 +49,7 @@ public class ChannelsSaveRequestDto {
                 .channelThumbnail(channelThumbnail)
                 .uploadsList(uploadsList)
                 .subscribers(subscribers)
+                .bannerExternalUrl(bannerExternalUrl)
                 .build();
     }
 

@@ -43,21 +43,35 @@ public class Channels extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int subscribers;
 
+    private String bannerExternalUrl; // part.brandingSettings.image.bannerExternalUrl
+
     @Builder
-    public Channels(Categories categories, String channelId, String channelName, String channelThumbnail, String uploadsList, int subscribers) {
+    public Channels(Categories categories,
+                    String channelId,
+                    String channelName,
+                    String channelThumbnail,
+                    String uploadsList,
+                    int subscribers,
+                    String bannerExternalUrl) {
         this.categories = categories;
         this.channelId = channelId;
         this.channelName = channelName;
         this.channelThumbnail = channelThumbnail;
         this.uploadsList = uploadsList;
         this.subscribers = subscribers;
+        this.bannerExternalUrl = bannerExternalUrl;
     }
 
-    public void update(String channelName, String channelThumbnail, String uploadsList, int subscribers) {
+    public void update(String channelName,
+                       String channelThumbnail,
+                       String uploadsList,
+                       int subscribers,
+                       String bannerExternalUrl) {
         this.channelName = channelName;
         this.channelThumbnail = channelThumbnail;
         this.uploadsList = uploadsList;
         this.subscribers = subscribers;
+        this.bannerExternalUrl = bannerExternalUrl;
     }
 
 }

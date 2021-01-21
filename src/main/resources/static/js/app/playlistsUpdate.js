@@ -15,12 +15,12 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/videos/uploadslist',
+            url: '/api/moaon/v1/uploads-list',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function(responce) {
-            alert(responce.length + ' : 글이 수정되었습니다.');
+            alert(responce.length + '개의 영상 정보가 저장되었습니다.');
             window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
@@ -52,7 +52,7 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/videos/uploadslist',
+            url: '/api/moaon/v1/uploads-list',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data),

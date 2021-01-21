@@ -55,10 +55,10 @@ public class saveTest {
                 .build();
 
         //when
-        channelsService.save(postChannelsSaveRequestDto);
+        String result = channelsService.save(postChannelsSaveRequestDto);
 
         //then
-        Channels Channels = channelsRepository.findAll().get(0);
+        Channels Channels = channelsRepository.findByChannelId(result);
         assertThat(Channels.getChannelId()).isEqualTo(channelId);
     }
 

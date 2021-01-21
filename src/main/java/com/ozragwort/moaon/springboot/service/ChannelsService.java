@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -28,10 +26,10 @@ public class ChannelsService {
     private final YoutubeApi youtubeApi;
 
     @Transactional
-    public Long save(PostChannelsSaveRequestDto requestDto) {
+    public String save(PostChannelsSaveRequestDto requestDto) {
 
         if (channelsRepository.findByChannelId(requestDto.getChannelId()) != null) {
-            return update(requestDto.getChannelId());
+            return null;
         }
 
         ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId());
@@ -43,36 +41,38 @@ public class ChannelsService {
                 .channelThumbnail(channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
                 .uploadsList(channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads())
                 .subscribers(channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue())
+                .bannerExternalUrl(channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl())
                 .build();
 
-        return channelsRepository.save(channelsSaveRequestDto.toEntity()).getIdx();
-    }
-
-    //need update
-    @Transactional
-    public Long update(Long idx) {
-        Optional<Channels> byId = channelsRepository.findById(idx);
-
-        return update(byId.get().getChannelId());
+        return channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
     }
 
     @Transactional
-    public Long update(String channelId) {
-
+    public String update(String channelId, ChannelsUpdateRequestDto requestDto) {
         Channels channels = channelsRepository.findByChannelId(channelId);
 
+        channels.update(requestDto.getChannelName(),
+                requestDto.getChannelThumbnail(),
+                requestDto.getUploadsList(),
+                requestDto.getSubscribers(),
+                requestDto.getBannerExternalUrl());
+
+        return channels.getChannelId();
+    }
+
+    @Transactional
+    public String refresh(String channelId) {
+        Channels channels = channelsRepository.findByChannelId(channelId);
         if (channels == null) {
             return null;
         }
-
         ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(channelId);
-
         channels.update(channelListResponse.getItems().get(0).getSnippet().getTitle(),
                 channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads(),
-                channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue());
-
-        return channels.getIdx();
+                channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue(),
+                channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl());
+        return channels.getChannelId();
     }
 
     @Transactional
@@ -104,19 +104,9 @@ public class ChannelsService {
 
     @Transactional
     public List<ChannelsResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
-        List<ChannelsResponseDto> list = channelsRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get()).stream()
+        return channelsRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), count).stream()
                 .map(ChannelsResponseDto::new)
                 .collect(Collectors.toList());
-        int listLength = list.size();
-
-        Random random = new Random();
-        List<ChannelsResponseDto> randList = new ArrayList<>();
-
-        for (int i = 0 ; i < count ; i++) {
-            randList.add(list.get(random.nextInt(listLength)));
-        }
-
-        return randList;
     }
 
     @Transactional
@@ -134,12 +124,15 @@ public class ChannelsService {
     }
 
     @Transactional
-    public Long delete(Long idx) {
-        Channels channels = channelsRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
-        channelsRepository.delete(channels);
+    public void deleteAll() {
+        channelsRepository.deleteAll();
+    }
 
-        return idx;
+    @Transactional
+    public String delete(String channelId) {
+        Channels channels = channelsRepository.findByChannelId(channelId);
+        channelsRepository.delete(channels);
+        return channels.getChannelId();
     }
 
 }

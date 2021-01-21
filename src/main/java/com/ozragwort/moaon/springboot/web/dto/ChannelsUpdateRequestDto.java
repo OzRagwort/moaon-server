@@ -12,13 +12,19 @@ public class ChannelsUpdateRequestDto {
     private String channelThumbnail;
     private String uploadsList;
     private int subscribers;
+    private String bannerExternalUrl;
 
     @Builder
-    public ChannelsUpdateRequestDto(String channelName, String channelThumbnail, String uploadsList, int subscribers) {
+    public ChannelsUpdateRequestDto(String channelName,
+                                    String channelThumbnail,
+                                    String uploadsList,
+                                    int subscribers,
+                                    String bannerExternalUrl) {
         this.channelName = channelName;
         this.channelThumbnail = channelThumbnail;
         this.uploadsList = uploadsList;
         this.subscribers = subscribers;
+        this.bannerExternalUrl = bannerExternalUrl;
     }
 
 }

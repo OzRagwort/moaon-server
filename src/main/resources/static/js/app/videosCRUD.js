@@ -22,7 +22,6 @@ var main = {
         $.ajax({
             type: 'POST',
             url: '/api/moaon/v1/videos',
-            dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function() {
@@ -37,16 +36,16 @@ var main = {
 
         $.ajax({
             type: 'PUT',
-            url: '/api/moaon/v1/videos/'+videoId
+            url: '/api/moaon/v1/videos/'+videoId+'/refresh'
         }).done(function() {
-            alert('글이 수정되었습니다.');
+            alert('영상 정보가 최신화되었습니다.');
             window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
     },
     list : function() {
-        var maxResult = $('#select-video-maxResult').val();
+        var maxResults = $('#select-video-maxResults').val();
         var page = 1;
         var idx = $('#txt-video-idx').val();
         var vid = $('#txt-video-id').val();
@@ -54,7 +53,7 @@ var main = {
         var category = $('#txt-category-idx').val();
 
         var url = '/admin/videos/list' +
-        '?maxResult=' + maxResult +
+        '?maxResults=' + maxResults +
         '&page=' + page;
 
         if (idx) {url = url + '&no=' + idx;}
@@ -70,10 +69,9 @@ var main = {
         $.ajax({
             type: 'DELETE',
             url: '/api/moaon/v1/videos/'+id,
-            dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         }).done(function() {
-            alert('글이 삭제되었습니다.');
+            alert('영상 정보가 삭제되었습니다.');
             window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));

@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.service;
 
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.ozragwort.moaon.springboot.component.CheckIdType;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
@@ -18,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -35,10 +34,10 @@ public class VideosService {
     private final YoutubeApi youtubeApi;
 
     @Transactional
-    public Long save(PostVideosRequestDto requestDto) {
+    public String save(PostVideosRequestDto requestDto) {
 
         if (videosRepository.findByVideoId(requestDto.getVideoId()) != null) {
-            return update(requestDto.getVideoId());
+            return refresh(requestDto.getVideoId());
         }
 
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(requestDto.getVideoId());
@@ -59,7 +58,15 @@ public class VideosService {
                 .tags(videoListResponse.getItems().get(0).getSnippet().getTags())
                 .build();
 
-        return videosRepository.save(videosSaveRequestDto.toEntity()).getIdx();
+        return videosRepository.save(videosSaveRequestDto.toEntity()).getVideoId();
+    }
+
+    @Transactional
+    public String saveRelations(String videoId, RelatedVideosSaveRequestDto requestDto) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.setRelatedVideos(requestDto.getRelatedVideo());
+
+        return videos.getVideoId();
     }
 
     // need update
@@ -93,28 +100,36 @@ public class VideosService {
     }
 
     @Transactional
-    public Long update(Long idx) {
-        Optional<Videos> byId = videosRepository.findById(idx);
+    public String update(String videoId, VideosUpdateRequestDto requestDto) {
+        Videos videos = videosRepository.findByVideoId(videoId);
 
-        return update(byId.get().getVideoId());
+        videos.update(requestDto.getVideoName(),
+                requestDto.getVideoThumbnail(),
+                requestDto.getVideoDescription(),
+                requestDto.getVideoPublishedDate(),
+                requestDto.getVideoDuration(),
+                requestDto.isVideoEmbeddable(),
+                requestDto.getViewCount(),
+                requestDto.getLikeCount(),
+                requestDto.getDislikeCount(),
+                requestDto.getCommentCount(),
+                requestDto.getTags());
+
+        return videos.getVideoId();
     }
 
     @Transactional
-    public Long update(String videoId) {
-
+    public String refresh(String videoId) {
         Videos videos = videosRepository.findByVideoId(videoId);
-
         if (videos == null) {
             return null;
         }
-
-        ModifiedDurationCheck check = new ModifiedDurationCheck(videos.getModifiedDate());
-        if (check.get() == 0) {
-            return videos.getIdx();
+        ModifiedDurationCheck check = new ModifiedDurationCheck();
+        if (!check.ModifiedDurationTimeCheck(videos.getModifiedDate())) {
+            return videos.getVideoId();
         }
 
         VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(videoId);
-
         videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
                 videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 videoListResponse.getItems().get(0).getSnippet().getDescription(),
@@ -126,8 +141,21 @@ public class VideosService {
                 videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue(),
                 videoListResponse.getItems().get(0).getSnippet().getTags());
+        return videos.getVideoId();
+    }
 
-        return videos.getIdx();
+    @Transactional
+    public String addRelations(String videoId, RelatedVideosUpdateRequestDto requestDto) {
+        CheckIdType checkIdType = new CheckIdType();
+        for (String relatedVideo : requestDto.getRelatedVideo()) {
+            if (!checkIdType.checkVideoId(relatedVideo)) {
+                return null;
+            }
+        }
+
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.addRelations(requestDto.getRelatedVideo());
+        return videos.getVideoId();
     }
 
     @Transactional
@@ -201,12 +229,40 @@ public class VideosService {
     }
 
     @Transactional
-    public Long delete(Long idx) {
-        Videos videos = videosRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));
+    public List<RelatedVideosResponseDto> findRelationsByVideoId(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        List<String> relatedVideos = videos.getRelatedVideos().stream().map(String::new).collect(Collectors.toList());
+        List<RelatedVideosResponseDto> relatedVideosResponseDtos = new ArrayList<>();
+
+        for (String relatedVideo : relatedVideos) {
+            Videos v = videosRepository.findByVideoId(relatedVideo);
+            if (v != null && videos.getChannels().getCategories().getIdx() == v.getChannels().getCategories().getIdx()){
+                relatedVideosResponseDtos.add(new RelatedVideosResponseDto(v));
+            }
+        }
+
+        return relatedVideosResponseDtos;
+    }
+
+    @Transactional
+    public void deleteAll() {
+        videosRepository.deleteAll();
+    }
+
+    @Transactional
+    public String delete(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
         videosRepository.delete(videos);
 
-        return idx;
+        return videos.getVideoId();
+    }
+
+    @Transactional
+    public String deleteRelations(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId);
+        videos.getRelatedVideos().clear();
+
+        return videos.getVideoId();
     }
 
     private List<Channels> StringToListChannels(String channelId) {

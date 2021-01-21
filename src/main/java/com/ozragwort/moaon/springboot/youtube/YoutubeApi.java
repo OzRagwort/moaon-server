@@ -95,7 +95,7 @@ public class YoutubeApi {
 
     public ChannelListResponse getChannelListResponse(String channelId) {
 
-        String part = "snippet,contentDetails,statistics";
+        String part = "snippet,contentDetails,statistics,brandingSettings";
 
         String url = "https://www.googleapis.com/youtube/v3/channels" +
                 "?key=" + getCLIENT_SECRETS() +

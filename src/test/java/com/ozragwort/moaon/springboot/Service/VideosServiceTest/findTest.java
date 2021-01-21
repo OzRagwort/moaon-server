@@ -49,6 +49,7 @@ public class findTest {
         String channelThumbnail = "https://yt3.ggpht.com/a/AATXAJyt1PtqMTt0Mz3TZSX4Y5RuZICAt08dDf675_eNLg=s240-c-k-c0x00ffffff-no-rj";
         String uploadsList = "UUnjyiWHGEyww-p8QYSftx2A";
         int subscribers = 1180000;
+        String bannerExternalUrl = "bannerExternalUrl";
 
         ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
                 categories,
@@ -56,7 +57,8 @@ public class findTest {
                 channelName,
                 channelThumbnail,
                 uploadsList,
-                subscribers);
+                subscribers,
+                bannerExternalUrl);
 
         channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
     }
@@ -79,11 +81,11 @@ public class findTest {
                 .build();
 
         //when
-        idx = videosService.save(postVideosRequestDto);
-        List<VideosResponseDto> videosResponseDto = videosService.findById(idx);
+        String result = videosService.save(postVideosRequestDto);
+        Videos videos = videosRepository.findByVideoId(result);
+        List<VideosResponseDto> videosResponseDto = videosService.findByVideoId(videoId);
 
         //then
-        Videos videos = videosRepository.findAll().get(0);
         assertThat(videos.getVideoId()).isEqualTo(videosResponseDto.get(0).getVideoId());
     }
 

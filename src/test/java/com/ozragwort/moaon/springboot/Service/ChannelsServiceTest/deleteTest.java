@@ -55,11 +55,11 @@ public class deleteTest {
                 .build();
 
         //when
-        idx = channelsService.save(postChannelsSaveRequestDto);
-        channelsService.delete(idx);
+        String result = channelsService.save(postChannelsSaveRequestDto);
+        channelsService.delete(channelId);
 
         //then
-        assertThat(channelsRepository.findAll().size()).isEqualTo(0);
+        assertThat(channelsRepository.findByChannelId(result)).isNull();
     }
 
 }
