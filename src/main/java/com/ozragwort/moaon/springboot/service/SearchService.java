@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -41,14 +42,15 @@ public class SearchService {
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Videos.class);
         fullTextQuery.setFirstResult(page);
         fullTextQuery.setMaxResults(size);
-        List<Videos> videosResponse = (List<Videos>) fullTextQuery.getResultList();
+        List<Videos> videosResponse = fullTextQuery.getResultList();
+        List<VideosResponseDto> list = videosResponse.stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return videosResponse.stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
+        return list;
     }
 
     @Transactional
