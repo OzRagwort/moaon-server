@@ -76,7 +76,11 @@ public class ChannelDeserializer {
     private ChannelBrandingSettings buildBrandingSettings(JSONObject brandingSettings) {
         ChannelBrandingSettings channelBrandingSettings = new ChannelBrandingSettings();
 
-        channelBrandingSettings.setImage(buildImageSettings((JSONObject) brandingSettings.get("image")));
+        try {
+            channelBrandingSettings.setImage(buildImageSettings((JSONObject) brandingSettings.get("image")));
+        } catch (NullPointerException e) {
+            channelBrandingSettings.setImage(null);
+        }
 
         return channelBrandingSettings;
     }

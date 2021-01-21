@@ -41,7 +41,8 @@ public class ChannelsService {
                 .channelThumbnail(channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
                 .uploadsList(channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads())
                 .subscribers(channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue())
-                .bannerExternalUrl(channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl())
+                .bannerExternalUrl(channelListResponse.getItems().get(0).getBrandingSettings().isEmpty() ?
+                        null : channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl())
                 .build();
 
         return channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
