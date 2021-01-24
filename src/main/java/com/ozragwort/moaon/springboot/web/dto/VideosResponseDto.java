@@ -4,6 +4,7 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +19,10 @@ public class VideosResponseDto {
     private Long categoriesIdx;
 
     private Channels channels;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime modifiedDate;
 
     private String videoId;
 
@@ -47,6 +52,8 @@ public class VideosResponseDto {
         this.idx = videos.getIdx();
         this.categoriesIdx = videos.getChannels().getCategories().getIdx();
         this.channels = videos.getChannels();
+        this.createdDate = videos.getCreatedDate();
+        this.modifiedDate = videos.getModifiedDate();
         this.videoId = videos.getVideoId();
         this.videoName = videos.getVideoName();
         this.videoThumbnail = videos.getVideoThumbnail();
