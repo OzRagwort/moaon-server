@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PostChannelUploadsListDto {
+public class YoutubeChannelUploadsListRequestDto {
 
     private String channelId;
 
     @Builder
-    public PostChannelUploadsListDto(String channelId) {
+    public YoutubeChannelUploadsListRequestDto(String channelId) {
         this.channelId = channelId;
     }
 

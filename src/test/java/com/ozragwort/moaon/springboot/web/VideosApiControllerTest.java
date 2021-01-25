@@ -1,6 +1,5 @@
 package com.ozragwort.moaon.springboot.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -97,7 +95,7 @@ public class VideosApiControllerTest {
                 //given
                 String videoId = "ZpIGb7QBhQA";
 
-                String content = objectMapper.writeValueAsString(new PostVideosRequestDto(videoId));
+                String content = objectMapper.writeValueAsString(new YoutubeVideosSaveRequestDto(videoId));
 
                 //when
                 mvc
@@ -121,7 +119,7 @@ public class VideosApiControllerTest {
                 //given
                 String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
 
-                String content = objectMapper.writeValueAsString(new PostChannelUploadsListDto(channelId));
+                String content = objectMapper.writeValueAsString(new YoutubeChannelUploadsListRequestDto(channelId));
 
                 List<Videos> listOrig = videosRepository.findAll();
 

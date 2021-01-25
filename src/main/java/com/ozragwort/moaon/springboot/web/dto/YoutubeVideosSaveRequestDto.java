@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PostVideosRequestDto {
+public class YoutubeVideosSaveRequestDto {
 
     private String videoId;
 
     @Builder
-    public PostVideosRequestDto(String videoId) {
+    public YoutubeVideosSaveRequestDto(String videoId) {
         this.videoId = videoId;
     }
 

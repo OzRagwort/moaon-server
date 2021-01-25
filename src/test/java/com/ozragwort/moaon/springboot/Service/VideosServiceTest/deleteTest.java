@@ -8,7 +8,7 @@ import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.PostVideosRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.YoutubeVideosSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,12 +75,12 @@ public class deleteTest {
         Long idx;
         String videoId = "8vAsg37pyC8";
 
-        PostVideosRequestDto postVideosRequestDto = PostVideosRequestDto.builder()
+        YoutubeVideosSaveRequestDto youtubeVideosSaveRequestDto = YoutubeVideosSaveRequestDto.builder()
                 .videoId(videoId)
                 .build();
 
         //when
-        String result = videosService.save(postVideosRequestDto);
+        String result = videosService.save(youtubeVideosSaveRequestDto);
         videosService.delete(videoId);
 
         //then

@@ -9,7 +9,7 @@ import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.PostVideosRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.YoutubeVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.VideosUpdateRequestDto;
 import org.junit.After;
 import org.junit.Before;
@@ -92,7 +92,7 @@ public class updateTest {
         int commentCount = 0;
         List<String> tags = new ArrayList<>();
 
-        PostVideosRequestDto postVideosRequestDto = PostVideosRequestDto.builder()
+        YoutubeVideosSaveRequestDto youtubeVideosSaveRequestDto = YoutubeVideosSaveRequestDto.builder()
                 .videoId(videoId)
                 .build();
 
@@ -111,7 +111,7 @@ public class updateTest {
         );
 
         //when
-        videosService.save(postVideosRequestDto);
+        videosService.save(youtubeVideosSaveRequestDto);
         String result = videosService.update(videoId, dto);
 
         //then

@@ -76,12 +76,12 @@ public class findTest {
         Long idx;
         String videoId = "8vAsg37pyC8";
 
-        PostVideosRequestDto postVideosRequestDto = PostVideosRequestDto.builder()
+        YoutubeVideosSaveRequestDto youtubeVideosSaveRequestDto = YoutubeVideosSaveRequestDto.builder()
                 .videoId(videoId)
                 .build();
 
         //when
-        String result = videosService.save(postVideosRequestDto);
+        String result = videosService.save(youtubeVideosSaveRequestDto);
         Videos videos = videosRepository.findByVideoId(result);
         List<VideosResponseDto> videosResponseDto = videosService.findByVideoId(videoId);
 

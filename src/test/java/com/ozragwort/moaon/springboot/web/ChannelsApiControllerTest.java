@@ -1,6 +1,5 @@
 package com.ozragwort.moaon.springboot.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -91,7 +89,7 @@ public class ChannelsApiControllerTest {
                 int subscribers = 568000;
 
                 String content = objectMapper.writeValueAsString(
-                        new PostChannelsSaveRequestDto(categoriesRepository.findAll().get(0).getIdx(), channelId));
+                        new YoutubeChannelsSaveRequestDto(categoriesRepository.findAll().get(0).getIdx(), channelId));
 
                 //when
                 mvc

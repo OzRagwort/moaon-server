@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PostChannelsSaveRequestDto {
+public class YoutubeChannelsSaveRequestDto {
 
     private Long categoryId;
 
     private String channelId;
 
     @Builder
-    public PostChannelsSaveRequestDto(Long categoryId, String channelId) {
+    public YoutubeChannelsSaveRequestDto(Long categoryId, String channelId) {
         this.categoryId = categoryId;
         this.channelId = channelId;
     }
