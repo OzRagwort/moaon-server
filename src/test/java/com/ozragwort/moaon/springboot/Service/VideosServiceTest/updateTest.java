@@ -7,10 +7,7 @@ import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.service.VideosService;
-import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.YoutubeVideosSaveRequestDto;
-import com.ozragwort.moaon.springboot.web.dto.VideosUpdateRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +38,6 @@ public class updateTest {
     @Autowired
     CategoriesRepository categoriesRepository;
 
-    public Channels channels;
-
     @Before
     public void setup() {
         CategoriesSaveRequestDto categoriesSaveRequestDto = new CategoriesSaveRequestDto("categoryName");
@@ -56,7 +51,7 @@ public class updateTest {
         int subscribers = 1180000;
         String bannerExternalUrl = "bannerExternalUrl";
 
-        ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
+        Channels channels = new Channels(
                 categories,
                 channelId,
                 channelName,
@@ -65,7 +60,7 @@ public class updateTest {
                 subscribers,
                 bannerExternalUrl);
 
-        channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
+        channelsRepository.save(channels);
     }
 
     @After
@@ -79,11 +74,12 @@ public class updateTest {
     public void Videos_Service_update_Test() {
         //given
         Long idx;
+        String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
         String videoId = "8vAsg37pyC8";
         String videoName = "videoName";
         String videoThumbnail = "videoThumbnail";
         String videoDescription = "videoDescription";
-        LocalDateTime videoPublishedDate = LocalDateTime.of(2020,1,1,0,0,0);
+        String videoPublishedDate = "2021-01-01T00:00:00Z";
         String videoDuration = "videoDuration";
         boolean videoEmbeddable = true;
         int viewCount = 0;
@@ -92,26 +88,38 @@ public class updateTest {
         int commentCount = 0;
         List<String> tags = new ArrayList<>();
 
-        YoutubeVideosSaveRequestDto youtubeVideosSaveRequestDto = YoutubeVideosSaveRequestDto.builder()
+        VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
                 .videoId(videoId)
+                .channelId(channelId)
+                .videoName(videoName)
+                .videoThumbnail(videoThumbnail)
+                .videoDescription(videoDescription)
+                .videoPublishedDate(videoPublishedDate)
+                .videoDuration(videoDuration)
+                .videoEmbeddable(videoEmbeddable)
+                .viewCount(viewCount)
+                .likeCount(likeCount)
+                .dislikeCount(dislikeCount)
+                .commentCount(commentCount)
+                .tags(tags)
                 .build();
 
         VideosUpdateRequestDto dto = new VideosUpdateRequestDto(
-                videoName,
-                videoThumbnail,
-                videoDescription,
-                videoPublishedDate,
-                videoDuration,
-                videoEmbeddable,
-                viewCount,
-                likeCount,
-                dislikeCount,
-                commentCount,
+                "videoName",
+                "videoThumbnail",
+                "videoDescription",
+                "2021-01-28T10:00:04Z",
+                "videoDuration",
+                true,
+                10000,
+                10000,
+                10000,
+                10000,
                 tags
         );
 
         //when
-        videosService.save(youtubeVideosSaveRequestDto);
+        videosService.save(videosSaveRequestDto);
         String result = videosService.update(videoId, dto);
 
         //then

@@ -5,6 +5,7 @@ import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.YoutubeChannelsSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
@@ -49,13 +50,13 @@ public class deleteTest {
         Long idx;
         String channelId = "UCETBLykCDpfP6L0awBd7Vwg";
 
-        YoutubeChannelsSaveRequestDto youtubeChannelsSaveRequestDto = YoutubeChannelsSaveRequestDto.builder()
+        ChannelsSaveRequestDto channelsSaveRequestDto = ChannelsSaveRequestDto.builder()
                 .channelId(channelId)
                 .categoryId(categories.getIdx())
                 .build();
 
         //when
-        String result = channelsService.save(youtubeChannelsSaveRequestDto);
+        String result = channelsService.save(channelsSaveRequestDto);
         channelsService.delete(channelId);
 
         //then

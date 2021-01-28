@@ -6,6 +6,7 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsUpdateRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.YoutubeChannelsSaveRequestDto;
 import org.junit.After;
@@ -56,7 +57,7 @@ public class updateTest {
         int subscribers = 123;
         String bannerExternalUrl = "bannerExternalUrl";
 
-        YoutubeChannelsSaveRequestDto youtubeChannelsSaveRequestDto = YoutubeChannelsSaveRequestDto.builder()
+        ChannelsSaveRequestDto channelsSaveRequestDto = ChannelsSaveRequestDto.builder()
                 .channelId(channelId)
                 .categoryId(categories.getIdx())
                 .build();
@@ -70,7 +71,7 @@ public class updateTest {
         );
 
         //when
-        channelsService.save(youtubeChannelsSaveRequestDto);
+        channelsService.save(channelsSaveRequestDto);
         String result = channelsService.update(channelId, dto);
 
         //then

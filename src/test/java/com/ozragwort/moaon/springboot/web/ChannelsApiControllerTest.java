@@ -59,7 +59,7 @@ public class ChannelsApiControllerTest {
                 int subscribers = 1180000;
                 String bannerExternalUrl = "bannerExternalUrl";
 
-                ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
+                Channels channels = new Channels(
                         categories,
                         channelId,
                         channelName,
@@ -68,7 +68,7 @@ public class ChannelsApiControllerTest {
                         subscribers,
                         bannerExternalUrl);
 
-                channelsRepository.save(channelsSaveRequestDto.toEntity());
+                channelsRepository.save(channels);
         }
 
         @After
@@ -162,12 +162,12 @@ public class ChannelsApiControllerTest {
         @Test
         public void 채널_api_delete() throws Exception {
                 //given
-                ChannelsSaveRequestDto channelsSaveRequestDto = ChannelsSaveRequestDto.builder()
+                Channels channels = Channels.builder()
                         .channelId("channelId")
                         .channelName("channelName")
                         .build();
 
-                String channelId = channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
+                String channelId = channelsRepository.save(channels).getChannelId();
 
                 //when
                 mvc
@@ -177,9 +177,9 @@ public class ChannelsApiControllerTest {
                         .andExpect(status().isOk())
                         .andDo(MockMvcResultHandlers.print());
 
-                Channels channels = channelsRepository.findByChannelId(channelId);
+                Channels checkChannels = channelsRepository.findByChannelId(channelId);
 
-                assertThat(channels).isNull();
+                assertThat(checkChannels).isNull();
         }
 
 }

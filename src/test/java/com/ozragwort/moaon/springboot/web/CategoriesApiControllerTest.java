@@ -61,7 +61,7 @@ public class CategoriesApiControllerTest {
     public void 카테고리_API_save() throws Exception {
 
         //given
-        String categoryName2 = "categoryName2";
+        String categoryName2 = categoryName1;
         String content = objectMapper.writeValueAsString(new CategoriesSaveRequestDto(categoryName2));
 
         //when

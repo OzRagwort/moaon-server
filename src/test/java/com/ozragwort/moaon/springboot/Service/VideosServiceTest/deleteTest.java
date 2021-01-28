@@ -8,6 +8,7 @@ import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.CategoriesSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.ChannelsSaveRequestDto;
+import com.ozragwort.moaon.springboot.web.dto.VideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.web.dto.YoutubeVideosSaveRequestDto;
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,8 +39,6 @@ public class deleteTest {
     @Autowired
     CategoriesRepository categoriesRepository;
 
-    public Channels channels;
-
     @Before
     public void setup() {
         CategoriesSaveRequestDto categoriesSaveRequestDto = new CategoriesSaveRequestDto("categoryName");
@@ -50,7 +52,7 @@ public class deleteTest {
         int subscribers = 1180000;
         String bannerExternalUrl = "bannerExternalUrl";
 
-        ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
+        Channels channels = new Channels(
                 categories,
                 channelId,
                 channelName,
@@ -59,7 +61,7 @@ public class deleteTest {
                 subscribers,
                 bannerExternalUrl);
 
-        channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
+        channelsRepository.save(channels);
     }
 
     @After
@@ -73,14 +75,38 @@ public class deleteTest {
     public void Videos_Service_delete_Test() {
         //given
         Long idx;
+        String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
         String videoId = "8vAsg37pyC8";
+        String videoName = "videoName";
+        String videoThumbnail = "videoThumbnail";
+        String videoDescription = "videoDescription";
+        String videoPublishedDate = "2021-01-01T00:00:00Z";
+        String videoDuration = "videoDuration";
+        boolean videoEmbeddable = true;
+        int viewCount = 0;
+        int likeCount = 0;
+        int dislikeCount = 0;
+        int commentCount = 0;
+        List<String> tags = new ArrayList<>();
 
-        YoutubeVideosSaveRequestDto youtubeVideosSaveRequestDto = YoutubeVideosSaveRequestDto.builder()
+        VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
                 .videoId(videoId)
+                .channelId(channelId)
+                .videoName(videoName)
+                .videoThumbnail(videoThumbnail)
+                .videoDescription(videoDescription)
+                .videoPublishedDate(videoPublishedDate)
+                .videoDuration(videoDuration)
+                .videoEmbeddable(videoEmbeddable)
+                .viewCount(viewCount)
+                .likeCount(likeCount)
+                .dislikeCount(dislikeCount)
+                .commentCount(commentCount)
+                .tags(tags)
                 .build();
 
         //when
-        String result = videosService.save(youtubeVideosSaveRequestDto);
+        String result = videosService.save(videosSaveRequestDto);
         videosService.delete(videoId);
 
         //then
