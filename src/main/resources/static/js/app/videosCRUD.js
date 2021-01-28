@@ -21,8 +21,9 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/videos',
+            url: '/api/moaon/v1/yt-videos',
             contentType: 'application/json; charset=utf-8',
+            dataType: 'text',
             data: JSON.stringify(data)
         }).done(function() {
             alert('등록되었습니다.');
@@ -32,11 +33,13 @@ var main = {
         });
     },
     update : function() {
-        var videoId = $('#updateVideoId').val();
+        var data = {
+            videoId: $('#updateVideoId').val()
+        };
 
         $.ajax({
-            type: 'PUT',
-            url: '/api/moaon/v1/videos/'+videoId+'/refresh'
+            type: 'POST',
+            url: '/api/moaon/v1/yt-videos'
         }).done(function() {
             alert('영상 정보가 최신화되었습니다.');
             window.location.href = '/admin/videos/crud';
