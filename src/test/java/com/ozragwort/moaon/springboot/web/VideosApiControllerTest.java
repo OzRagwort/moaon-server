@@ -1,6 +1,5 @@
 package com.ozragwort.moaon.springboot.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -64,7 +62,7 @@ public class VideosApiControllerTest {
                 int subscribers = 1180000;
                 String bannerExternalUrl = "bannerExternalUrl";
 
-                ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
+                Channels channels = new Channels(
                         categories,
                         channelId,
                         channelName,
@@ -73,14 +71,14 @@ public class VideosApiControllerTest {
                         subscribers,
                         bannerExternalUrl);
 
-                Channels channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
+                Channels channels1 = channelsRepository.save(channels);
 
-                VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
-                        .channels(channels)
+                Videos videos = Videos.builder()
+                        .channels(channels1)
                         .videoId("mGuYJ4wc-xw")
                         .videoName("testName")
                         .build();
-                videosRepository.save(videosSaveRequestDto.toEntity());
+                videosRepository.save(videos);
         }
 
         @After
@@ -95,9 +93,37 @@ public class VideosApiControllerTest {
         public void 영상_api_save() throws Exception {
 
                 //given
+                String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
                 String videoId = "ZpIGb7QBhQA";
+                String videoName = "videoName";
+                String videoThumbnail = "videoThumbnail";
+                String videoDescription = "videoDescription";
+                String videoPublishedDate = "2021-01-01T00:00:00Z";
+                String videoDuration = "videoDuration";
+                boolean videoEmbeddable = true;
+                int viewCount = 0;
+                int likeCount = 0;
+                int dislikeCount = 0;
+                int commentCount = 0;
+                List<String> tags = new ArrayList<>();
 
-                String content = objectMapper.writeValueAsString(new PostVideosRequestDto(videoId));
+                String content = objectMapper.writeValueAsString(
+                        VideosSaveRequestDto.builder()
+                                .videoId(videoId)
+                                .channelId(channelId)
+                                .videoName(videoName)
+                                .videoThumbnail(videoThumbnail)
+                                .videoDescription(videoDescription)
+                                .videoPublishedDate(videoPublishedDate)
+                                .videoDuration(videoDuration)
+                                .videoEmbeddable(videoEmbeddable)
+                                .viewCount(viewCount)
+                                .likeCount(likeCount)
+                                .dislikeCount(dislikeCount)
+                                .commentCount(commentCount)
+                                .tags(tags)
+                                .build()
+                );
 
                 //when
                 mvc
@@ -112,32 +138,6 @@ public class VideosApiControllerTest {
                 Videos videos = videosRepository.findByVideoId(videoId);
 
                 assertThat(videos.getVideoId()).isEqualTo(videoId);
-
-        }
-
-        @Test
-        public void 영상_api_saveUploadsList() throws Exception {
-
-                //given
-                String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
-
-                String content = objectMapper.writeValueAsString(new PostChannelUploadsListDto(channelId));
-
-                List<Videos> listOrig = videosRepository.findAll();
-
-                //when
-                mvc
-                        .perform(post("/api/moaon/v1/uploads-list")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        )
-                        //then
-                        .andDo(print())
-                        .andExpect(status().isOk());
-
-                List<Videos> list = videosRepository.findAll();
-
-                assertThat(list.size()).isNotEqualTo(listOrig.size());
 
         }
 
@@ -167,7 +167,7 @@ public class VideosApiControllerTest {
                 String videoName = "videoName";
                 String videoThumbnail = "videoThumbnail";
                 String videoDescription = "videoDescription";
-                LocalDateTime videoPublishedDate = LocalDateTime.of(2020,1,1,0,0,0);
+                String videoPublishedDate = "2021-01-28T10:00:04Z";
                 String videoDuration = "videoDuration";
                 boolean videoEmbeddable = true;
                 int viewCount = 0;
@@ -209,11 +209,11 @@ public class VideosApiControllerTest {
         @Test
         public void 영상_api_delete() throws Exception {
                 //given
-                VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
+                Videos videos = Videos.builder()
                         .videoId("testId")
                         .videoName("testName")
                         .build();
-                String videoId = videosRepository.save(videosSaveRequestDto.toEntity()).getVideoId();
+                String videoId = videosRepository.save(videos).getVideoId();
 
                 //when
                 mvc
@@ -223,9 +223,9 @@ public class VideosApiControllerTest {
                         .andExpect(status().isOk())
                         .andDo(MockMvcResultHandlers.print());
 
-                Videos videos = videosRepository.findByVideoId(videoId);
+                Videos checkVideos = videosRepository.findByVideoId(videoId);
 
-                assertThat(videos).isNull();
+                assertThat(checkVideos).isNull();
         }
 
 

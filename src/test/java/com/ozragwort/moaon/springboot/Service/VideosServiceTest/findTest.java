@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +37,6 @@ public class findTest {
     @Autowired
     CategoriesRepository categoriesRepository;
 
-    public Channels channels;
-
     @Before
     public void setup() {
         CategoriesSaveRequestDto categoriesSaveRequestDto = new CategoriesSaveRequestDto("categoryName");
@@ -51,7 +50,7 @@ public class findTest {
         int subscribers = 1180000;
         String bannerExternalUrl = "bannerExternalUrl";
 
-        ChannelsSaveRequestDto channelsSaveRequestDto = new ChannelsSaveRequestDto(
+        Channels channels = new Channels(
                 categories,
                 channelId,
                 channelName,
@@ -60,7 +59,7 @@ public class findTest {
                 subscribers,
                 bannerExternalUrl);
 
-        channels = channelsRepository.save(channelsSaveRequestDto.toEntity());
+        channelsRepository.save(channels);
     }
 
     @After
@@ -74,14 +73,38 @@ public class findTest {
     public void Videos_Service_find_Test() {
         //given
         Long idx;
+        String channelId = "UCnjyiWHGEyww-p8QYSftx2A";
         String videoId = "8vAsg37pyC8";
+        String videoName = "videoName";
+        String videoThumbnail = "videoThumbnail";
+        String videoDescription = "videoDescription";
+        String videoPublishedDate = "2021-01-01T00:00:00Z";
+        String videoDuration = "videoDuration";
+        boolean videoEmbeddable = true;
+        int viewCount = 0;
+        int likeCount = 0;
+        int dislikeCount = 0;
+        int commentCount = 0;
+        List<String> tags = new ArrayList<>();
 
-        PostVideosRequestDto postVideosRequestDto = PostVideosRequestDto.builder()
+        VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
                 .videoId(videoId)
+                .channelId(channelId)
+                .videoName(videoName)
+                .videoThumbnail(videoThumbnail)
+                .videoDescription(videoDescription)
+                .videoPublishedDate(videoPublishedDate)
+                .videoDuration(videoDuration)
+                .videoEmbeddable(videoEmbeddable)
+                .viewCount(viewCount)
+                .likeCount(likeCount)
+                .dislikeCount(dislikeCount)
+                .commentCount(commentCount)
+                .tags(tags)
                 .build();
 
         //when
-        String result = videosService.save(postVideosRequestDto);
+        String result = videosService.save(videosSaveRequestDto);
         Videos videos = videosRepository.findByVideoId(result);
         List<VideosResponseDto> videosResponseDto = videosService.findByVideoId(videoId);
 

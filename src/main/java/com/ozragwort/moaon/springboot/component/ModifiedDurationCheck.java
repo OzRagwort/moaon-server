@@ -16,11 +16,7 @@ public class ModifiedDurationCheck {
         Period period = Period.between(modifiedDate.toLocalDate(), now.toLocalDate());
         long minutes = ChronoUnit.MINUTES.between(modifiedDate.toLocalTime(), now.toLocalTime());
 
-        if (period.isZero() && minutes > 10) {
-            return true;
-        } else {
-            return false;
-        }
+        return period.isZero() && minutes < 60;
     }
 
 }

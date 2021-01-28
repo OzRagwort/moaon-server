@@ -17,18 +17,13 @@ public class ChannelsApiController {
     private final ChannelsService channelsService;
 
     @PostMapping("/channels")
-    public String save(@RequestBody PostChannelsSaveRequestDto requestDto) {
+    public String save(@RequestBody ChannelsSaveRequestDto requestDto) {
         return channelsService.save(requestDto);
     }
 
     @PutMapping("/channels/{channelId}")
     public String update(@PathVariable String channelId, @RequestBody ChannelsUpdateRequestDto requestDto) {
         return channelsService.update(channelId, requestDto);
-    }
-
-    @PutMapping("/channels/{channelId}/refresh")
-    public String update(@PathVariable String channelId) {
-        return channelsService.refresh(channelId);
     }
 
     @GetMapping("/channels/{channelId}")

@@ -1,19 +1,16 @@
 package com.ozragwort.moaon.springboot.web.dto;
 
-import com.ozragwort.moaon.springboot.domain.channels.Channels;
-import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class VideosSaveRequestDto {
 
-    private Channels channels;
+    private String channelId;
 
     private String videoId;
 
@@ -23,7 +20,7 @@ public class VideosSaveRequestDto {
 
     private String videoDescription;
 
-    private LocalDateTime videoPublishedDate;
+    private String videoPublishedDate;
 
     private String videoDuration;
 
@@ -40,12 +37,12 @@ public class VideosSaveRequestDto {
     private List<String> tags;
 
     @Builder
-    public VideosSaveRequestDto(Channels channels,
+    public VideosSaveRequestDto(String channelId,
                                 String videoId,
                                 String videoName,
                                 String videoThumbnail,
                                 String videoDescription,
-                                LocalDateTime videoPublishedDate,
+                                String videoPublishedDate,
                                 String videoDuration,
                                 boolean videoEmbeddable,
                                 int viewCount,
@@ -53,7 +50,7 @@ public class VideosSaveRequestDto {
                                 int dislikeCount,
                                 int commentCount,
                                 List<String> tags) {
-        this.channels = channels;
+        this.channelId = channelId;
         this.videoId = videoId;
         this.videoName = videoName;
         this.videoThumbnail = videoThumbnail;
@@ -66,24 +63,6 @@ public class VideosSaveRequestDto {
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
         this.tags = tags;
-    }
-
-    public Videos toEntity() {
-        return Videos.builder()
-                .channels(channels)
-                .videoId(videoId)
-                .videoName(videoName)
-                .videoThumbnail(videoThumbnail)
-                .videoDescription(videoDescription)
-                .videoPublishedDate(videoPublishedDate)
-                .videoDuration(videoDuration)
-                .videoEmbeddable(videoEmbeddable)
-                .viewCount(viewCount)
-                .likeCount(likeCount)
-                .dislikeCount(dislikeCount)
-                .commentCount(commentCount)
-                .tags(tags)
-                .build();
     }
 
 }

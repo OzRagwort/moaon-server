@@ -1,7 +1,5 @@
 package com.ozragwort.moaon.springboot.service;
 
-import com.google.api.services.youtube.model.PlaylistItemListResponse;
-import com.google.api.services.youtube.model.VideoListResponse;
 import com.ozragwort.moaon.springboot.component.CheckIdType;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
@@ -11,7 +9,6 @@ import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import com.ozragwort.moaon.springboot.youtube.YoutubeApi;
-import com.ozragwort.moaon.springboot.component.ModifiedDurationCheck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,31 +31,31 @@ public class VideosService {
     private final YoutubeApi youtubeApi;
 
     @Transactional
-    public String save(PostVideosRequestDto requestDto) {
+    public String save(VideosSaveRequestDto requestDto) {
 
-        if (videosRepository.findByVideoId(requestDto.getVideoId()) != null) {
-            return refresh(requestDto.getVideoId());
-        }
+        if (videosRepository.findByVideoId(requestDto.getVideoId()) != null)
+            throw new IllegalArgumentException("Video is not empty = " + requestDto.getVideoId());
+        Channels channels = channelsRepository.findByChannelId(requestDto.getChannelId());
+        if (channels == null)
+            throw new IllegalArgumentException("no channel = " + requestDto.getChannelId());
 
-        VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(requestDto.getVideoId());
-
-        VideosSaveRequestDto videosSaveRequestDto = VideosSaveRequestDto.builder()
-                .channels(channelsRepository.findByChannelId(videoListResponse.getItems().get(0).getSnippet().getChannelId()))
-                .videoId(videoListResponse.getItems().get(0).getId())
-                .videoName(videoListResponse.getItems().get(0).getSnippet().getTitle())
-                .videoThumbnail(videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
-                .videoDescription(videoListResponse.getItems().get(0).getSnippet().getDescription())
-                .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()))
-                .videoDuration(videoListResponse.getItems().get(0).getContentDetails().getDuration())
-                .videoEmbeddable(videoListResponse.getItems().get(0).getStatus().getEmbeddable())
-                .viewCount(videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue())
-                .likeCount(videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue())
-                .dislikeCount(videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue())
-                .commentCount(videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue())
-                .tags(videoListResponse.getItems().get(0).getSnippet().getTags())
+        Videos videos = Videos.builder()
+                .videoDescription(requestDto.getVideoDescription())
+                .channels(channels)
+                .videoId(requestDto.getVideoId())
+                .videoName(requestDto.getVideoName())
+                .videoThumbnail(requestDto.getVideoThumbnail())
+                .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(requestDto.getVideoPublishedDate()))
+                .videoDuration(requestDto.getVideoDuration())
+                .videoEmbeddable(requestDto.isVideoEmbeddable())
+                .viewCount(requestDto.getViewCount())
+                .likeCount(requestDto.getLikeCount())
+                .dislikeCount(requestDto.getDislikeCount())
+                .commentCount(requestDto.getCommentCount())
+                .tags(requestDto.getTags())
                 .build();
 
-        return videosRepository.save(videosSaveRequestDto.toEntity()).getVideoId();
+        return videosRepository.save(videos).getVideoId();
     }
 
     @Transactional
@@ -69,36 +66,6 @@ public class VideosService {
         return videos.getVideoId();
     }
 
-    // need update
-    @Transactional
-    public List<Long> saveUploadsListVideos(PostChannelUploadsListDto uploadsListDto) {
-
-        String uploadList = channelsRepository.findByChannelId(uploadsListDto.getChannelId()).getUploadsList();
-
-        List<PlaylistItemListResponse> playlistItemListResponse =
-                youtubeApi.getPlaylistItemListResponse(uploadList);
-
-        List<Long> list = new ArrayList<>();
-
-        for (int i = 0 ; i < playlistItemListResponse.size() ; i++) {
-            for (int j = 0 ; j < playlistItemListResponse.get(i).getItems().size() ; j++) {
-
-                VideosSaveUploadsListRequestDto videosSaveUploadsListRequestDto = VideosSaveUploadsListRequestDto.builder()
-                        .channels(channelsRepository.findByChannelId(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getChannelId()))
-                        .videoId(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getResourceId().getVideoId())
-                        .videoName(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getTitle())
-                        .videoThumbnail(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getThumbnails().getMedium().getUrl())
-                        .videoDescription(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getDescription())
-                        .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(playlistItemListResponse.get(i).getItems().get(j).getSnippet().getPublishedAt()))
-                        .build();
-
-                list.add(videosRepository.save(videosSaveUploadsListRequestDto.toEntity()).getIdx());
-            }
-        }
-
-        return list;
-    }
-
     @Transactional
     public String update(String videoId, VideosUpdateRequestDto requestDto) {
         Videos videos = videosRepository.findByVideoId(videoId);
@@ -106,7 +73,7 @@ public class VideosService {
         videos.update(requestDto.getVideoName(),
                 requestDto.getVideoThumbnail(),
                 requestDto.getVideoDescription(),
-                requestDto.getVideoPublishedDate(),
+                ConvertUtcDateTime.StringToUTCDateTime(requestDto.getVideoPublishedDate()),
                 requestDto.getVideoDuration(),
                 requestDto.isVideoEmbeddable(),
                 requestDto.getViewCount(),
@@ -115,32 +82,6 @@ public class VideosService {
                 requestDto.getCommentCount(),
                 requestDto.getTags());
 
-        return videos.getVideoId();
-    }
-
-    @Transactional
-    public String refresh(String videoId) {
-        Videos videos = videosRepository.findByVideoId(videoId);
-        if (videos == null) {
-            return null;
-        }
-        ModifiedDurationCheck check = new ModifiedDurationCheck();
-        if (!check.ModifiedDurationTimeCheck(videos.getModifiedDate())) {
-            return videos.getVideoId();
-        }
-
-        VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(videoId);
-        videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
-                videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
-                videoListResponse.getItems().get(0).getSnippet().getDescription(),
-                ConvertUtcDateTime.StringToUTCDateTime(videoListResponse.getItems().get(0).getSnippet().getPublishedAt()),
-                videoListResponse.getItems().get(0).getContentDetails().getDuration(),
-                videoListResponse.getItems().get(0).getStatus().getEmbeddable(),
-                videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue(),
-                videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue(),
-                videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
-                videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue(),
-                videoListResponse.getItems().get(0).getSnippet().getTags());
         return videos.getVideoId();
     }
 

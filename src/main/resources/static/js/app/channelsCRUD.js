@@ -22,7 +22,7 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/channels',
+            url: '/api/moaon/v1/yt-channels',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function(response) {
@@ -33,11 +33,16 @@ var main = {
         });
     },
     update : function() {
-        var channelId = $('#updateChannelId').val();
+        var data = {
+            categoryId: $('#updateChannelCategory').val(),
+            channelId: $('#updateChannelId').val()
+        };
 
         $.ajax({
-            type: 'PUT',
-            url: '/api/moaon/v1/channels/'+channelId+'/refresh'
+            type: 'POST',
+            url: '/api/moaon/v1/yt-channels',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
         }).done(function() {
             alert('채널 정보를 최신화하였습니다.');
             window.location.href = '/admin/channels/crud';

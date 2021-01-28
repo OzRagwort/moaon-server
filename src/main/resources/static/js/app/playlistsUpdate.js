@@ -15,7 +15,7 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/uploads-list',
+            url: '/api/moaon/v1/yt-upload',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
@@ -52,7 +52,7 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/uploads-list',
+            url: '/api/moaon/v1/yt-upload',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data),
