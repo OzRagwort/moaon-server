@@ -20,7 +20,7 @@ public class VideosApiController {
     private final SearchService searchService;
 
     @PostMapping("/videos")
-    public String save(@RequestBody PostVideosRequestDto requestDto) {
+    public String save(@RequestBody VideosSaveRequestDto requestDto) {
         return videosService.save(requestDto);
     }
 
@@ -32,11 +32,6 @@ public class VideosApiController {
     @PutMapping("/videos/{videoId}")
     public String update(@PathVariable String videoId, @RequestBody VideosUpdateRequestDto requestDto) {
         return videosService.update(videoId, requestDto);
-    }
-
-    @PutMapping("/videos/{videoId}/refresh")
-    public String update(@PathVariable String videoId) {
-        return videosService.refresh(videoId);
     }
 
     @PutMapping("/videos/{videoId}/relations")

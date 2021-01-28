@@ -1,11 +1,10 @@
 package com.ozragwort.moaon.springboot.service;
 
-import com.google.api.services.youtube.model.ChannelListResponse;
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.web.dto.*;
-import com.ozragwort.moaon.springboot.youtube.YoutubeApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,29 +22,25 @@ public class ChannelsService {
 
     private final CategoriesRepository categoriesRepository;
 
-    private final YoutubeApi youtubeApi;
-
     @Transactional
-    public String save(PostChannelsSaveRequestDto requestDto) {
+    public String save(ChannelsSaveRequestDto requestDto) {
 
-        if (channelsRepository.findByChannelId(requestDto.getChannelId()) != null) {
-            return null;
-        }
+        if (channelsRepository.findByChannelId(requestDto.getChannelId()) != null)
+            throw new IllegalArgumentException("Not empty = " + requestDto.getChannelId());
+        Categories categories = categoriesRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("no category = " + requestDto.getCategoryId()));
 
-        ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId());
-
-        ChannelsSaveRequestDto channelsSaveRequestDto = ChannelsSaveRequestDto.builder()
-                .categories(categoriesRepository.findById(requestDto.getCategoryId()).get())
-                .channelId(channelListResponse.getItems().get(0).getId())
-                .channelName(channelListResponse.getItems().get(0).getSnippet().getTitle())
-                .channelThumbnail(channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl())
-                .uploadsList(channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads())
-                .subscribers(channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue())
-                .bannerExternalUrl(channelListResponse.getItems().get(0).getBrandingSettings().isEmpty() ?
-                        null : channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl())
+        Channels channels = Channels.builder()
+                .categories(categories)
+                .channelId(requestDto.getChannelId())
+                .channelName(requestDto.getChannelName())
+                .channelThumbnail(requestDto.getChannelThumbnail())
+                .uploadsList(requestDto.getUploadsList())
+                .subscribers(requestDto.getSubscribers())
+                .bannerExternalUrl(requestDto.getBannerExternalUrl())
                 .build();
 
-        return channelsRepository.save(channelsSaveRequestDto.toEntity()).getChannelId();
+        return channelsRepository.save(channels).getChannelId();
     }
 
     @Transactional
@@ -58,21 +53,6 @@ public class ChannelsService {
                 requestDto.getSubscribers(),
                 requestDto.getBannerExternalUrl());
 
-        return channels.getChannelId();
-    }
-
-    @Transactional
-    public String refresh(String channelId) {
-        Channels channels = channelsRepository.findByChannelId(channelId);
-        if (channels == null) {
-            return null;
-        }
-        ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(channelId);
-        channels.update(channelListResponse.getItems().get(0).getSnippet().getTitle(),
-                channelListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
-                channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists().getUploads(),
-                channelListResponse.getItems().get(0).getStatistics().getSubscriberCount().intValue(),
-                channelListResponse.getItems().get(0).getBrandingSettings().getImage().getBannerExternalUrl());
         return channels.getChannelId();
     }
 
