@@ -67,6 +67,7 @@ public class VideoDeserializer {
                 video.setStatus(buildStatus((JSONObject) ob.get("status")));
                 video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
             } catch (NullPointerException e) {
+                System.out.printf("Video Deserializer build items [%s]%n", ob.get("id"));
                 e.getMessage();
             }
 
@@ -80,9 +81,13 @@ public class VideoDeserializer {
         VideoStatistics videoStatistics = new VideoStatistics();
 
         videoStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
-        videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
         videoStatistics.setFavoriteCount(new BigInteger((String) statistic.get("favoriteCount")));
-        if(statistic.get("likeCount") != null) {
+        if (statistic.containsKey("commentCount")) {
+            videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
+        } else {
+            videoStatistics.setCommentCount(BigInteger.ZERO);
+        }
+        if(statistic.containsKey("likeCount")) {
             videoStatistics.setLikeCount(new BigInteger((String) statistic.get("likeCount")));
             videoStatistics.setDislikeCount(new BigInteger((String) statistic.get("dislikeCount")));
         } else {
@@ -103,6 +108,7 @@ public class VideoDeserializer {
             videoStatus.setPrivacyStatus((String) status.get("privacyStatus"));
             videoStatus.setMadeForKids((Boolean) status.get("madeForKids"));
         } catch (NullPointerException e) {
+            System.out.println("Video Deserializer build Status");
             e.getMessage();
         }
 
