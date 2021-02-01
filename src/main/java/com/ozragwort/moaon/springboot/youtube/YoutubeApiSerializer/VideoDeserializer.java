@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
 part :  O   id
@@ -67,6 +68,7 @@ public class VideoDeserializer {
                 video.setStatus(buildStatus((JSONObject) ob.get("status")));
                 video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
             } catch (NullPointerException e) {
+                System.out.printf("Video Deserializer build items [%s]%n", ob.get("id"));
                 e.getMessage();
             }
 
@@ -80,9 +82,13 @@ public class VideoDeserializer {
         VideoStatistics videoStatistics = new VideoStatistics();
 
         videoStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
-        videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
         videoStatistics.setFavoriteCount(new BigInteger((String) statistic.get("favoriteCount")));
-        if(statistic.get("likeCount") != null) {
+        if (statistic.containsKey("commentCount")) {
+            videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
+        } else {
+            videoStatistics.setCommentCount(BigInteger.ZERO);
+        }
+        if(statistic.containsKey("likeCount")) {
             videoStatistics.setLikeCount(new BigInteger((String) statistic.get("likeCount")));
             videoStatistics.setDislikeCount(new BigInteger((String) statistic.get("dislikeCount")));
         } else {
@@ -103,6 +109,7 @@ public class VideoDeserializer {
             videoStatus.setPrivacyStatus((String) status.get("privacyStatus"));
             videoStatus.setMadeForKids((Boolean) status.get("madeForKids"));
         } catch (NullPointerException e) {
+            System.out.println("Video Deserializer build Status");
             e.getMessage();
         }
 
@@ -121,14 +128,16 @@ public class VideoDeserializer {
 
     private VideoSnippet buildSnippet(JSONObject snippet) {
         VideoSnippet videoSnippet = new VideoSnippet();
-        
+
+        List<String> tags = ((List<String>) snippet.get("tags")).stream().map(String::toLowerCase).distinct().collect(Collectors.toList());
+
         videoSnippet.setPublishedAt((String) snippet.get("publishedAt"));
         videoSnippet.setChannelId((String) snippet.get("channelId"));
         videoSnippet.setTitle((String) snippet.get("title"));
         videoSnippet.setDescription((String) snippet.get("description"));
         videoSnippet.setThumbnails(buildThumbnailDetails((JSONObject) snippet.get("thumbnails")));
         videoSnippet.setChannelTitle((String) snippet.get("channelTitle"));
-        videoSnippet.setTags((List<String>) snippet.get("tags"));
+        videoSnippet.setTags(tags);
         videoSnippet.setDefaultLanguage((String) snippet.get("defaultLanguage"));
         videoSnippet.setDefaultAudioLanguage((String) snippet.get("defaultAudioLanguage"));
         videoSnippet.setLocalized(buildLocalized((JSONObject) snippet.get("localized")));

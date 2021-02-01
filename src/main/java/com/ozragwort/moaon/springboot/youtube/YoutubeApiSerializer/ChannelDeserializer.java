@@ -64,6 +64,7 @@ public class ChannelDeserializer {
                 channel.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
                 channel.setBrandingSettings(buildBrandingSettings((JSONObject) ob.get("brandingSettings")));
             } catch (NullPointerException e) {
+                System.out.printf("Channel Deserializer build items [%s]%n", ob.get("id"));
                 e.getMessage();
             }
 
@@ -98,9 +99,9 @@ public class ChannelDeserializer {
 
         channelStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
         channelStatistics.setVideoCount(new BigInteger((String) statistic.get("videoCount")));
-        try {
+        if (statistic.containsKey("subscriberCount")) {
             channelStatistics.setSubscriberCount(new BigInteger((String) statistic.get("subscriberCount")));
-        } catch (NullPointerException e) {
+        } else {
             channelStatistics.setSubscriberCount(BigInteger.ZERO);
         }
 
@@ -152,11 +153,15 @@ public class ChannelDeserializer {
     private ThumbnailDetails buildThumbnailDetails(JSONObject thumbnails) {
         ThumbnailDetails thumbnailDetails = new ThumbnailDetails();
 
-        thumbnailDetails.setDefault(buildThumbnail((JSONObject) thumbnails.get("default")));
-        thumbnailDetails.setMedium(buildThumbnail((JSONObject) thumbnails.get("medium")));
-        thumbnailDetails.setHigh(buildThumbnail((JSONObject) thumbnails.get("high")));
-        thumbnailDetails.setStandard(buildThumbnail((JSONObject) thumbnails.get("standard")));
-        thumbnailDetails.setMaxres(buildThumbnail((JSONObject) thumbnails.get("maxres")));
+        try {
+            thumbnailDetails.setDefault(buildThumbnail((JSONObject) thumbnails.get("default")));
+            thumbnailDetails.setMedium(buildThumbnail((JSONObject) thumbnails.get("medium")));
+            thumbnailDetails.setHigh(buildThumbnail((JSONObject) thumbnails.get("high")));
+            thumbnailDetails.setStandard(buildThumbnail((JSONObject) thumbnails.get("standard")));
+            thumbnailDetails.setMaxres(buildThumbnail((JSONObject) thumbnails.get("maxres")));
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
 
         return thumbnailDetails;
     }
