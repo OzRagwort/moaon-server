@@ -56,6 +56,7 @@ public class PlaylistItemDeserializer {
                 playlistItem.setKind((String) ob.get("kind"));
                 playlistItem.setStatus(buildStatus((JSONObject) ob.get("status")));
             } catch (NullPointerException e) {
+                System.out.printf("Playlist Deserializer build items [%s]%n", ob.get("id"));
                 e.getMessage();
             }
 
