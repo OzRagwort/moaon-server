@@ -80,7 +80,7 @@ public class VideosService {
                 requestDto.getLikeCount(),
                 requestDto.getDislikeCount(),
                 requestDto.getCommentCount(),
-                requestDto.getTags());
+                requestDto.getTags().stream().map(String::new).distinct().collect(Collectors.toList()));
 
         return videos.getVideoId();
     }
