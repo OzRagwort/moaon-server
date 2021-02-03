@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VideosRepository extends JpaRepository<Videos, Long> {
@@ -54,5 +55,8 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     // 특정 tag를 가진 category의 비디오 가져오기
     @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags)")
     List<Videos> findTagByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+
+    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time")
+    List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
 
 }

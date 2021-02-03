@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -183,6 +184,15 @@ public class VideosService {
         }
 
         return relatedVideosResponseDtos;
+    }
+
+    @Transactional
+    public List<VideosResponseDto> findByPublishedDate(Long publishedDate, Pageable pageable) {
+        LocalDateTime convertedTime = ConvertUtcDateTime.nowTimeUnderHour(publishedDate.intValue());
+        return videosRepository.findByPublishedDate(convertedTime, pageable)
+                .stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional

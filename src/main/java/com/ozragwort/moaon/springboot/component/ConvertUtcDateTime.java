@@ -15,4 +15,8 @@ public class ConvertUtcDateTime {
         );
     }
 
+    public static LocalDateTime nowTimeUnderHour(int hour) {
+        return LocalDateTime.now(ZoneId.of("UTC")).plusHours(hour * -1);
+    }
+
 }
