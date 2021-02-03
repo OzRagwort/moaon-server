@@ -129,7 +129,12 @@ public class VideoDeserializer {
     private VideoSnippet buildSnippet(JSONObject snippet) {
         VideoSnippet videoSnippet = new VideoSnippet();
 
-        List<String> tags = ((List<String>) snippet.get("tags")).stream().map(String::new).distinct().collect(Collectors.toList());
+        List<String> tags;
+        try {
+            tags = ((List<String>) snippet.get("tags")).stream().map(String::new).distinct().collect(Collectors.toList());
+        } catch (NullPointerException e) {
+            tags = new ArrayList<>();
+        }
 
         videoSnippet.setPublishedAt((String) snippet.get("publishedAt"));
         videoSnippet.setChannelId((String) snippet.get("channelId"));
