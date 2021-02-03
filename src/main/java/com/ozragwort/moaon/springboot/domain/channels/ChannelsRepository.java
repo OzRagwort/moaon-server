@@ -28,4 +28,10 @@ public interface ChannelsRepository extends JpaRepository<Channels, Long> {
     @Query(value = "SELECT channels.* FROM channels, categories WHERE channels.categories_idx = :categories Order by rand() LIMIT :count", nativeQuery = true)
     List<Channels> findRandByCategoryIdx(@Param("categories") Categories categories, @Param("count") int count);
 
+    @Query("SELECT p FROM Channels p WHERE p.subscribers >= :subscribers and p.categories = :categories")
+    List<Channels> findBySubscribersOver(@Param("subscribers") int subscribers, @Param("categories") Categories categories);
+
+    @Query("SELECT p FROM Channels p WHERE p.subscribers <= :subscribers and p.categories = :categories")
+    List<Channels> findBySubscribersUnder(@Param("subscribers") int subscribers, @Param("categories") Categories categories);
+
 }

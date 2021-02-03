@@ -91,6 +91,20 @@ public class ChannelsService {
     }
 
     @Transactional
+    public List<ChannelsResponseDto> findBySubscribers(int subscribers, boolean subOverUnder, Long categoryId) {
+        Categories categories = categoriesRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("category is empty id=" + categoryId));
+
+        List<Channels> channels = subOverUnder ?
+                channelsRepository.findBySubscribersOver(subscribers, categories) :
+                channelsRepository.findBySubscribersUnder(subscribers, categories);
+
+        return channels.stream()
+                .map(ChannelsResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public List<ChannelsResponseDto> findAll() {
         return channelsRepository.findAll().stream()
                 .map(ChannelsResponseDto::new)
