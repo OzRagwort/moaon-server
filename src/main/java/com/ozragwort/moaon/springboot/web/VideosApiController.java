@@ -5,6 +5,7 @@ import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,24 +72,14 @@ public class VideosApiController {
         } else if (videoId != null) {
             return videosService.findByVideoId(videoId);
         } else if (channelId != null) {
-            if (sort == null) {
-                return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-            } else if (sort.equals("asc")) {
-                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending()));
-            } else if (sort.equals("desc")) {
-                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending()));
-            } else if (sort.equals("popular")) {
-                return videosService.findByChannelIdSort(channelId, PageRequest.of(pageCount - 1, size, Sort.by("viewCount").descending()));
-            } else {
-                return videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
-            }
+            return videosService.findByChannelId(channelId, sortCheck(size, pageCount, sort));
         } else if (categoryId != null) {
             if (tags != null) {
-                return searchService.searchVideosByTags(tags, categoryId, PageRequest.of(pageCount - 1, size));
+                return searchService.searchVideosByTags(tags, categoryId, sortCheck(size, pageCount, sort));
             } else if(hour != null) {
-                return videosService.findByPublishedDate(hour, PageRequest.of(pageCount - 1, size, Sort.by("viewCount").descending()));
+                return videosService.findByPublishedDate(hour, sortCheck(size, pageCount, sort));
             } else {
-                return videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+                return videosService.findByCategoryIdx(categoryId, sortCheck(size, pageCount, sort));
             }
         } else if (randomChannelId != null) {
             return videosService.findByChannelIdRand(randomChannelId, size);
@@ -98,7 +89,7 @@ public class VideosApiController {
             return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
         }
         else {
-            return videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            return videosService.findAll(sortCheck(size, pageCount, sort));
         }
     }
 
@@ -110,6 +101,20 @@ public class VideosApiController {
     @DeleteMapping("/videos/{videoId}/relations")
     public String deleteRelations(@PathVariable String videoId) {
         return videosService.deleteRelations(videoId);
+    }
+
+    private Pageable sortCheck(int size, int pageCount, String sort) {
+        if (sort == null) {
+            return PageRequest.of(pageCount - 1, size);
+        } else if (sort.equals("asc")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").ascending());
+        } else if (sort.equals("desc")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending());
+        } else if (sort.equals("popular")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("viewCount").descending());
+        } else {
+            return PageRequest.of(pageCount - 1, size);
+        }
     }
 
 }
