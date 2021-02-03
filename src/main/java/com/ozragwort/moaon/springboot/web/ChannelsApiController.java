@@ -4,6 +4,7 @@ import com.ozragwort.moaon.springboot.service.ChannelsService;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class ChannelsApiController {
             @RequestParam(value = "randomCategory", required = false) Long randomCategoryId,
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
+            @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "subscribers", defaultValue = "0") int subscribers,
             @RequestParam(value = "subscribersOver", defaultValue = "true") boolean subscribersOver
     ) {
@@ -50,18 +52,32 @@ public class ChannelsApiController {
             if (subscribers != 0) {
                 return channelsService.findBySubscribers(subscribers, subscribersOver, categoryId);
             } else {
-                return channelsService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+                return channelsService.findByCategoryIdx(categoryId, sortCheck(size, pageCount, sort));
             }
         } else if (randomCategoryId != null) {
             return channelsService.findByCategoryIdxRand(randomCategoryId, size);
         } else {
-            return channelsService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            return channelsService.findAll(sortCheck(size, pageCount, sort));
         }
     }
 
     @DeleteMapping("/channels/{channelId}")
     public String delete(@PathVariable String channelId) {
         return channelsService.delete(channelId);
+    }
+
+    private Pageable sortCheck(int size, int pageCount, String sort) {
+        if (sort == null) {
+            return PageRequest.of(pageCount - 1, size);
+        } else if (sort.equals("asc")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("idx").ascending());
+        } else if (sort.equals("desc")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("idx").descending());
+        } else if (sort.equals("popular")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("subscribers").descending());
+        } else {
+            return PageRequest.of(pageCount - 1, size);
+        }
     }
 
 }
