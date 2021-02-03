@@ -53,7 +53,7 @@ public class YoutubeService {
 
         if (videos != null) {
             ModifiedDurationCheck check = new ModifiedDurationCheck();
-            return check.ModifiedDurationTimeUnder6hour(videos.getModifiedDate()) ?
+            return check.updateTimeCheck(videos.getVideoPublishedDate(), videos.getModifiedDate()) ?
                     videos.getVideoId() : updateVideos(videoListResponse, videos);
         } else {
             return saveVideos(videoListResponse);
