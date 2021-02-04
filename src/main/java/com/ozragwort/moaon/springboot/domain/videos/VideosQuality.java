@@ -27,24 +27,24 @@ public class VideosQuality extends BaseTimeEntity {
     @Column(name = "videos_quality_channelId")
     private String channelId;
 
-    @Column(name = "videos_quality_point")
-    private double point;
+    @Column(name = "videos_quality_score")
+    private double score;
 
     @Builder
     public VideosQuality(Videos videos,
                          String channelId,
-                         double point) {
+                         double score) {
         this.videos = videos;
         this.channelId = channelId;
-        this.point = point;
+        this.score = score;
     }
 
     public void update(Videos videos,
                        String channelId,
-                       double point) {
+                       double score) {
         this.videos = videos;
         this.channelId = channelId;
-        this.point = point;
+        this.score = score;
     }
 
 }
