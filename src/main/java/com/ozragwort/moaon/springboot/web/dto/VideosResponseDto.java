@@ -4,7 +4,6 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,6 +45,8 @@ public class VideosResponseDto {
 
     private int commentCount;
 
+    private double score;
+
     private List<String> tags;
 
     public VideosResponseDto(Videos videos) {
@@ -65,6 +66,7 @@ public class VideosResponseDto {
         this.likeCount = videos.getLikeCount();
         this.dislikeCount = videos.getDislikeCount();
         this.commentCount = videos.getCommentCount();
+        this.score = videos.getScore();
         this.tags = videos.getTags().stream().map(String::new).collect(Collectors.toList());
     }
 

@@ -10,14 +10,13 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -54,8 +53,8 @@ public class SearchService {
     }
 
     @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, PageRequest pageRequest) {
-        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageRequest);
+    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, Pageable pageable) {
+        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageable);
         return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());

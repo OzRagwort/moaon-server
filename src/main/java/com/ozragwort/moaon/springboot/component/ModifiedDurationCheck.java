@@ -11,14 +11,25 @@ import java.time.temporal.ChronoUnit;
 @Component
 public class ModifiedDurationCheck {
 
-    private int checkMinutes = 360;
+    private int checkModifiedDateMinutes = 360;
+    private int checkPublishedDateMinutes = 10;
 
-    public boolean ModifiedDurationTimeUnder6hour(LocalDateTime modifiedDate) {
+    public boolean updateTimeCheck(LocalDateTime publishedDate, LocalDateTime modifiedDate) {
         LocalDateTime now = LocalDateTime.now();
-        Period period = Period.between(modifiedDate.toLocalDate(), now.toLocalDate());
-        long minutes = ChronoUnit.MINUTES.between(modifiedDate.toLocalTime(), now.toLocalTime());
+        Period periodModifiedDate = Period.between(modifiedDate.toLocalDate(), now.toLocalDate());
+        long minutesModifiedDate = ChronoUnit.MINUTES.between(modifiedDate.toLocalTime(), now.toLocalTime());
 
-        return (period.isZero() && minutes < checkMinutes);
+        Period periodPublishedDate = Period.between(publishedDate.toLocalDate(), now.toLocalDate());
+        long minutesPublishedDate = ChronoUnit.MINUTES.between(publishedDate.toLocalTime(), now.toLocalTime());
+
+        // 영상 업로드 3일 이내인 경우
+        if (periodPublishedDate.getDays() < 3) {
+            // 최근 수정일이 10분 이내면 갱신
+            return periodModifiedDate.isZero() && minutesModifiedDate < checkPublishedDateMinutes;
+        } else {
+            // 최근 수정일이 360분 이내면 갱신
+            return periodModifiedDate.isZero() && minutesModifiedDate < checkModifiedDateMinutes;
+        }
     }
 
 }
