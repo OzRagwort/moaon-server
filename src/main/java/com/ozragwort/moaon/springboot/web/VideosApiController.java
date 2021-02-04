@@ -61,6 +61,8 @@ public class VideosApiController {
             @RequestParam(value = "randomCategory", required = false) Long randomCategoryId,
             @RequestParam(value = "search", required = false) String keyword,
             @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "overAvg", defaultValue = "false") boolean avg,
+            @RequestParam(value = "topScore", defaultValue = "0") double score,
             // 조건
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
@@ -83,11 +85,15 @@ public class VideosApiController {
             }
         } else if (randomChannelId != null) {
             return videosService.findByChannelIdRand(randomChannelId, size);
-        } else if (randomCategoryId != null) {
-            return videosService.findByCategoryIdxRand(randomCategoryId, size);
-        } else if (keyword != null) {
-            return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
-        }
+    } else if (randomCategoryId != null) {
+        return videosService.findByCategoryIdxRand(randomCategoryId, size);
+    } else if (avg) {
+        return videosService.findOverAvgRandByScore(size);
+    } else if (score != 0) {
+        return videosService.findByScore(score, sortCheck(size, pageCount, sort));
+    } else if (keyword != null) {
+        return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
+    }
         else {
             return videosService.findAll(sortCheck(size, pageCount, sort));
         }
@@ -112,6 +118,10 @@ public class VideosApiController {
             return PageRequest.of(pageCount - 1, size, Sort.by("videoPublishedDate").descending());
         } else if (sort.equals("popular")) {
             return PageRequest.of(pageCount - 1, size, Sort.by("viewCount").descending());
+        } else if (sort.equals("asc-score")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("score").ascending());
+        } else if (sort.equals("desc-score")) {
+            return PageRequest.of(pageCount - 1, size, Sort.by("score").descending());
         } else {
             return PageRequest.of(pageCount - 1, size);
         }

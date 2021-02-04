@@ -1,7 +1,7 @@
 package com.ozragwort.moaon.springboot.web;
 
 import com.ozragwort.moaon.springboot.service.ChannelsService;
-import com.ozragwort.moaon.springboot.service.VideosQualityService;
+import com.ozragwort.moaon.springboot.service.VideosService;
 import com.ozragwort.moaon.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +18,7 @@ public class ChannelsApiController {
 
     private final ChannelsService channelsService;
 
-    private final VideosQualityService videosQualityService;
+    private final VideosService videosService;
 
     @PostMapping("/channels")
     public String save(@RequestBody ChannelsSaveRequestDto requestDto) {
@@ -37,7 +37,7 @@ public class ChannelsApiController {
 
     @GetMapping("/channels/{channelId}/videos-quality")
     public double findQualityByChannelId(@PathVariable String channelId) {
-        return videosQualityService.getScoreAvgByChannelId(channelId);
+        return videosService.getScoreAvgByChannelId(channelId);
     }
 
     @GetMapping("/channels")

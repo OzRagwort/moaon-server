@@ -5,6 +5,7 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
 import com.ozragwort.moaon.springboot.component.ModifiedDurationCheck;
+import com.ozragwort.moaon.springboot.component.ScoreCalculation;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
@@ -31,6 +32,8 @@ public class YoutubeService {
     private final CategoriesRepository categoriesRepository;
 
     private final YoutubeApi youtubeApi;
+
+    private final ScoreCalculation scoreCalculation;
 
     @Transactional
     public String updateChannelByYoutube(YoutubeChannelsSaveRequestDto requestDto) {
@@ -116,6 +119,11 @@ public class YoutubeService {
         if (channels == null)
             throw new IllegalArgumentException("Channel is null = " + videoListResponse.getItems().get(0).getSnippet().getChannelId());
 
+        double score = scoreCalculation.makeScore(videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue());
+
         Videos videos = Videos.builder()
                 .channels(channels)
                 .videoId(videoListResponse.getItems().get(0).getId())
@@ -129,6 +137,7 @@ public class YoutubeService {
                 .likeCount(videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue())
                 .dislikeCount(videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue())
                 .commentCount(videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue())
+                .score(score)
                 .tags(videoListResponse.getItems().get(0).getSnippet().getTags())
                 .build();
 
@@ -136,6 +145,11 @@ public class YoutubeService {
     }
 
     private String updateVideos(VideoListResponse videoListResponse, Videos videos) {
+        double score = scoreCalculation.makeScore(videoListResponse.getItems().get(0).getStatistics().getViewCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
+                videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue());
+
         videos.update(videoListResponse.getItems().get(0).getSnippet().getTitle(),
                 videoListResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl(),
                 videoListResponse.getItems().get(0).getSnippet().getDescription(),
@@ -146,6 +160,7 @@ public class YoutubeService {
                 videoListResponse.getItems().get(0).getStatistics().getLikeCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getDislikeCount().intValue(),
                 videoListResponse.getItems().get(0).getStatistics().getCommentCount().intValue(),
+                score,
                 videoListResponse.getItems().get(0).getSnippet().getTags());
         return videos.getVideoId();
     }

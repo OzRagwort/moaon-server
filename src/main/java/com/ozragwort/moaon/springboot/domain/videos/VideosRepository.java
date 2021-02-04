@@ -59,4 +59,16 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time")
     List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
 
+    @Query("SELECT avg(p.score) FROM Videos p ")
+    double getScoreAvg();
+
+    @Query("SELECT avg(p.score) FROM Videos p WHERE p.channels.channelId = :channelId GROUP BY p.channels.channelId")
+    double getScoreAvgByChannelId(@Param("channelId") String channelId);
+
+    @Query("SELECT p FROM Videos p WHERE p.score >= :score")
+    List<Videos> findByScore(@Param("score") double score, Pageable pageable);
+
+    @Query(value = "SELECT * FROM videos WHERE videos_score >= :score ORDER BY rand() LIMIT :count", nativeQuery = true)
+    List<Videos> findOverAvgRandByScore(@Param("score") double score, @Param("count") int count);
+
 }

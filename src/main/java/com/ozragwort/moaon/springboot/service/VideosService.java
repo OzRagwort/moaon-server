@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.service;
 
 import com.ozragwort.moaon.springboot.component.CheckIdType;
 import com.ozragwort.moaon.springboot.component.ConvertUtcDateTime;
+import com.ozragwort.moaon.springboot.component.ScoreCalculation;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
@@ -31,6 +32,8 @@ public class VideosService {
 
     private final YoutubeApi youtubeApi;
 
+    private final ScoreCalculation scoreCalculation;
+
     @Transactional
     public String save(VideosSaveRequestDto requestDto) {
 
@@ -39,6 +42,8 @@ public class VideosService {
         Channels channels = channelsRepository.findByChannelId(requestDto.getChannelId());
         if (channels == null)
             throw new IllegalArgumentException("no channel = " + requestDto.getChannelId());
+
+        double score = scoreCalculation.makeScore(requestDto.getViewCount(),requestDto.getLikeCount(),requestDto.getDislikeCount(),requestDto.getCommentCount());
 
         Videos videos = Videos.builder()
                 .videoDescription(requestDto.getVideoDescription())
@@ -53,6 +58,7 @@ public class VideosService {
                 .likeCount(requestDto.getLikeCount())
                 .dislikeCount(requestDto.getDislikeCount())
                 .commentCount(requestDto.getCommentCount())
+                .score(score)
                 .tags(requestDto.getTags())
                 .build();
 
@@ -71,6 +77,8 @@ public class VideosService {
     public String update(String videoId, VideosUpdateRequestDto requestDto) {
         Videos videos = videosRepository.findByVideoId(videoId);
 
+        double score = scoreCalculation.makeScore(requestDto.getViewCount(),requestDto.getLikeCount(),requestDto.getDislikeCount(),requestDto.getCommentCount());
+
         videos.update(requestDto.getVideoName(),
                 requestDto.getVideoThumbnail(),
                 requestDto.getVideoDescription(),
@@ -81,6 +89,7 @@ public class VideosService {
                 requestDto.getLikeCount(),
                 requestDto.getDislikeCount(),
                 requestDto.getCommentCount(),
+                score,
                 requestDto.getTags().stream().map(String::new).distinct().collect(Collectors.toList()));
 
         return videos.getVideoId();
@@ -98,6 +107,11 @@ public class VideosService {
         Videos videos = videosRepository.findByVideoId(videoId);
         videos.addRelations(requestDto.getRelatedVideo());
         return videos.getVideoId();
+    }
+
+    @Transactional
+    public double getScoreAvgByChannelId(String channelId) {
+        return videosRepository.getScoreAvgByChannelId(channelId);
     }
 
     @Transactional
@@ -157,6 +171,21 @@ public class VideosService {
     }
 
     @Transactional
+    public List<VideosResponseDto> findByScore(double score, Pageable pageable) {
+        return videosRepository.findByScore(score, pageable).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<VideosResponseDto> findOverAvgRandByScore(int size) {
+        double avg = videosRepository.getScoreAvg();
+        return videosRepository.findOverAvgRandByScore(avg, size).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public List<VideosResponseDto> findAll() {
         return videosRepository.findAll().stream()
                 .map(VideosResponseDto::new)
@@ -178,7 +207,7 @@ public class VideosService {
 
         for (String relatedVideo : relatedVideos) {
             Videos v = videosRepository.findByVideoId(relatedVideo);
-            if (v != null && videos.getChannels().getCategories().getIdx() == v.getChannels().getCategories().getIdx()){
+            if (v != null && videos.getChannels().getCategories().getIdx().equals(v.getChannels().getCategories().getIdx())){
                 relatedVideosResponseDtos.add(new RelatedVideosResponseDto(v));
             }
         }
@@ -220,8 +249,8 @@ public class VideosService {
         List<Channels> list = new ArrayList<>();
         String[] arr = channelId.split(",");
 
-        for(int i = 0 ; i < arr.length ; i++) {
-            list.add(channelsRepository.findByChannelId(arr[i]));
+        for (String s : arr) {
+            list.add(channelsRepository.findByChannelId(s));
         }
 
         return list;
