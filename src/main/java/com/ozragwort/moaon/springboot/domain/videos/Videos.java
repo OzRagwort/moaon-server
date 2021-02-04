@@ -63,6 +63,9 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
+    @Column(name = "videos_score")
+    private double score;
+
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(
             name = "videos_tags",
@@ -94,6 +97,7 @@ public class Videos extends BaseTimeEntity {
                   int likeCount,
                   int dislikeCount,
                   int commentCount,
+                  double score,
                   List<String> tags) {
         this.channels = channels;
         this.videoId = videoId;
@@ -107,6 +111,7 @@ public class Videos extends BaseTimeEntity {
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
+        this.score = score;
         this.tags = tags;
     }
 
@@ -135,6 +140,7 @@ public class Videos extends BaseTimeEntity {
                        int likeCount,
                        int dislikeCount,
                        int commentCount,
+                       double score,
                        List<String> tags) {
         this.videoName = videoName;
         this.videoThumbnail = videoThumbnail;
@@ -146,6 +152,7 @@ public class Videos extends BaseTimeEntity {
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
+        this.score = score;
         this.tags.clear();
         this.tags = tags;
     }

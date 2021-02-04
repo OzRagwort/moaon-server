@@ -129,13 +129,20 @@ public class VideoDeserializer {
     private VideoSnippet buildSnippet(JSONObject snippet) {
         VideoSnippet videoSnippet = new VideoSnippet();
 
+        List<String> tags;
+        try {
+            tags = ((List<String>) snippet.get("tags")).stream().map(String::new).distinct().collect(Collectors.toList());
+        } catch (NullPointerException e) {
+            tags = new ArrayList<>();
+        }
+
         videoSnippet.setPublishedAt((String) snippet.get("publishedAt"));
         videoSnippet.setChannelId((String) snippet.get("channelId"));
         videoSnippet.setTitle((String) snippet.get("title"));
         videoSnippet.setDescription((String) snippet.get("description"));
         videoSnippet.setThumbnails(buildThumbnailDetails((JSONObject) snippet.get("thumbnails")));
         videoSnippet.setChannelTitle((String) snippet.get("channelTitle"));
-        videoSnippet.setTags((List<String>) snippet.get("tags"));
+        videoSnippet.setTags(tags);
         videoSnippet.setDefaultLanguage((String) snippet.get("defaultLanguage"));
         videoSnippet.setDefaultAudioLanguage((String) snippet.get("defaultAudioLanguage"));
         videoSnippet.setLocalized(buildLocalized((JSONObject) snippet.get("localized")));
