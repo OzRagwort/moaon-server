@@ -80,20 +80,20 @@ public class VideosApiController {
                 return searchService.searchVideosByTags(tags, categoryId, sortCheck(size, pageCount, sort));
             } else if(hour != null) {
                 return videosService.findByPublishedDate(hour, sortCheck(size, pageCount, sort));
+            } else if (avg) {
+                return videosService.findOverAvgRandByScore(size);
+            } else if (score != 0) {
+                return videosService.findByScore(score, sortCheck(size, pageCount, sort));
+            } else if (keyword != null) {
+                return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
             } else {
                 return videosService.findByCategoryIdx(categoryId, sortCheck(size, pageCount, sort));
             }
         } else if (randomChannelId != null) {
             return videosService.findByChannelIdRand(randomChannelId, size);
-    } else if (randomCategoryId != null) {
-        return videosService.findByCategoryIdxRand(randomCategoryId, size);
-    } else if (avg) {
-        return videosService.findOverAvgRandByScore(size);
-    } else if (score != 0) {
-        return videosService.findByScore(score, sortCheck(size, pageCount, sort));
-    } else if (keyword != null) {
-        return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
-    }
+        } else if (randomCategoryId != null) {
+            return videosService.findByCategoryIdxRand(randomCategoryId, size);
+        }
         else {
             return videosService.findAll(sortCheck(size, pageCount, sort));
         }
