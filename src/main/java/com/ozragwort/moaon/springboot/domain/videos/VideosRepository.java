@@ -32,7 +32,7 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories ORDER BY RAND()")
     List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
     // 특정 tag를 가진 category의 비디오 가져오기
