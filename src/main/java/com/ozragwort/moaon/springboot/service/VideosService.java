@@ -134,45 +134,42 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findByChannelId(String channelId, Pageable pageable) {
+    public List<VideosResponseDto> findByChannelId(String channelId, boolean random, Pageable pageable) {
         List<Channels> channelsList = StringToListChannels(channelId);
-        return videosRepository.findByChannelId(channelsList, pageable).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
+
+        if (random) {
+            return videosRepository.findRandByChannelId(channelsList, pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            return videosRepository.findByChannelId(channelsList, pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Transactional
-    public List<VideosResponseDto> findByChannelIdSort(String channelId, Pageable pageable) {
-        List<Channels> channelsList = StringToListChannels(channelId);
-        return videosRepository.findByChannelIdSort(channelsList, pageable).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
+    public List<VideosResponseDto> findByCategoryIdx(Long categoryIdx, boolean random, Pageable pageable) {
+        if (random) {
+            return videosRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            return videosRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
+                    .map(VideosResponseDto::new)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Transactional
-    public List<VideosResponseDto> findByChannelIdRand(String channelId, int count) {
-        return videosRepository.findRandByChannelId(channelsRepository.findByChannelId(channelId), count).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<VideosResponseDto> findByCategoryIdx(Long categoryIdx, Pageable pageable) {
-        return videosRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<VideosResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
-        return videosRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), count).stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<VideosResponseDto> findByScore(double score, Pageable pageable) {
-        return videosRepository.findByScore(score, pageable).stream()
+    public List<VideosResponseDto> findByScore(double score, boolean random, Pageable pageable) {
+        List<Videos> videos;
+        if (random) {
+            videos = videosRepository.findRandByScore(score, pageable);
+        } else {
+            videos = videosRepository.findByScore(score, pageable);
+        }
+        return videos.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -216,10 +213,15 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findByPublishedDate(Long publishedDate, Pageable pageable) {
+    public List<VideosResponseDto> findByPublishedDate(Long publishedDate, boolean random, Pageable pageable) {
         LocalDateTime convertedTime = ConvertUtcDateTime.nowTimeUnderHour(publishedDate.intValue());
-        return videosRepository.findByPublishedDate(convertedTime, pageable)
-                .stream()
+        List<Videos> videos;
+        if (random) {
+            videos = videosRepository.findRandByPublishedDate(convertedTime, pageable);
+        } else {
+            videos = videosRepository.findByPublishedDate(convertedTime, pageable);
+        }
+        return videos.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }

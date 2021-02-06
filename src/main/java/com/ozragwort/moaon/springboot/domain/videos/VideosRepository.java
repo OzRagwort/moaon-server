@@ -23,41 +23,30 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.videoId = :videoId")
     Videos findByVideoId(@Param("videoId") String videoId);
 
-    // 미사용
-    @Query("SELECT p FROM Videos p WHERE p.channels = :channels")
-    List<Videos> findByChannelId(@Param("channels") Channels channels);
-
     @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
     List<Videos> findByChannelId(@Param("channels") List<Channels> channels, Pageable pageable);
 
-    // 미사용
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
-    List<Videos> findByCategoryIdx(@Param("categories") Categories categories);
+    @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels) ORDER BY RAND()")
+    List<Videos> findRandByChannelId(@Param("channels") List<Channels> channels, Pageable pageable);
 
     @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
-    // find random(native)
-    @Query(value = "SELECT videos.* FROM videos, channels WHERE channels.channels_idx = videos.channels_idx and channels.channels_idx = :channels Order by rand() LIMIT :count", nativeQuery = true)
-    List<Videos> findRandByChannelId(@Param("channels") Channels channels, @Param("count") int count);
-
-    @Query(value = "SELECT videos.* FROM videos, channels WHERE channels.channels_idx = videos.channels_idx and channels.categories_idx = :categories Order by rand() LIMIT :count", nativeQuery = true)
-    List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, @Param("count") int count);
-
-    // find Sorting
-    @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels)")
-    List<Videos> findByChannelIdSort(@Param("channels") List<Channels> channels, Pageable pageable);
-
-//    fulltext search 임시 보류
-//    @Query(value = "SELECT * FROM videos WHERE match(video_name, video_description) against(':keyword') LIMIT :count", nativeQuery = true)
-//    List<Videos> searchVideos(@Param("keyword") String keyword, @Param("count") int count);
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
+    List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
     // 특정 tag를 가진 category의 비디오 가져오기
     @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags)")
     List<Videos> findTagByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
 
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags) ORDER BY RAND()")
+    List<Videos> findRandTagByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+
     @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time")
     List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
+
+    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time ORDER BY RAND()")
+    List<Videos> findRandByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
 
     @Query("SELECT avg(p.score) FROM Videos p ")
     double getScoreAvg();
@@ -67,6 +56,9 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
 
     @Query("SELECT p FROM Videos p WHERE p.score >= :score")
     List<Videos> findByScore(@Param("score") double score, Pageable pageable);
+
+    @Query("SELECT p FROM Videos p WHERE p.score >= :score ORDER BY RAND()")
+    List<Videos> findRandByScore(@Param("score") double score, Pageable pageable);
 
     @Query(value = "SELECT * FROM videos WHERE videos_score >= :score ORDER BY rand() LIMIT :count", nativeQuery = true)
     List<Videos> findOverAvgRandByScore(@Param("score") double score, @Param("count") int count);

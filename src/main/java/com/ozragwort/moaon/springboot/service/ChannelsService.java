@@ -76,28 +76,33 @@ public class ChannelsService {
     }
 
     @Transactional
-    public List<ChannelsResponseDto> findByCategoryIdx(Long categoryIdx, Pageable pageable) {
-
-        return channelsRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
-                .map(ChannelsResponseDto::new)
-                .collect(Collectors.toList());
+    public List<ChannelsResponseDto> findByCategoryIdx(Long categoryIdx, boolean random, Pageable pageable) {
+        if (random) {
+            return channelsRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
+                    .map(ChannelsResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            return channelsRepository.findByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), pageable).stream()
+                    .map(ChannelsResponseDto::new)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Transactional
-    public List<ChannelsResponseDto> findByCategoryIdxRand(Long categoryIdx, int count) {
-        return channelsRepository.findRandByCategoryIdx(categoriesRepository.findById(categoryIdx).get(), count).stream()
-                .map(ChannelsResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<ChannelsResponseDto> findBySubscribers(int subscribers, boolean subOverUnder, Long categoryId) {
+    public List<ChannelsResponseDto> findBySubscribers(int subscribers, boolean subOverUnder, Long categoryId, boolean random, Pageable pageable) {
         Categories categories = categoriesRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("category is empty id=" + categoryId));
 
-        List<Channels> channels = subOverUnder ?
-                channelsRepository.findBySubscribersOver(subscribers, categories) :
-                channelsRepository.findBySubscribersUnder(subscribers, categories);
+        List<Channels> channels;
+        if (random) {
+            channels = subOverUnder ?
+                    channelsRepository.findOverRandBySubscribers(subscribers, categories, pageable) :
+                    channelsRepository.findUnderRandBySubscribers(subscribers, categories, pageable);
+        } else {
+            channels = subOverUnder ?
+                    channelsRepository.findOverBySubscribers(subscribers, categories, pageable) :
+                    channelsRepository.findUnderBySubscribers(subscribers, categories, pageable);
+        }
 
         return channels.stream()
                 .map(ChannelsResponseDto::new)

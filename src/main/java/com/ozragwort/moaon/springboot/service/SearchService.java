@@ -53,8 +53,13 @@ public class SearchService {
     }
 
     @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, Pageable pageable) {
-        List<Videos> videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageable);
+    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, boolean random, Pageable pageable) {
+        List<Videos> videosList;
+        if (random) {
+            videosList = videosRepository.findRandTagByKeyword(keywords, categoryIdx, pageable);
+        } else {
+            videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageable);
+        }
         return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
