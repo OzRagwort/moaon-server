@@ -45,12 +45,12 @@ public class ChannelsApiController {
             @RequestParam(value = "no", required = false) Long idx,
             @RequestParam(value = "id", required = false) String channelId,
             @RequestParam(value = "category", required = false) Long categoryId,
-            @RequestParam(value = "randomCategory", required = false) Long randomCategoryId,
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "subscribers", defaultValue = "0") int subscribers,
-            @RequestParam(value = "subscribersOver", defaultValue = "true") boolean subscribersOver
+            @RequestParam(value = "subscribersOver", defaultValue = "true") boolean subscribersOver,
+            @RequestParam(value = "random", defaultValue = "false") boolean random
     ) {
         if (idx != null) {
             return channelsService.findById(idx);
@@ -58,12 +58,10 @@ public class ChannelsApiController {
             return channelsService.findByChannelId(channelId);
         } else if (categoryId != null) {
             if (subscribers != 0) {
-                return channelsService.findBySubscribers(subscribers, subscribersOver, categoryId);
+                return channelsService.findBySubscribers(subscribers, subscribersOver, categoryId, random, sortCheck(size, pageCount, sort));
             } else {
-                return channelsService.findByCategoryIdx(categoryId, sortCheck(size, pageCount, sort));
+                return channelsService.findByCategoryIdx(categoryId, random, sortCheck(size, pageCount, sort));
             }
-        } else if (randomCategoryId != null) {
-            return channelsService.findByCategoryIdxRand(randomCategoryId, size);
         } else {
             return channelsService.findAll(sortCheck(size, pageCount, sort));
         }

@@ -67,32 +67,29 @@ public class VideosApiController {
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
             @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "publishedDateUnderHour", required = false) Long hour
+            @RequestParam(value = "publishedDateUnderHour", required = false) Long hour,
+            @RequestParam(value = "random", defaultValue = "false") boolean random
     ) {
         if (idx != null) {
             return videosService.findById(idx);
         } else if (videoId != null) {
             return videosService.findByVideoId(videoId);
         } else if (channelId != null) {
-            return videosService.findByChannelId(channelId, sortCheck(size, pageCount, sort));
+            return videosService.findByChannelId(channelId, random, sortCheck(size, pageCount, sort));
         } else if (categoryId != null) {
             if (tags != null) {
-                return searchService.searchVideosByTags(tags, categoryId, sortCheck(size, pageCount, sort));
+                return searchService.searchVideosByTags(tags, categoryId, random, sortCheck(size, pageCount, sort));
             } else if(hour != null) {
-                return videosService.findByPublishedDate(hour, sortCheck(size, pageCount, sort));
+                return videosService.findByPublishedDate(hour, random, sortCheck(size, pageCount, sort));
             } else if (avg) {
                 return videosService.findOverAvgRandByScore(size);
             } else if (score != 0) {
-                return videosService.findByScore(score, sortCheck(size, pageCount, sort));
+                return videosService.findByScore(score, random, sortCheck(size, pageCount, sort));
             } else if (keyword != null) {
                 return searchService.searchVideosByKeywords(keyword, (pageCount - 1) * size, size);
             } else {
-                return videosService.findByCategoryIdx(categoryId, sortCheck(size, pageCount, sort));
+                return videosService.findByCategoryIdx(categoryId, random, sortCheck(size, pageCount, sort));
             }
-        } else if (randomChannelId != null) {
-            return videosService.findByChannelIdRand(randomChannelId, size);
-        } else if (randomCategoryId != null) {
-            return videosService.findByCategoryIdxRand(randomCategoryId, size);
         }
         else {
             return videosService.findAll(sortCheck(size, pageCount, sort));

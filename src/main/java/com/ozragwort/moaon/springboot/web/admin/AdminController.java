@@ -93,7 +93,7 @@ public class AdminController {
         } else if (channelId != null) {
             channels = channelsService.findByChannelId(channelId);
         } else if (categoryId != null) {
-            channels = channelsService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            channels = channelsService.findByCategoryIdx(categoryId, false, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         } else {
             channels = channelsService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         }
@@ -133,9 +133,9 @@ public class AdminController {
         else if (videoId != null)
             videos = videosService.findByVideoId(videoId);
         else if (channelId != null)
-            videos = videosService.findByChannelId(channelId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            videos = videosService.findByChannelId(channelId, false, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         else if (categoryId != null)
-            videos = videosService.findByCategoryIdx(categoryId, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
+            videos = videosService.findByCategoryIdx(categoryId, false, PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         else
             videos = videosService.findAll(PageRequest.of(pageCount - 1, size, Sort.by("idx").descending()));
         model.addAttribute("videoList", videos);
