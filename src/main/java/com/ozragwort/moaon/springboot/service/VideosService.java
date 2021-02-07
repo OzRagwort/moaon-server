@@ -115,6 +115,16 @@ public class VideosService {
     }
 
     @Transactional
+    public List<String> getTagsByChannelId(String channelId, Pageable pageable) {
+        Channels channels = channelsRepository.findByChannelId(channelId);
+        if (channels == null) {
+            throw new IllegalArgumentException("no channel = " + channelId);
+        } else {
+            return videosRepository.getTagsByChannelId(channelId, pageable);
+        }
+    }
+
+    @Transactional
     public List<VideosResponseDto> findById(Long idx) {
         Videos videos = videosRepository.findById(idx)
                 .orElseThrow(() -> new IllegalArgumentException("id가 없음. id=" + idx));

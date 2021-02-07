@@ -56,9 +56,9 @@ public class SearchService {
     public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, boolean random, Pageable pageable) {
         List<Videos> videosList;
         if (random) {
-            videosList = videosRepository.findRandTagByKeyword(keywords, categoryIdx, pageable);
+            videosList = videosRepository.findRandTagsByKeyword(keywords, categoryIdx, pageable);
         } else {
-            videosList = videosRepository.findTagByKeyword(keywords, categoryIdx, pageable);
+            videosList = videosRepository.findTagsByKeyword(keywords, categoryIdx, pageable);
         }
         return videosList.stream()
                 .map(VideosResponseDto::new)
