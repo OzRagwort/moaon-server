@@ -40,6 +40,12 @@ public class ChannelsApiController {
         return videosService.getScoreAvgByChannelId(channelId);
     }
 
+    @GetMapping("/channels/{channelId}/videos-tags")
+    public List<String> getTagsByChannelId(@PathVariable String channelId,
+                                           @RequestParam(value = "maxResults", defaultValue = "10") int size) {
+        return videosService.getTagsByChannelId(channelId, PageRequest.of(0, size));
+    }
+
     @GetMapping("/channels")
     public List<ChannelsResponseDto> find(
             @RequestParam(value = "no", required = false) Long idx,
