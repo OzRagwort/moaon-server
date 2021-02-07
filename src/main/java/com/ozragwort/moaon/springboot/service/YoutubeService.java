@@ -81,7 +81,14 @@ public class YoutubeService {
                     .videoDescription(playlistItem.getSnippet().getDescription())
                     .videoPublishedDate(ConvertUtcDateTime.StringToUTCDateTime(playlistItem.getSnippet().getPublishedAt()))
                     .build())
-                        .map(videosSaveUploadsListRequestDto -> videosRepository.save(videosSaveUploadsListRequestDto.toEntity()).getIdx())
+                        .map(videosSaveUploadsListRequestDto -> {
+                            Videos videos = videosRepository.findByVideoId(videosSaveUploadsListRequestDto.getVideoId());
+                            if (videos == null) {
+                                return videosRepository.save(videosSaveUploadsListRequestDto.toEntity()).getIdx();
+                            } else {
+                                return videos.getIdx();
+                            }
+                        })
                         .forEach(list::add);
         }
 
