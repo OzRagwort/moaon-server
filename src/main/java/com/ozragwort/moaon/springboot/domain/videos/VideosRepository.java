@@ -32,15 +32,18 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
     List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories ORDER BY RAND()")
     List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
 
     // 특정 tag를 가진 category의 비디오 가져오기
     @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags)")
-    List<Videos> findTagByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+    List<Videos> findTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
 
     @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags) ORDER BY RAND()")
-    List<Videos> findRandTagByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+    List<Videos> findRandTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+
+    @Query("SELECT DISTINCT t FROM Videos p join p.tags t WHERE p.channels.channelId = :channelId GROUP BY t ORDER BY count(t) DESC")
+    List<String> getTagsByChannelId(@Param("channelId") String channelId, Pageable pageable);
 
     @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time")
     List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
