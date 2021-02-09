@@ -12,8 +12,10 @@ public class ScoreCalculation {
                             int likeCount,
                             int dislikeCount,
                             int commentCount) {
+        double vw = 0.25, lw = 1.05, ldw = 0.5, mw = 0.5;
+
         if ((viewCount != 0) && (likeCount != 0) && (dislikeCount != 0) && (commentCount != 0)) {
-            return (Math.pow(likeCount, 1.1) * (double) likeCount) / ((double) dislikeCount * (double) viewCount);
+            return Math.pow(((Math.pow(viewCount, vw) * Math.pow(likeCount, lw)) / (double) dislikeCount) * Math.pow(((double) likeCount / (double) viewCount) * 100, ldw), mw);
         } else {
             return 0;
         }
