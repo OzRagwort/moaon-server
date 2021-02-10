@@ -49,10 +49,18 @@ public class VideosTagsPopularityService {
     }
 
     @Transactional
-    public List<VideosTagsPopularityResponseDto> findTagsPopularityByCategoryId(Long categoryId) {
-        return videosTagsPopularityRepository.findByCategoryId(categoryId).stream()
-                .map(VideosTagsPopularityResponseDto::new)
-                .collect(Collectors.toList());
+    public List<VideosTagsPopularityResponseDto> findTagsPopularityByCategoryId(Long categoryId, boolean random) {
+        List<VideosTagsPopularityResponseDto> list;
+        if (random) {
+            list = videosTagsPopularityRepository.findRandByCategoryId(categoryId).stream()
+                    .map(VideosTagsPopularityResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            list = videosTagsPopularityRepository.findByCategoryId(categoryId).stream()
+                    .map(VideosTagsPopularityResponseDto::new)
+                    .collect(Collectors.toList());
+        }
+        return list;
     }
 
     @Transactional
