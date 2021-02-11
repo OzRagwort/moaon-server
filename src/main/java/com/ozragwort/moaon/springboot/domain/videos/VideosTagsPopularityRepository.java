@@ -17,4 +17,7 @@ public interface VideosTagsPopularityRepository extends JpaRepository<VideosTags
     @Query("SELECT p FROM VideosTagsPopularity p WHERE p.tags = :tags")
     List<VideosTagsPopularity> findByTags(@Param("tags") String tags);
 
+    @Query("SELECT p FROM VideosTagsPopularity p WHERE p.tags = :tags and p.categoryId = :categoryId")
+    List<VideosTagsPopularity> findByTagsAndCategoryId(@Param("tags") String tags, @Param("categoryId") Long categoryId);
+
 }

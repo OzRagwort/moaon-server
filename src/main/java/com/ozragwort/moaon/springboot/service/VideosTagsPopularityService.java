@@ -71,6 +71,13 @@ public class VideosTagsPopularityService {
     }
 
     @Transactional
+    public List<VideosTagsPopularityResponseDto> findTagsPopularityByTagsAndCategoryId(Long categoryId, String tags) {
+        return videosTagsPopularityRepository.findByTagsAndCategoryId(tags, categoryId).stream()
+                .map(VideosTagsPopularityResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public void delete(Long idx) {
         videosTagsPopularityRepository.deleteById(idx);
     }
