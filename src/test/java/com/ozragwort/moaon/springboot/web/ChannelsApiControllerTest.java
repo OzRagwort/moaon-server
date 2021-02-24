@@ -89,7 +89,7 @@ public class ChannelsApiControllerTest {
                 int subscribers = 568000;
 
                 String content = objectMapper.writeValueAsString(
-                        new YoutubeChannelsSaveRequestDto(categoriesRepository.findAll().get(0).getIdx(), channelId));
+                        new YoutubeChannelsSaveRequestDto(categoriesRepository.findAll().get(0).getIdx(), channelId, null));
 
                 //when
                 mvc

@@ -37,7 +37,8 @@ public class YoutubeService {
 
     @Transactional
     public String updateChannelByYoutube(YoutubeChannelsSaveRequestDto requestDto) {
-        ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId());
+        String secret = requestDto.getSecret();
+        ChannelListResponse channelListResponse = youtubeApi.getChannelListResponse(requestDto.getChannelId(), secret);
         Channels channels = channelsRepository.findByChannelId(requestDto.getChannelId());
         categoriesRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("no category = " + requestDto.getCategoryId()));
@@ -51,7 +52,8 @@ public class YoutubeService {
 
     @Transactional
     public String updateVideoByYoutube(YoutubeVideosSaveRequestDto requestDto) {
-        VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(requestDto.getVideoId());
+        String secret = requestDto.getSecret();
+        VideoListResponse videoListResponse = youtubeApi.getVideoListResponse(requestDto.getVideoId(), secret);
         Videos videos = videosRepository.findByVideoId(requestDto.getVideoId());
 
         if (videos != null) {
@@ -65,11 +67,12 @@ public class YoutubeService {
 
     @Transactional
     public List<Long> updateVideosByUploadsList(YoutubeChannelUploadsListRequestDto requestDto) {
+        String secret = requestDto.getSecret();
         Channels channels = channelsRepository.findByChannelId(requestDto.getChannelId());
         if (channels == null)
             throw new IllegalArgumentException("no channel = " + requestDto.getChannelId());
         String uploadList = channels.getUploadsList();
-        List<PlaylistItemListResponse> playlistItemListResponse = youtubeApi.getPlaylistItemListResponse(uploadList);
+        List<PlaylistItemListResponse> playlistItemListResponse = youtubeApi.getPlaylistItemListResponse(uploadList, secret);
         List<Long> list = new ArrayList<>();
 
         for (PlaylistItemListResponse itemListResponse : playlistItemListResponse) {

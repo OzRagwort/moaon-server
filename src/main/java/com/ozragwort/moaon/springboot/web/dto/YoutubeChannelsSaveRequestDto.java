@@ -12,10 +12,13 @@ public class YoutubeChannelsSaveRequestDto {
 
     private String channelId;
 
+    private String secret;
+
     @Builder
-    public YoutubeChannelsSaveRequestDto(Long categoryId, String channelId) {
+    public YoutubeChannelsSaveRequestDto(Long categoryId, String channelId, String secret) {
         this.categoryId = categoryId;
         this.channelId = channelId;
+        this.secret = secret;
     }
 
 }

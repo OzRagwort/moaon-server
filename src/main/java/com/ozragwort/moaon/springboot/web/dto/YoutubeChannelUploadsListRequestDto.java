@@ -10,9 +10,12 @@ public class YoutubeChannelUploadsListRequestDto {
 
     private String channelId;
 
+    private String secret;
+
     @Builder
-    public YoutubeChannelUploadsListRequestDto(String channelId) {
+    public YoutubeChannelUploadsListRequestDto(String channelId, String secret) {
         this.channelId = channelId;
+        this.secret = secret;
     }
 
 }

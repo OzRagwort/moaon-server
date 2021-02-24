@@ -10,9 +10,12 @@ public class YoutubeVideosSaveRequestDto {
 
     private String videoId;
 
+    private String secret;
+
     @Builder
-    public YoutubeVideosSaveRequestDto(String videoId) {
+    public YoutubeVideosSaveRequestDto(String videoId, String secret) {
         this.videoId = videoId;
+        this.secret = secret;
     }
 
 }
