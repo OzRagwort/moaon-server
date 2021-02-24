@@ -93,39 +93,53 @@ public class YoutubeApi {
         }
     }
 
-    public ChannelListResponse getChannelListResponse(String channelId) {
+    public ChannelListResponse getChannelListResponse(String channelId, String secret) {
+        String secretKey;
+        if (secret == null) {
+            secretKey = getCLIENT_SECRETS();
+        } else {
+            secretKey = secret;
+        }
 
         String part = "snippet,contentDetails,statistics,brandingSettings";
 
         String url = "https://www.googleapis.com/youtube/v3/channels" +
-                "?key=" + getCLIENT_SECRETS() +
+                "?key=" + secretKey +
                 "&part=" + part +
                 "&id=" + channelId;
 
         JSONObject jsonObject = get(url);
 
-        ChannelListResponse channelListResponse = setChannelList(jsonObject);
-
-        return channelListResponse;
+        return setChannelList(jsonObject);
     }
 
-    public VideoListResponse getVideoListResponse(String videoId) {
+    public VideoListResponse getVideoListResponse(String videoId, String secret) {
+        String secretKey;
+        if (secret == null) {
+            secretKey = getCLIENT_SECRETS();
+        } else {
+            secretKey = secret;
+        }
 
         String part = "snippet,contentDetails,statistics,status";
 
         String url = "https://www.googleapis.com/youtube/v3/videos" +
-                "?key=" + getCLIENT_SECRETS() +
+                "?key=" + secretKey +
                 "&part=" + part +
                 "&id=" + videoId;
 
         JSONObject jsonObject = get(url);
 
-        VideoListResponse videoListResponse = setVideoList(jsonObject);
-
-        return videoListResponse;
+        return setVideoList(jsonObject);
     }
 
-    public List<PlaylistItemListResponse> getPlaylistItemListResponse(String uploadsList) {
+    public List<PlaylistItemListResponse> getPlaylistItemListResponse(String uploadsList, String secret) {
+        String secretKey;
+        if (secret == null) {
+            secretKey = getCLIENT_SECRETS();
+        } else {
+            secretKey = secret;
+        }
 
         List<PlaylistItemListResponse> listResponses = new JSONArray();
         PlaylistItemListResponse playlistItemListResponse;
@@ -135,7 +149,7 @@ public class YoutubeApi {
 
         do {
             String url = "https://www.googleapis.com/youtube/v3/playlistItems" +
-                    "?key=" + getCLIENT_SECRETS() +
+                    "?key=" + secretKey +
                     "&part=" + part +
                     "&playlistId=" + uploadsList +
                     "&maxResults=" + 50 +

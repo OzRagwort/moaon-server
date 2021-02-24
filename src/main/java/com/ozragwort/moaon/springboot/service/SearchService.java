@@ -41,6 +41,13 @@ public class SearchService {
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Videos.class);
         fullTextQuery.setFirstResult(page);
         fullTextQuery.setMaxResults(size);
+        fullTextQuery.setSort(queryBuilder
+                .sort()
+                .byScore().desc()
+                .andByField("viewCount").desc()
+                .andByField("score").desc()
+                .createSort());
+
         List<Videos> videosResponse = fullTextQuery.getResultList();
         List<VideosResponseDto> list = videosResponse.stream()
                 .map(VideosResponseDto::new)
@@ -83,6 +90,11 @@ public class SearchService {
                 .andField("videoDescription")
                 .matching("*" + keyword + "*")
                 .createQuery();
+//        return queryBuilder.keyword().wildcard()
+//                .onFields("videoName").boostedTo(2f)
+//                .andField("videoDescription")
+//                .matching("*" + keyword + "*")
+//                .createQuery();
     }
 
     // 유사한것들 찾기 (~, ~0.8) default = 0.5

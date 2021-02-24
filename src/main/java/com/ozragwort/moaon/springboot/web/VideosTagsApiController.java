@@ -28,10 +28,13 @@ public class VideosTagsApiController {
 
     @GetMapping("/popular-tags")
     public List<VideosTagsPopularityResponseDto> find(@RequestParam(value = "category", required = false) Long categoryId,
-                                                      @RequestParam(value = "tags", required = false) String tags
+                                                      @RequestParam(value = "tags", required = false) String tags,
+                                                      @RequestParam(value = "random", defaultValue = "false") boolean random
     ) {
-        if (categoryId != null) {
-            return videosTagsPopularityService.findTagsPopularityByCategoryId(categoryId);
+        if (categoryId != null && tags != null) {
+            return videosTagsPopularityService.findTagsPopularityByTagsAndCategoryId(categoryId, tags);
+        } else if (categoryId != null) {
+            return videosTagsPopularityService.findTagsPopularityByCategoryId(categoryId, random);
         } else if (tags != null) {
             return videosTagsPopularityService.findByTags(tags);
         } else {
