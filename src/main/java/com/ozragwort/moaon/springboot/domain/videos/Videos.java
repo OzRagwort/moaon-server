@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -51,6 +52,8 @@ public class Videos extends BaseTimeEntity {
 
     private boolean videoEmbeddable;
 
+    @Field
+    @SortableField()
     @Column(columnDefinition = "INT default 0")
     private int viewCount;
 
@@ -63,6 +66,8 @@ public class Videos extends BaseTimeEntity {
     @Column(columnDefinition = "INT default 0")
     private int commentCount;
 
+    @Field
+    @SortableField()
     @Column(name = "videos_score")
     private double score;
 
