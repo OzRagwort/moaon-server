@@ -144,7 +144,7 @@ public class YoutubeApi {
         List<PlaylistItemListResponse> listResponses = new JSONArray();
         PlaylistItemListResponse playlistItemListResponse;
 
-        String part = "snippet,contentDetails";
+        String part = "snippet,contentDetails,status";
         String nextPageToken = "";
 
         do {
