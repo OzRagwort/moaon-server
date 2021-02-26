@@ -65,7 +65,7 @@ public class ChannelDeserializer {
                 channel.setBrandingSettings(buildBrandingSettings((JSONObject) ob.get("brandingSettings")));
             } catch (NullPointerException e) {
                 System.out.printf("Channel Deserializer build items [%s]%n", ob.get("id"));
-                e.getMessage();
+                e.printStackTrace();
             }
 
             channelList.add(channel);

@@ -69,7 +69,7 @@ public class VideoDeserializer {
                 video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
             } catch (NullPointerException e) {
                 System.out.printf("Video Deserializer build items [%s]%n", ob.get("id"));
-                e.getMessage();
+                e.printStackTrace();
             }
 
             videoList.add(video);
