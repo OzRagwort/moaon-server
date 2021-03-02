@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,14 +50,15 @@ public class VideosTagsPopularityService {
     }
 
     @Transactional
-    public List<VideosTagsPopularityResponseDto> findTagsPopularityByCategoryId(Long categoryId, boolean random) {
+    public List<VideosTagsPopularityResponseDto> findTagsPopularityByCategoryId(String categoryId, boolean random) {
         List<VideosTagsPopularityResponseDto> list;
+        List<Long> categoryList = StringToListCategories(categoryId);
         if (random) {
-            list = videosTagsPopularityRepository.findRandByCategoryId(categoryId).stream()
+            list = videosTagsPopularityRepository.findRandByCategoryId(categoryList).stream()
                     .map(VideosTagsPopularityResponseDto::new)
                     .collect(Collectors.toList());
         } else {
-            list = videosTagsPopularityRepository.findByCategoryId(categoryId).stream()
+            list = videosTagsPopularityRepository.findByCategoryId(categoryList).stream()
                     .map(VideosTagsPopularityResponseDto::new)
                     .collect(Collectors.toList());
         }
@@ -71,8 +73,9 @@ public class VideosTagsPopularityService {
     }
 
     @Transactional
-    public List<VideosTagsPopularityResponseDto> findTagsPopularityByTagsAndCategoryId(Long categoryId, String tags) {
-        return videosTagsPopularityRepository.findByTagsAndCategoryId(tags, categoryId).stream()
+    public List<VideosTagsPopularityResponseDto> findTagsPopularityByTagsAndCategoryId(String categoryId, String tags) {
+        List<Long> categoryList = StringToListCategories(categoryId);
+        return videosTagsPopularityRepository.findByTagsAndCategoryId(tags, categoryList).stream()
                 .map(VideosTagsPopularityResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -81,4 +84,16 @@ public class VideosTagsPopularityService {
     public void delete(Long idx) {
         videosTagsPopularityRepository.deleteById(idx);
     }
+
+    private List<Long> StringToListCategories(String categoryId) {
+        List<Long> list = new ArrayList<>();
+        String[] arr = categoryId.split(",");
+
+        for (String s : arr) {
+            list.add(Long.parseLong(s));
+        }
+
+        return list;
+    }
+
 }
