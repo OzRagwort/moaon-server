@@ -29,41 +29,38 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.channels IN (:channels) ORDER BY RAND()")
     List<Videos> findRandByChannelId(@Param("channels") List<Channels> channels, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories")
-    List<Videos> findByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories IN (:categories)")
+    List<Videos> findByCategoryIdx(@Param("categories") List<Categories> categories, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories = :categories ORDER BY RAND()")
-    List<Videos> findRandByCategoryIdx(@Param("categories") Categories categories, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories IN (:categories) ORDER BY RAND()")
+    List<Videos> findRandByCategoryIdx(@Param("categories") List<Categories> categories, Pageable pageable);
 
     // 특정 tag를 가진 category의 비디오 가져오기
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags)")
-    List<Videos> findTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx IN (:categoryIdx) and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags)")
+    List<Videos> findTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx = :categoryIdx and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags) ORDER BY RAND()")
-    List<Videos> findRandTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.channels.categories.idx IN (:categoryIdx) and p.idx IN (select distinct p.idx from p.tags WHERE :keywords member p.tags) ORDER BY RAND()")
+    List<Videos> findRandTagsByKeyword(@Param("keywords") String keywords, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
     @Query("SELECT DISTINCT t FROM Videos p join p.tags t WHERE p.channels.channelId = :channelId GROUP BY t ORDER BY count(t) DESC")
     List<String> getTagsByChannelId(@Param("channelId") String channelId, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time")
-    List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time and p.channels.categories.idx IN (:categoryIdx)")
+    List<Videos> findByPublishedDate(@Param("time") LocalDateTime time, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time ORDER BY RAND()")
-    List<Videos> findRandByPublishedDate(@Param("time") LocalDateTime time, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.videoPublishedDate > :time and p.channels.categories.idx IN (:categoryIdx) ORDER BY RAND()")
+    List<Videos> findRandByPublishedDate(@Param("time") LocalDateTime time, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
-    @Query("SELECT avg(p.score) FROM Videos p ")
-    double getScoreAvg();
+    @Query("SELECT avg(p.score) FROM Videos p WHERE p.channels.categories.idx IN (:categoryIdx)")
+    double getScoreAvg(@Param("categoryIdx") List<Long> categoryIdx);
 
     @Query("SELECT avg(p.score) FROM Videos p WHERE p.channels.channelId = :channelId GROUP BY p.channels.channelId")
     double getScoreAvgByChannelId(@Param("channelId") String channelId);
 
-    @Query("SELECT p FROM Videos p WHERE p.score >= :score")
-    List<Videos> findByScore(@Param("score") double score, Pageable pageable);
+    @Query("SELECT p FROM Videos p WHERE p.score >= :score and p.channels.categories.idx IN (:categoryIdx)")
+    List<Videos> findByScore(@Param("score") double score, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
-    @Query("SELECT p FROM Videos p WHERE p.score >= :score ORDER BY RAND()")
-    List<Videos> findRandByScore(@Param("score") double score, Pageable pageable);
-
-    @Query(value = "SELECT * FROM videos WHERE videos_score >= :score ORDER BY rand() LIMIT :count", nativeQuery = true)
-    List<Videos> findOverAvgRandByScore(@Param("score") double score, @Param("count") int count);
+    @Query("SELECT p FROM Videos p WHERE p.score >= :score and p.channels.categories.idx IN (:categoryIdx) ORDER BY RAND()")
+    List<Videos> findRandByScore(@Param("score") double score, @Param("categoryIdx") List<Long> categoryIdx, Pageable pageable);
 
 }

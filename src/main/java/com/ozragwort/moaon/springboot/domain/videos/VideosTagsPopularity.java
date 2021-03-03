@@ -4,7 +4,6 @@ import com.ozragwort.moaon.springboot.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 
@@ -15,7 +14,6 @@ import javax.persistence.*;
         name = "videos_tags_popularity",
         uniqueConstraints = @UniqueConstraint(columnNames = {"videos_tags_popularity_categories","videos_tags_popularity_tags"})
 )
-@Indexed
 public class VideosTagsPopularity extends BaseTimeEntity {
 
     @Id

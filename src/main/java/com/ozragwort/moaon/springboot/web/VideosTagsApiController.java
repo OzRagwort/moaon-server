@@ -27,7 +27,7 @@ public class VideosTagsApiController {
     }
 
     @GetMapping("/popular-tags")
-    public List<VideosTagsPopularityResponseDto> find(@RequestParam(value = "category", required = false) Long categoryId,
+    public List<VideosTagsPopularityResponseDto> find(@RequestParam(value = "category", required = false) String categoryId,
                                                       @RequestParam(value = "tags", required = false) String tags,
                                                       @RequestParam(value = "random", defaultValue = "false") boolean random
     ) {

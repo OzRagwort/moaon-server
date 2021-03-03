@@ -4,17 +4,13 @@ import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.web.dto.VideosResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.lucene.search.Query;
 
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,28 +23,24 @@ public class SearchService {
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
-    public List<VideosResponseDto> searchVideosByKeywords(String keyword, int page, int size) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+    public List<VideosResponseDto> searchVideosByKeywords(String keyword, String categoryId, int page, int size) {
 
-        FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        List<Long> categoryList = StringToListCategories(categoryId);
+
         entityManager.getTransaction().begin();
 
-        QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
-                .forEntity(Videos.class)
-                .get();
-        Query query = getWildcardQuery(queryBuilder, keyword);
+        String queryStr = "SELECT p FROM Videos p WHERE " +
+                "p.channels.categories.idx IN (?1) and " +
+                "(matchs_natural(p.videoName, p.videoDescription, '"+keyword+"') > 0 or matchs_boolean(p.videoName, p.videoDescription, '"+keyword+"') > 0) " +
+                "ORDER BY p.score DESC";
 
-        FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Videos.class);
-        fullTextQuery.setFirstResult(page);
-        fullTextQuery.setMaxResults(size);
-        fullTextQuery.setSort(queryBuilder
-                .sort()
-                .byScore().desc()
-                .andByField("viewCount").desc()
-                .andByField("score").desc()
-                .createSort());
+        Query query = entityManager.createQuery(queryStr, Videos.class)
+                .setParameter(1, categoryList);
 
-        List<Videos> videosResponse = fullTextQuery.getResultList();
+        query.setFirstResult(page);
+        query.setMaxResults(size);
+        List<Videos> videosResponse = query.getResultList();
         List<VideosResponseDto> list = videosResponse.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
@@ -60,50 +52,28 @@ public class SearchService {
     }
 
     @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryIdx, boolean random, Pageable pageable) {
+    public List<VideosResponseDto> searchVideosByTags(String keywords, String categoryId, boolean random, Pageable pageable) {
         List<Videos> videosList;
+        List<Long> categoryList = StringToListCategories(categoryId);
         if (random) {
-            videosList = videosRepository.findRandTagsByKeyword(keywords, categoryIdx, pageable);
+            videosList = videosRepository.findRandTagsByKeyword(keywords, categoryList, pageable);
         } else {
-            videosList = videosRepository.findTagsByKeyword(keywords, categoryIdx, pageable);
+            videosList = videosRepository.findTagsByKeyword(keywords, categoryList, pageable);
         }
         return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    // 딱 그 키워드와 같은 결과
-    private Query getKeywordQuery(QueryBuilder queryBuilder, String keyword) {
-        return queryBuilder.keyword()
-                .onFields("videoName").boostedTo(2f)
-                .andField("videoDescription")
-                .matching(keyword)
-                .createQuery();
-    }
+    private List<Long> StringToListCategories(String categoryId) {
+        List<Long> list = new ArrayList<>();
+        String[] arr = categoryId.split(",");
 
-    // 조건 추가 (?, *)
-    // ? => 뭐가 들어가야 할 지 모르겠는것 test인지 text인지 모를때 te?t (한글자)
-    // * => ?가 여러글자
-    private Query getWildcardQuery(QueryBuilder queryBuilder, String keyword) {
-        return queryBuilder.keyword().wildcard()
-                .onFields("videoName").boostedTo(2f)
-                .andField("videoDescription")
-                .matching("*" + keyword + "*")
-                .createQuery();
-//        return queryBuilder.keyword().wildcard()
-//                .onFields("videoName").boostedTo(2f)
-//                .andField("videoDescription")
-//                .matching("*" + keyword + "*")
-//                .createQuery();
-    }
+        for (String s : arr) {
+            list.add(Long.parseLong(s));
+        }
 
-    // 유사한것들 찾기 (~, ~0.8) default = 0.5
-    private Query getFuzzyQuery(QueryBuilder queryBuilder, String keyword) {
-        return queryBuilder.keyword().fuzzy()
-                .onFields("videoName").boostedTo(2f)
-                .andField("videoDescription")
-                .matching(keyword)
-                .createQuery();
+        return list;
     }
 
 }

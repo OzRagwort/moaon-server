@@ -50,7 +50,7 @@ public class ChannelsApiController {
     public List<ChannelsResponseDto> find(
             @RequestParam(value = "no", required = false) Long idx,
             @RequestParam(value = "id", required = false) String channelId,
-            @RequestParam(value = "category", required = false) Long categoryId,
+            @RequestParam(value = "category", required = false) String categoryId,
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
             @RequestParam(value = "sort", required = false) String sort,
