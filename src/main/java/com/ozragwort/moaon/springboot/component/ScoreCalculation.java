@@ -17,7 +17,11 @@ public class ScoreCalculation {
         if ((viewCount != 0) && (likeCount != 0) && (dislikeCount != 0) && (commentCount != 0)) {
             return Math.pow(((Math.pow(viewCount, vw) * Math.pow(likeCount, lw)) / (double) dislikeCount) * Math.pow(((double) likeCount / (double) viewCount) * 100, ldw), mw);
         } else {
-            return 0;
+            double v = viewCount + 1;
+            double l = likeCount + 1;
+            double d = dislikeCount + 1;
+            double c = commentCount + 1;
+            return Math.pow(((Math.pow(v, vw) * Math.pow(l, lw)) / d) * Math.pow((l / v) * 100, ldw), mw);
         }
     }
 
