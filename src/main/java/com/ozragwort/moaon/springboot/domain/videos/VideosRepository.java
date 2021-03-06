@@ -63,4 +63,7 @@ public interface VideosRepository extends JpaRepository<Videos, Long> {
     @Query("SELECT p FROM Videos p WHERE p.score >= :score and p.channels.categories.idx = :categoryIdx ORDER BY RAND()")
     List<Videos> findRandByScore(@Param("score") double score, @Param("categoryIdx") Long categoryIdx, Pageable pageable);
 
+    @Query("SELECT p FROM Videos p WHERE p.viewCount >= 10000 and p.channels.categories.idx = :categoryIdx ORDER BY RAND()")
+    List<Videos> recommend(@Param("categoryIdx") Long categoryIdx, Pageable pageable);
+
 }

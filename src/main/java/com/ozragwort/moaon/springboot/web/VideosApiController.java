@@ -61,6 +61,7 @@ public class VideosApiController {
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "overAvg", defaultValue = "false") boolean avg,
             @RequestParam(value = "topScore", defaultValue = "0") double score,
+            @RequestParam(value = "recommend", defaultValue = "false") boolean recommend,
             // 조건
             @RequestParam(value = "maxResults", defaultValue = "10") int size,
             @RequestParam(value = "page", defaultValue = "1") int pageCount,
@@ -75,7 +76,9 @@ public class VideosApiController {
         } else if (channelId != null) {
             return videosService.findByChannelId(channelId, random, sortCheck(size, pageCount, sort));
         } else if (categoryId != null) {
-            if (tags != null) {
+            if (recommend) {
+                return videosService.findRecommend(categoryId, PageRequest.of(pageCount - 1, size));
+            } else if (tags != null) {
                 return searchService.searchVideosByTags(tags, categoryId, random, sortCheck(size, pageCount, sort));
             } else if(hour != null) {
                 return videosService.findByPublishedDate(hour, categoryId, random, sortCheck(size, pageCount, sort));

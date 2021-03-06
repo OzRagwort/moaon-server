@@ -235,6 +235,13 @@ public class VideosService {
     }
 
     @Transactional
+    public List<VideosResponseDto> findRecommend(Long categoryId, Pageable pageable) {
+        return videosRepository.recommend(categoryId, pageable).stream()
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public void deleteAll() {
         videosRepository.deleteAll();
     }
