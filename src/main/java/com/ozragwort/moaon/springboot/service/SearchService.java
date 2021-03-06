@@ -23,20 +23,19 @@ public class SearchService {
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
-    public List<VideosResponseDto> searchVideosByKeywords(String keyword, String categoryId, int page, int size) {
+    public List<VideosResponseDto> searchVideosByKeywords(String keyword, Long categoryId, int page, int size) {
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List<Long> categoryList = StringToListCategories(categoryId);
 
         entityManager.getTransaction().begin();
 
         String queryStr = "SELECT p FROM Videos p WHERE " +
-                "p.channels.categories.idx IN (?1) and " +
+                "p.channels.categories.idx = ?1 and " +
                 "(matchs_natural(p.videoName, p.videoDescription, '"+keyword+"') > 0 or matchs_boolean(p.videoName, p.videoDescription, '"+keyword+"') > 0) " +
                 "ORDER BY p.score DESC";
 
         Query query = entityManager.createQuery(queryStr, Videos.class)
-                .setParameter(1, categoryList);
+                .setParameter(1, categoryId);
 
         query.setFirstResult(page);
         query.setMaxResults(size);
@@ -52,28 +51,16 @@ public class SearchService {
     }
 
     @Transactional
-    public List<VideosResponseDto> searchVideosByTags(String keywords, String categoryId, boolean random, Pageable pageable) {
+    public List<VideosResponseDto> searchVideosByTags(String keywords, Long categoryId, boolean random, Pageable pageable) {
         List<Videos> videosList;
-        List<Long> categoryList = StringToListCategories(categoryId);
         if (random) {
-            videosList = videosRepository.findRandTagsByKeyword(keywords, categoryList, pageable);
+            videosList = videosRepository.findRandTagsByKeyword(keywords, categoryId, pageable);
         } else {
-            videosList = videosRepository.findTagsByKeyword(keywords, categoryList, pageable);
+            videosList = videosRepository.findTagsByKeyword(keywords, categoryId, pageable);
         }
         return videosList.stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
-    }
-
-    private List<Long> StringToListCategories(String categoryId) {
-        List<Long> list = new ArrayList<>();
-        String[] arr = categoryId.split(",");
-
-        for (String s : arr) {
-            list.add(Long.parseLong(s));
-        }
-
-        return list;
     }
 
 }

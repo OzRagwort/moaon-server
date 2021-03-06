@@ -15,7 +15,7 @@ public interface CategoriesRepository extends JpaRepository<Categories, Long> {
     @Query("SELECT p FROM Categories p WHERE p.idx = :idx")
     Categories findOne(@Param("idx") Long idx);
 
-    @Query("SELECT p FROM Categories p WHERE p.idx IN (:idx)")
-    List<Categories> findByIdxList(@Param("idx") List<Long> idx);
+    @Query("SELECT p FROM Categories p WHERE p.idx = :idx")
+    List<Categories> findByIdx(@Param("idx") Long idx);
 
 }

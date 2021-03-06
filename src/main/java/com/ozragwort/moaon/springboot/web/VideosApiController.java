@@ -56,7 +56,7 @@ public class VideosApiController {
             @RequestParam(value = "no", required = false) Long idx,
             @RequestParam(value = "id", required = false) String videoId,
             @RequestParam(value = "channel", required = false) String channelId,
-            @RequestParam(value = "category", required = false) String categoryId,
+            @RequestParam(value = "category", required = false) Long categoryId,
             @RequestParam(value = "search", required = false) String keyword,
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "overAvg", defaultValue = "false") boolean avg,

@@ -76,27 +76,23 @@ public class ChannelsService {
     }
 
     @Transactional
-    public List<ChannelsResponseDto> findByCategoryIdx(String categoryId, boolean random, Pageable pageable) {
-        List<Long> categoryList = StringToListCategories(categoryId);
+    public List<ChannelsResponseDto> findByCategoryIdx(Long categoryId, boolean random, Pageable pageable) {
         if (random) {
-            return channelsRepository.findRandByCategoryIdx(categoriesRepository.findByIdxList(categoryList), pageable).stream()
+            return channelsRepository.findRandByCategoryIdx(categoriesRepository.findByIdx(categoryId), pageable).stream()
                     .map(ChannelsResponseDto::new)
                     .collect(Collectors.toList());
         } else {
-            return channelsRepository.findByCategoryIdx(categoriesRepository.findByIdxList(categoryList), pageable).stream()
+            return channelsRepository.findByCategoryIdx(categoriesRepository.findByIdx(categoryId), pageable).stream()
                     .map(ChannelsResponseDto::new)
                     .collect(Collectors.toList());
         }
     }
 
     @Transactional
-    public List<ChannelsResponseDto> findBySubscribers(int subscribers, boolean subOverUnder, String categoryId, boolean random, Pageable pageable) {
-        List<Long> categoryList = StringToListCategories(categoryId);
+    public List<ChannelsResponseDto> findBySubscribers(int subscribers, boolean subOverUnder, Long categoryId, boolean random, Pageable pageable) {
         List<Categories> categories = new ArrayList<>();
-        for (Long category : categoryList) {
-            categories.add(categoriesRepository.findById(category)
-                    .orElseThrow(() -> new IllegalArgumentException("category is empty id=" + category)));
-        }
+        categories.add(categoriesRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("category is empty id=" + categoryId)));
 
         List<Channels> channels;
         if (random) {
@@ -138,17 +134,6 @@ public class ChannelsService {
         Channels channels = channelsRepository.findByChannelId(channelId);
         channelsRepository.delete(channels);
         return channels.getChannelId();
-    }
-
-    private List<Long> StringToListCategories(String categoryId) {
-        List<Long> list = new ArrayList<>();
-        String[] arr = categoryId.split(",");
-
-        for (String s : arr) {
-            list.add(Long.parseLong(s));
-        }
-
-        return list;
     }
 
 }

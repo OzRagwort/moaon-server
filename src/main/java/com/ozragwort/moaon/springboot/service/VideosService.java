@@ -157,27 +157,25 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findByCategoryIdx(String categoryId, boolean random, Pageable pageable) {
-        List<Long> categoryList = StringToListCategories(categoryId);
+    public List<VideosResponseDto> findByCategoryIdx(Long categoryId, boolean random, Pageable pageable) {
         if (random) {
-            return videosRepository.findRandByCategoryIdx(categoriesRepository.findByIdxList(categoryList), pageable).stream()
+            return videosRepository.findRandByCategoryIdx(categoriesRepository.findByIdx(categoryId), pageable).stream()
                     .map(VideosResponseDto::new)
                     .collect(Collectors.toList());
         } else {
-            return videosRepository.findByCategoryIdx(categoriesRepository.findByIdxList(categoryList), pageable).stream()
+            return videosRepository.findByCategoryIdx(categoriesRepository.findByIdx(categoryId), pageable).stream()
                     .map(VideosResponseDto::new)
                     .collect(Collectors.toList());
         }
     }
 
     @Transactional
-    public List<VideosResponseDto> findByScore(double score, String categoryId, boolean random, Pageable pageable) {
+    public List<VideosResponseDto> findByScore(double score, Long categoryId, boolean random, Pageable pageable) {
         List<Videos> videos;
-        List<Long> categoryList = StringToListCategories(categoryId);
         if (random) {
-            videos = videosRepository.findRandByScore(score, categoryList, pageable);
+            videos = videosRepository.findRandByScore(score, categoryId, pageable);
         } else {
-            videos = videosRepository.findByScore(score, categoryList, pageable);
+            videos = videosRepository.findByScore(score, categoryId, pageable);
         }
         return videos.stream()
                 .map(VideosResponseDto::new)
@@ -185,10 +183,9 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findOverAvgRandByScore(String categoryId, Pageable pageable) {
-        List<Long> categoryList = StringToListCategories(categoryId);
-        double avg = videosRepository.getScoreAvg(categoryList);
-        return videosRepository.findRandByScore(avg, categoryList, pageable).stream()
+    public List<VideosResponseDto> findOverAvgRandByScore(Long categoryId, Pageable pageable) {
+        double avg = videosRepository.getScoreAvg(categoryId);
+        return videosRepository.findRandByScore(avg, categoryId, pageable).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -224,14 +221,13 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findByPublishedDate(Long publishedDate, String categoryId, boolean random, Pageable pageable) {
+    public List<VideosResponseDto> findByPublishedDate(Long publishedDate, Long categoryId, boolean random, Pageable pageable) {
         LocalDateTime convertedTime = ConvertUtcDateTime.nowTimeUnderHour(publishedDate.intValue());
         List<Videos> videos;
-        List<Long> categoryList = StringToListCategories(categoryId);
         if (random) {
-            videos = videosRepository.findRandByPublishedDate(convertedTime, categoryList, pageable);
+            videos = videosRepository.findRandByPublishedDate(convertedTime, categoryId, pageable);
         } else {
-            videos = videosRepository.findByPublishedDate(convertedTime, categoryList, pageable);
+            videos = videosRepository.findByPublishedDate(convertedTime, categoryId, pageable);
         }
         return videos.stream()
                 .map(VideosResponseDto::new)
@@ -265,17 +261,6 @@ public class VideosService {
 
         for (String s : arr) {
             list.add(channelsRepository.findByChannelId(s));
-        }
-
-        return list;
-    }
-
-    private List<Long> StringToListCategories(String categoryId) {
-        List<Long> list = new ArrayList<>();
-        String[] arr = categoryId.split(",");
-
-        for (String s : arr) {
-            list.add(Long.parseLong(s));
         }
 
         return list;
