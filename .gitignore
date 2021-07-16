@@ -9,3 +9,6 @@ application-oauth.properties
 /src/main/resources/application.yml
 /out
 !gradle/wrapper/gradle-wrapper.jar
+
+# flyway config
+/src/main/resources/db/flyway.conf
