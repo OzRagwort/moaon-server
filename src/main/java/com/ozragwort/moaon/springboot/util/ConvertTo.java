@@ -1,11 +1,12 @@
-package com.ozragwort.moaon.springboot.v1.component;
+package com.ozragwort.moaon.springboot.util;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class ConvertUtcDateTime {
+public class ConvertTo {
 
     public static LocalDateTime StringToUTCDateTime(String time) {
         return LocalDateTime.from(
@@ -15,8 +16,13 @@ public class ConvertUtcDateTime {
         );
     }
 
-    public static LocalDateTime nowTimeUnderHour(int hour) {
-        return LocalDateTime.now(ZoneId.of("UTC")).plusHours(hour * -1);
+    public static long DurationStringToSecond(String duration) {
+        return Duration.parse(duration).getSeconds();
     }
+
+    public static String DurationSecondToString(long second) {
+        return Duration.ofSeconds(second).toString();
+    }
+
 
 }

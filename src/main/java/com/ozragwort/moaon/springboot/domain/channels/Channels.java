@@ -1,8 +1,8 @@
-package com.ozragwort.moaon.springboot.v1.domain.channels;
+package com.ozragwort.moaon.springboot.domain.channels;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ozragwort.moaon.springboot.v1.domain.BaseTimeEntity;
-import com.ozragwort.moaon.springboot.v1.domain.categories.Categories;
+import com.ozragwort.moaon.springboot.domain.BaseTimeEntity;
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,18 +27,22 @@ public class Channels extends BaseTimeEntity {
     @JoinColumn(name = "categories_idx")
     private Categories categories;
 
-    @Column(name = "channel_id", unique = true)
+    @Column(name = "channels_id", unique = true)
     private String channelId;
 
+    @Column(name = "channels_name")
     private String channelName; // part.snippet.title
 
+    @Column(name = "channels_thumbnail")
     private String channelThumbnail; // part.snippet.thumbnails
 
+    @Column(name = "channels_uploads_list")
     private String uploadsList; // part.contentDetails.uploads
 
-    @Column(columnDefinition = "INT default 0")
+    @Column(name = "channels_subscribers", columnDefinition = "INT default 0")
     private int subscribers;
 
+    @Column(name = "channels_banner_external_url")
     private String bannerExternalUrl; // part.brandingSettings.image.bannerExternalUrl
 
     @Builder

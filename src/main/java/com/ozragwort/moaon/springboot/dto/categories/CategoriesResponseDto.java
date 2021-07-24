@@ -1,6 +1,6 @@
-package com.ozragwort.moaon.springboot.v1.web.dto;
+package com.ozragwort.moaon.springboot.dto.categories;
 
-import com.ozragwort.moaon.springboot.v1.domain.categories.Categories;
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

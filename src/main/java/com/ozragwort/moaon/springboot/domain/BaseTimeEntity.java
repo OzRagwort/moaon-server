@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.v1.domain;
+package com.ozragwort.moaon.springboot.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
