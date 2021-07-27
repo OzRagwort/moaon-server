@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer;
+package com.ozragwort.moaon.springboot.util.youtube;
 
 import com.google.api.services.youtube.model.*;
 import org.json.simple.JSONArray;
@@ -9,18 +9,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-part :  O   id
-        O   snippet
-        O   contentDetails
-        O   statistics
-        X   status
-        X   auditDetails
-        O   brandingSettings (just image.bannerExternalUrl)
-        X   contentOwnerDetails
-        X   localizations
-        X   topicDetails
- */
 @Component
 public class ChannelDeserializer {
 
@@ -50,10 +38,10 @@ public class ChannelDeserializer {
         List<Channel> channelList = new ArrayList<>();
         Channel channel;
 
-        for (int i = 0 ; i < items.size() ; i++) {
+        for (Object item : items) {
             channel = new Channel();
 
-            JSONObject ob = (JSONObject) items.get(i);
+            JSONObject ob = (JSONObject) item;
 
             try {
                 channel.setKind((String) ob.get("kind"));

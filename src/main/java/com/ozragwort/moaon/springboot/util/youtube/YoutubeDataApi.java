@@ -1,9 +1,8 @@
-package com.ozragwort.moaon.springboot.v1.youtube;
+package com.ozragwort.moaon.springboot.util.youtube;
 
-import com.google.api.services.youtube.model.*;
-import com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer.ChannelDeserializer;
-import com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer.PlaylistItemDeserializer;
-import com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer.VideoDeserializer;
+import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.VideoListResponse;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,32 +21,20 @@ import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 @Component
-public class YoutubeApi {
+public class YoutubeDataApi {
 
     private final String CLIENT_SECRETS = "json/yt_api_key.json";
 
     private String getCLIENT_SECRETS() {
-        FileReader fileReader = null;
-
         JSONParser jsonParser = new JSONParser();
-
         JSONObject jsonObject = null;
 
         try {
-
             ClassPathResource resource = new ClassPathResource(CLIENT_SECRETS);
-
             byte[] byteArray = FileCopyUtils.copyToByteArray(resource.getInputStream());
-
             String jsonTxt = new String(byteArray, StandardCharsets.UTF_8);
-
             jsonObject = (JSONObject) jsonParser.parse(jsonTxt);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
 
@@ -84,15 +71,9 @@ public class YoutubeApi {
     }
 
     public ChannelListResponse getChannelListResponse(String channelId, String secret) {
-        String secretKey;
-        if (secret == null) {
-            secretKey = getCLIENT_SECRETS();
-        } else {
-            secretKey = secret;
-        }
+        String secretKey = makeKey(secret);
 
         String part = "snippet,contentDetails,statistics,brandingSettings";
-
         String url = "https://www.googleapis.com/youtube/v3/channels" +
                 "?key=" + secretKey +
                 "&part=" + part +
@@ -104,15 +85,9 @@ public class YoutubeApi {
     }
 
     public VideoListResponse getVideoListResponse(String videoId, String secret) {
-        String secretKey;
-        if (secret == null) {
-            secretKey = getCLIENT_SECRETS();
-        } else {
-            secretKey = secret;
-        }
+        String secretKey = makeKey(secret);
 
-        String part = "snippet,contentDetails,statistics,status";
-
+        String part = "snippet,contentDetails,statistics";
         String url = "https://www.googleapis.com/youtube/v3/videos" +
                 "?key=" + secretKey +
                 "&part=" + part +
@@ -124,12 +99,7 @@ public class YoutubeApi {
     }
 
     public List<PlaylistItemListResponse> getPlaylistItemListResponse(String uploadsList, String secret) {
-        String secretKey;
-        if (secret == null) {
-            secretKey = getCLIENT_SECRETS();
-        } else {
-            secretKey = secret;
-        }
+        String secretKey = makeKey(secret);
 
         List<PlaylistItemListResponse> listResponses = new JSONArray();
         PlaylistItemListResponse playlistItemListResponse;
@@ -146,53 +116,41 @@ public class YoutubeApi {
                     "&pageToken=" + nextPageToken;
 
             JSONObject jsonObject = get(url);
-
             playlistItemListResponse = setPlaylistItemList(jsonObject);
-
             nextPageToken = playlistItemListResponse.getNextPageToken();
-
             listResponses.add(playlistItemListResponse);
-
         } while (nextPageToken != null);
 
         return listResponses;
     }
 
-
     private ChannelListResponse setChannelList(JSONObject jsonObject) {
-
         ChannelListResponse channelListResponse;
-
         ChannelDeserializer channelDeserializer = new ChannelDeserializer();
-
         channelListResponse = channelDeserializer.deserialize(jsonObject);
-
         return channelListResponse;
-
     }
 
     private PlaylistItemListResponse setPlaylistItemList(JSONObject jsonObject) {
-
         PlaylistItemListResponse playlistItemListResponse;
-
         PlaylistItemDeserializer playlistItemDeserializer = new PlaylistItemDeserializer();
-
         playlistItemListResponse = playlistItemDeserializer.deserialize(jsonObject);
-
         return playlistItemListResponse;
-
     }
 
     private VideoListResponse setVideoList(JSONObject jsonObject) {
-
         VideoListResponse videoListResponse;
-
         VideoDeserializer videoDeserializer = new VideoDeserializer();
-
         videoListResponse = videoDeserializer.deserialize(jsonObject);
-
         return videoListResponse;
+    }
 
+    private String makeKey(String secret) {
+        if (secret == null) {
+            return getCLIENT_SECRETS();
+        } else {
+            return secret;
+        }
     }
 
 }

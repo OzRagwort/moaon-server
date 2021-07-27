@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer;
+package com.ozragwort.moaon.springboot.util.youtube;
 
 import com.google.api.services.youtube.model.*;
 import org.json.simple.JSONArray;
@@ -10,21 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
-part :  O   id
-        O   snippet
-        O   contentDetails
-        O   statistics
-        O   status
-        X   fileDetails
-        X   liveStreamingDetails
-        X   localizations
-        X   player
-        X   processingDetails
-        X   recordingDetails
-        X   suggestions
-        X   topicDetails
- */
 @Component
 public class VideoDeserializer {
 
@@ -54,10 +39,10 @@ public class VideoDeserializer {
         List<Video> videoList = new ArrayList<>();
         Video video;
 
-        for (int i = 0 ; i < items.size() ; i++) {
+        for (Object item : items) {
             video = new Video();
 
-            JSONObject ob = (JSONObject) items.get(i);
+            JSONObject ob = (JSONObject) item;
 
             try {
                 video.setKind((String) ob.get("kind"));
@@ -65,10 +50,8 @@ public class VideoDeserializer {
                 video.setId((String) ob.get("id"));
                 video.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
                 video.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
-                video.setStatus(buildStatus((JSONObject) ob.get("status")));
                 video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
             } catch (NullPointerException e) {
-                System.out.printf("Video Deserializer build items [%s]%n", ob.get("id"));
                 e.printStackTrace();
             }
 
@@ -81,39 +64,23 @@ public class VideoDeserializer {
     private VideoStatistics buildStatistic(JSONObject statistic) {
         VideoStatistics videoStatistics = new VideoStatistics();
 
-        videoStatistics.setViewCount(new BigInteger((String) statistic.get("viewCount")));
-        videoStatistics.setFavoriteCount(new BigInteger((String) statistic.get("favoriteCount")));
-        if (statistic.containsKey("commentCount")) {
-            videoStatistics.setCommentCount(new BigInteger((String) statistic.get("commentCount")));
-        } else {
-            videoStatistics.setCommentCount(BigInteger.ZERO);
-        }
-        if(statistic.containsKey("likeCount")) {
-            videoStatistics.setLikeCount(new BigInteger((String) statistic.get("likeCount")));
-            videoStatistics.setDislikeCount(new BigInteger((String) statistic.get("dislikeCount")));
-        } else {
-            videoStatistics.setLikeCount(BigInteger.ZERO);
-            videoStatistics.setDislikeCount(BigInteger.ZERO);
-        }
+        BigInteger vc = new BigInteger((String) statistic.get("viewCount"));
+        BigInteger cc = statistic.containsKey("commentCount")
+                ? new BigInteger((String) statistic.get("commentCount"))
+                : BigInteger.ZERO;
+        BigInteger lc = statistic.containsKey("likeCount")
+                ? new BigInteger((String) statistic.get("likeCount"))
+                : BigInteger.ZERO;
+        BigInteger dc = statistic.containsKey("dislikeCount")
+                ? new BigInteger((String) statistic.get("dislikeCount"))
+                : BigInteger.ZERO;
+
+        videoStatistics.setViewCount(vc);
+        videoStatistics.setCommentCount(cc);
+        videoStatistics.setLikeCount(lc);
+        videoStatistics.setDislikeCount(dc);
 
         return videoStatistics;
-    }
-
-    private VideoStatus buildStatus(JSONObject status) {
-        VideoStatus videoStatus = new VideoStatus();
-
-        try {
-            videoStatus.setEmbeddable((Boolean) status.get("embeddable"));
-            videoStatus.setPublicStatsViewable((Boolean) status.get("publicStatsViewable"));
-            videoStatus.setUploadStatus((String) status.get("uploadStatus"));
-            videoStatus.setPrivacyStatus((String) status.get("privacyStatus"));
-            videoStatus.setMadeForKids((Boolean) status.get("madeForKids"));
-        } catch (NullPointerException e) {
-            System.out.println("Video Deserializer build Status");
-            e.getMessage();
-        }
-
-        return videoStatus;
     }
 
     private VideoContentDetails buildContentDetails(JSONObject contentDetails) {

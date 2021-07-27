@@ -1,4 +1,4 @@
-package com.ozragwort.moaon.springboot.v1.youtube.YoutubeApiSerializer;
+package com.ozragwort.moaon.springboot.util.youtube;
 
 import com.google.api.services.youtube.model.*;
 import org.json.simple.JSONArray;
@@ -8,12 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-part :  O   id
-        O   snippet
-        O   contentDetails
-        O   status
- */
 @Component
 public class PlaylistItemDeserializer {
 
@@ -43,10 +37,10 @@ public class PlaylistItemDeserializer {
         List<PlaylistItem> playlistItemList = new ArrayList<>();
         PlaylistItem playlistItem;
 
-        for (int i = 0 ; i < items.size() ; i++) {
+        for (Object item : items) {
             playlistItem = new PlaylistItem();
 
-            JSONObject ob = (JSONObject) items.get(i);
+            JSONObject ob = (JSONObject) item;
 
             try {
                 playlistItem.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
