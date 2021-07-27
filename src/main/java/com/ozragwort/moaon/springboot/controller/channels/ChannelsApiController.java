@@ -7,6 +7,7 @@ import com.ozragwort.moaon.springboot.dto.channels.ChannelsUpdateRequestDto;
 import com.ozragwort.moaon.springboot.dto.videos.VideosSnippetResponseDto;
 import com.ozragwort.moaon.springboot.service.channels.ChannelsService;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
+import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class ChannelsApiController {
 
     private final ChannelsService channelsService;
     private final VideosService videosService;
+    private final YoutubeChannelsService youtubeChannelsService;
 
     @PostMapping("/channels")
     public ResponseEntity<ApiResult> save(@RequestBody ChannelsSaveRequestDto requestDto) {
@@ -43,6 +45,7 @@ public class ChannelsApiController {
 
     @GetMapping("/channels/{channelId}")
     public ResponseEntity<ApiResult> findById(@PathVariable String channelId) {
+        youtubeChannelsService.refresh(channelId);
         ChannelsResponseDto channelsResponseDto = channelsService.findByChannelId(channelId);
 
         ApiResult apiResult = new ApiResult().succeed(channelsResponseDto);
@@ -65,6 +68,7 @@ public class ChannelsApiController {
             @RequestParam(required = false) Map<String, Object> keyword,
             Pageable pageable
     ) {
+        youtubeChannelsService.refresh(channelId);
         List<VideosSnippetResponseDto> videosSnippetResponseDtoList =
                 videosService.findAllByChannelsId(channelId, keyword, pageable);
 

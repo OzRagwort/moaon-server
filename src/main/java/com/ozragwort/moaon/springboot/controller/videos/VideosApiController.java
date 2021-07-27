@@ -3,6 +3,7 @@ package com.ozragwort.moaon.springboot.controller.videos;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.videos.*;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
+import com.ozragwort.moaon.springboot.service.youtube.YoutubeVideosService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class VideosApiController {
 
     private final VideosService videosService;
+    private final YoutubeVideosService youtubeVideosService;
 
     @PostMapping("/videos")
     public ResponseEntity<ApiResult> save(@RequestBody VideosSaveRequestDto requestDto) {
@@ -40,6 +42,7 @@ public class VideosApiController {
 
     @GetMapping("/videos/{videoId}")
     public ResponseEntity<ApiResult> findById(@PathVariable String videoId) {
+        youtubeVideosService.refresh(videoId);
         VideosSnippetResponseDto videosSnippetResponseDto = videosService.findByVideoId(videoId);
 
         ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDto);
@@ -49,6 +52,7 @@ public class VideosApiController {
 
     @GetMapping("/videos/{videoId}/statistics")
     public ResponseEntity<ApiResult> findStatisticsById(@PathVariable String videoId) {
+        youtubeVideosService.refresh(videoId);
         VideosStatisticsResponseDto videosStatisticsResponseDto = videosService.findStatisticsById(videoId);
 
         ApiResult apiResult = new ApiResult().succeed(videosStatisticsResponseDto);
