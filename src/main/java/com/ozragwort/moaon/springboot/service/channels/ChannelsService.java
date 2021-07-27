@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ozragwort.moaon.springboot.domain.channels.ChannelsSpecs.SearchKey;
-import static com.ozragwort.moaon.springboot.domain.channels.ChannelsSpecs.searchWith;
+import static com.ozragwort.moaon.springboot.domain.specs.ChannelsSpecs.SearchKey;
+import static com.ozragwort.moaon.springboot.domain.specs.ChannelsSpecs.searchWith;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.isNull;
 

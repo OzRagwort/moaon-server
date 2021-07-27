@@ -1,4 +1,6 @@
-package com.ozragwort.moaon.springboot.domain.videos;
+package com.ozragwort.moaon.springboot.domain.specs;
+
+import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;

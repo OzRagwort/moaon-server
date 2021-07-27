@@ -1,4 +1,6 @@
-package com.ozragwort.moaon.springboot.domain.videos;
+package com.ozragwort.moaon.springboot.domain.specs;
+
+import com.ozragwort.moaon.springboot.domain.videos.VideosStatistics;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

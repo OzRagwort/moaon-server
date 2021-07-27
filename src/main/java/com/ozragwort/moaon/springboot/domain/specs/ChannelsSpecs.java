@@ -1,5 +1,6 @@
-package com.ozragwort.moaon.springboot.domain.channels;
+package com.ozragwort.moaon.springboot.domain.specs;
 
+import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
