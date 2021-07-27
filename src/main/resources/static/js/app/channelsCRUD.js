@@ -22,12 +22,11 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/yt-channels',
+            url: '/admin/channels/crud',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function(response) {
-            alert(response + ' 등록되었습니다.');
-            window.location.href = '/admin/channels/crud';
+            alert(response.channelId + ' 등록되었습니다.');
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
@@ -40,12 +39,11 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/yt-channels',
+            url: '/admin/channels/crud',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function() {
             alert('채널 정보를 최신화하였습니다.');
-            window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
@@ -57,7 +55,7 @@ var main = {
         var cid = $('#txt-channel-id').val();
         var category = $('#txt-category-idx').val();
 
-        var url = '/admin/channels/list' +
+        var url = '/admin/channels/crud' +
         '?maxResults=' + maxResults +
         '&page=' + page;
 
@@ -68,11 +66,11 @@ var main = {
         window.location.href = url;
     },
     delete : function() {
-        var id = $('#deleteChannelIdx').val();
+        var id = $('#deleteChannelId').val();
 
         $.ajax({
             type: 'DELETE',
-            url: '/api/moaon/v1/channels/'+id,
+            url: '/admin/channels/crud'+id,
             contentType: 'application/json; charset=utf-8'
         }).done(function(response) {
             alert(response + ' 채널 정보가 삭제되었습니다.');
