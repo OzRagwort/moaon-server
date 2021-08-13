@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.dto.videos;
 
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -43,6 +44,7 @@ public class VideosSnippetSaveRequestDto {
         this.tags = new ArrayList<>();
     }
 
+    @Builder
     public VideosSnippetSaveRequestDto(String channelId,
                                        String videosId,
                                        String videosName,
