@@ -81,7 +81,15 @@ public class YoutubeDataApi {
 
         JSONObject jsonObject = get(url);
 
-        return setChannelList(jsonObject);
+        ChannelListResponse channelListResponse;
+        try {
+            channelListResponse = setChannelList(jsonObject);
+        } catch (NullPointerException e) {
+            System.out.println("Channel Deserializer build items [" + channelId + "]");
+            throw new NullPointerException("Invalid Video ID : " + channelId);
+        }
+
+        return channelListResponse;
     }
 
     public VideoListResponse getVideoListResponse(String videoId, String secret) {
@@ -95,7 +103,15 @@ public class YoutubeDataApi {
 
         JSONObject jsonObject = get(url);
 
-        return setVideoList(jsonObject);
+        VideoListResponse videoListResponse;
+        try {
+            videoListResponse = setVideoList(jsonObject);
+        } catch (NullPointerException e) {
+            System.out.print("Video Deserializer build items [" + videoId + "]");
+            throw new IllegalArgumentException("Invalid Video ID : " + videoId);
+        }
+
+        return videoListResponse;
     }
 
     public List<PlaylistItemListResponse> getPlaylistItemListResponse(String uploadsList, String secret) {

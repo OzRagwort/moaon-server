@@ -1,6 +1,8 @@
 package com.ozragwort.moaon.springboot.controller.admin.videos;
 
 import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
+import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
+import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeVideosService;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +22,23 @@ public class AdminVideosController {
     private final YoutubeVideosService youtubeVideosService;
 
     @PostMapping("/admin/videos/crud")
-    public ResponseEntity<VideosResponseDto> adminSaveVideo(@RequestBody AdminVideosSaveRequestDto requestDto) {
+    public ResponseEntity<ApiResult> adminSaveVideo(@RequestBody AdminVideosSaveRequestDto requestDto) {
         VideosResponseDto responseDto = youtubeVideosService.save(requestDto);
 
-        return ResponseEntity.ok().body(responseDto);
+        ApiResult apiResult;
+        apiResult = responseDto == null
+                ? new ApiResult().failed(new FailedResponse(400, "Invalid Video ID : " + requestDto.getVideoId()))
+                : new ApiResult().succeed(responseDto);
+
+        return ResponseEntity.ok().body(apiResult);
     }
 
     @PutMapping("/admin/videos/crud/{videoId}")
-    public ResponseEntity<VideosResponseDto> adminRefreshVideo(@PathVariable String videoId) {
+    public ResponseEntity<ApiResult> adminRefreshVideo(@PathVariable String videoId) {
         VideosResponseDto responseDto = youtubeVideosService.refresh(videoId);
 
-        return ResponseEntity.ok().body(responseDto);
+        ApiResult apiResult = new ApiResult().succeed(responseDto);
+        return ResponseEntity.ok().body(apiResult);
     }
 
     @GetMapping("/admin/videos/crud")
@@ -49,10 +57,11 @@ public class AdminVideosController {
     }
 
     @DeleteMapping("/admin/videos/crud/{videoId}")
-    public ResponseEntity<String> adminDeleteVideo(@PathVariable String videoId) {
+    public ResponseEntity<ApiResult> adminDeleteVideo(@PathVariable String videoId) {
         youtubeVideosService.delete(videoId);
 
-        return ResponseEntity.ok().body(videoId);
+        ApiResult apiResult = new ApiResult().succeed(videoId);
+        return ResponseEntity.ok().body(apiResult);
     }
 
 }

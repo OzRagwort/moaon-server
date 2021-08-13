@@ -1,14 +1,20 @@
 package com.ozragwort.moaon.springboot.service.youtube;
 
 import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.specs.AdminChannelsSpecs;
+import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
+import com.ozragwort.moaon.springboot.domain.videos.VideosSnippetRepository;
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
+import com.ozragwort.moaon.springboot.dto.videos.VideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.videos.VideosSnippetResponseDto;
+import com.ozragwort.moaon.springboot.dto.videos.VideosSnippetSaveRequestDto;
+import com.ozragwort.moaon.springboot.dto.videos.VideosStatisticsSaveRequestDto;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
 import com.ozragwort.moaon.springboot.util.youtube.YoutubeDataApi;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +45,8 @@ public class YoutubeChannelsService {
     private final EntityManagerFactory entityManagerFactory;
     private final CategoriesRepository categoriesRepository;
     private final ChannelsRepository channelsRepository;
+    private final VideosSnippetRepository videosSnippetRepository;
+    private final YoutubeVideosService youtubeVideosService;
     private final VideosService videosService;
     private final YoutubeDataApi youtubeDataApi;
 
@@ -46,9 +54,12 @@ public class YoutubeChannelsService {
     public ChannelsResponseDto save(AdminChannelsSaveRequestDto requestDto) {
         ChannelListResponse channelListResponse = youtubeDataApi.getChannelListResponse(requestDto.getChannelId(), null);
 
-        Channels channels = channelsRepository.save(responseToEntity(channelListResponse, requestDto.getCategoryId()));
-
-        return new ChannelsResponseDto(channels);
+        if (channelListResponse.getItems().isEmpty()) {
+            return null;
+        } else {
+            Channels channels = channelsRepository.save(responseToEntity(channelListResponse, requestDto.getCategoryId()));
+            return new ChannelsResponseDto(channels);
+        }
     }
 
     @Transactional
@@ -61,6 +72,42 @@ public class YoutubeChannelsService {
         return new ChannelsResponseDto(
                 updateChannels(channelListResponse, channels)
         );
+    }
+
+    @Transactional
+    public void uploadUpdate(String channelId) {
+        Channels channels = channelsRepository.findByChannelId(channelId)
+                .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + channelId));
+
+        List<PlaylistItemListResponse> playlistItemListResponse = youtubeDataApi.getPlaylistItemListResponse(channels.getUploadsList(), null);
+
+        for (PlaylistItemListResponse itemListResponse : playlistItemListResponse) {
+            itemListResponse.getItems().stream().map(playlistItem ->
+                    VideosSnippetSaveRequestDto.builder()
+                            .channelId(playlistItem.getSnippet().getChannelId())
+                            .videosId(playlistItem.getSnippet().getResourceId().getVideoId())
+                            .videosName(playlistItem.getSnippet().getTitle())
+                            .videosThumbnail(playlistItem.getSnippet().getThumbnails().getMedium().getUrl())
+                            .videosDescription(playlistItem.getSnippet().getDescription())
+                            .videosPublishedDate(playlistItem.getSnippet().getPublishedAt())
+                            .videosDuration("PT0M0S")
+                            .tags(new ArrayList<>())
+                            .build())
+                    .forEach(videosSnippetSaveRequestDto -> {
+                        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videosSnippetSaveRequestDto.getVideosId())
+                                .orElse(null);
+
+                        if (videosSnippet == null) {
+                            VideosSaveRequestDto requestDto = new VideosSaveRequestDto(
+                                    videosSnippetSaveRequestDto,
+                                    new VideosStatisticsSaveRequestDto(0, 0, 0, 0)
+                            );
+                            videosService.save(requestDto);
+                        } else {
+                            youtubeVideosService.refresh(videosSnippetSaveRequestDto.getVideosId());
+                        }
+                    });
+        }
     }
 
     @Transactional

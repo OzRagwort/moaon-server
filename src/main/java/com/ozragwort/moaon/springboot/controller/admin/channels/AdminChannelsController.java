@@ -1,6 +1,8 @@
 package com.ozragwort.moaon.springboot.controller.admin.channels;
 
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
+import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
+import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +22,32 @@ public class AdminChannelsController {
     private final YoutubeChannelsService youtubeChannelsService;
 
     @PostMapping("/admin/channels/crud")
-    public ResponseEntity<ChannelsResponseDto> adminSaveChannel(@RequestBody AdminChannelsSaveRequestDto requestDto) {
+    public ResponseEntity<ApiResult> adminSaveChannel(@RequestBody AdminChannelsSaveRequestDto requestDto) {
         ChannelsResponseDto responseDto = youtubeChannelsService.save(requestDto);
 
-        return ResponseEntity.ok().body(responseDto);
+        ApiResult apiResult;
+        apiResult = responseDto == null
+                ? new ApiResult().failed(new FailedResponse(400, "Invalid Channel ID : " + requestDto.getChannelId()))
+                : new ApiResult().succeed(responseDto);
+
+        return ResponseEntity.ok().body(apiResult);
     }
 
     @PutMapping("/admin/channels/crud/{channelId}")
-    public ResponseEntity<ChannelsResponseDto> adminRefreshChannel(@PathVariable String channelId) {
+    public ResponseEntity<ApiResult> adminRefreshChannel(@PathVariable String channelId) {
         ChannelsResponseDto responseDto = youtubeChannelsService.refresh(channelId);
 
-        return ResponseEntity.ok().body(responseDto);
+        ApiResult apiResult = new ApiResult().succeed(responseDto);
+        return ResponseEntity.ok().body(apiResult);
+    }
+
+    @PutMapping("/admin/channels/crud/{channelId}/upload")
+    public ResponseEntity<ApiResult> uploadUpdate(@PathVariable String channelId) {
+        youtubeChannelsService.uploadUpdate(channelId);
+
+        ApiResult apiResult = new ApiResult().succeed(true);
+        return ResponseEntity.ok()
+                .body(apiResult);
     }
 
     @GetMapping("/admin/channels/crud")
@@ -49,10 +66,11 @@ public class AdminChannelsController {
     }
 
     @DeleteMapping("/admin/channels/crud/{channelId}")
-    public ResponseEntity<String> adminDeleteChannel(@PathVariable String channelId) {
+    public ResponseEntity<ApiResult> adminDeleteChannel(@PathVariable String channelId) {
         youtubeChannelsService.delete(channelId);
 
-        return ResponseEntity.ok().body(channelId);
+        ApiResult apiResult = new ApiResult().succeed(channelId);
+        return ResponseEntity.ok().body(apiResult);
     }
 
 }

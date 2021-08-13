@@ -40,21 +40,15 @@ public class ChannelDeserializer {
 
         for (Object item : items) {
             channel = new Channel();
-
             JSONObject ob = (JSONObject) item;
 
-            try {
-                channel.setKind((String) ob.get("kind"));
-                channel.setEtag((String) ob.get("etag"));
-                channel.setId((String) ob.get("id"));
-                channel.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
-                channel.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
-                channel.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
-                channel.setBrandingSettings(buildBrandingSettings((JSONObject) ob.get("brandingSettings")));
-            } catch (NullPointerException e) {
-                System.out.printf("Channel Deserializer build items [%s]%n", ob.get("id"));
-                e.printStackTrace();
-            }
+            channel.setKind((String) ob.get("kind"));
+            channel.setEtag((String) ob.get("etag"));
+            channel.setId((String) ob.get("id"));
+            channel.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
+            channel.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
+            channel.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
+            channel.setBrandingSettings(buildBrandingSettings((JSONObject) ob.get("brandingSettings")));
 
             channelList.add(channel);
         }

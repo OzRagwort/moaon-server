@@ -25,8 +25,8 @@ var main = {
             url: '/admin/channels/crud',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
-        }).done(function(response) {
-            alert(response.channelId + ' 등록되었습니다.');
+        }).done(function(res) {
+            alert(res.response.channelId + ' 등록되었습니다.');
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
@@ -70,10 +70,10 @@ var main = {
 
         $.ajax({
             type: 'DELETE',
-            url: '/admin/channels/crud'+id,
+            url: '/admin/channels/crud/'+id,
             contentType: 'application/json; charset=utf-8'
-        }).done(function(response) {
-            alert(response + ' 채널 정보가 삭제되었습니다.');
+        }).done(function() {
+            alert('채널 정보가 삭제되었습니다.');
             window.location.href = '/admin/channels/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));

@@ -49,10 +49,14 @@ public class YoutubeVideosService {
     public VideosResponseDto save(AdminVideosSaveRequestDto requestDto) {
         VideoListResponse videoListResponse = youtubeDataApi.getVideoListResponse(requestDto.getVideoId(), null);
 
-        VideosSnippet videosSnippet = videosSnippetRepository.save(responseToSnippet(videoListResponse));
-        VideosStatistics videosStatistics = videosStatisticsRepository.save(responseToStatistics(videoListResponse, videosSnippet));
+        if (videoListResponse.getItems().isEmpty()) {
+            return null;
+        } else {
+            VideosSnippet videosSnippet = videosSnippetRepository.save(responseToSnippet(videoListResponse));
+            VideosStatistics videosStatistics = videosStatisticsRepository.save(responseToStatistics(videoListResponse, videosSnippet));
 
-        return new VideosResponseDto(videosSnippet, videosStatistics);
+            return new VideosResponseDto(videosSnippet, videosStatistics);
+        }
     }
 
     @Transactional

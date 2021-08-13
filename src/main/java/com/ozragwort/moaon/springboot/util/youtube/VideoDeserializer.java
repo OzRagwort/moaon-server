@@ -24,7 +24,7 @@ public class VideoDeserializer {
         videoListResponse.setPrevPageToken((String) jsonObject.get("prevPageToken"));
 
         return videoListResponse;
-    }
+}
 
     private PageInfo buildPageInfo(JSONObject jsonObject) {
         PageInfo pageInfo = new PageInfo();
@@ -44,16 +44,12 @@ public class VideoDeserializer {
 
             JSONObject ob = (JSONObject) item;
 
-            try {
-                video.setKind((String) ob.get("kind"));
-                video.setEtag((String) ob.get("etag"));
-                video.setId((String) ob.get("id"));
-                video.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
-                video.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
-                video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
+            video.setKind((String) ob.get("kind"));
+            video.setEtag((String) ob.get("etag"));
+            video.setId((String) ob.get("id"));
+            video.setSnippet(buildSnippet((JSONObject) ob.get("snippet")));
+            video.setContentDetails(buildContentDetails((JSONObject) ob.get("contentDetails")));
+            video.setStatistics(buildStatistic((JSONObject) ob.get("statistics")));
 
             videoList.add(video);
         }
