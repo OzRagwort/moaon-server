@@ -6,8 +6,6 @@ import com.ozragwort.moaon.springboot.service.videos.VideosService;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeVideosService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +53,7 @@ public class VideosApiController {
     @GetMapping("/videos")
     public ResponseEntity<ApiResult> findAll(
             @RequestParam(required = false) Map<String, Object> keyword,
-            @PageableDefault(sort = "videoPublishedDate", direction = Sort.Direction.DESC) Pageable pageable
+            Pageable pageable
             ) {
         List<VideosResponseDto> videosResponseDtoList = videosService.findAll(keyword, pageable);
 
