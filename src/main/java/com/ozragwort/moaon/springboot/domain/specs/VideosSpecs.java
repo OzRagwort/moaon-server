@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -45,18 +46,23 @@ public class VideosSpecs {
     public static List<Predicate> getPredicateByKeyword(Map<VideosSearchKey, Object> keyword, Root<Videos> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicate = new ArrayList<>();
 
+        String strIds = "";
+        List<String> ids = new ArrayList<>();
+
         for (VideosSearchKey key : keyword.keySet()) {
             switch (key) {
                 case VIDEOID:
                 case CHANNELID:
-                    predicate.add(criteriaBuilder.equal(
-                            root.get(key.value), keyword.get(key)
-                    ));
+                    strIds = (String) keyword.get(key);
+                    ids = Arrays.asList(strIds.split(","));
+
+                    predicate.add(criteriaBuilder.in(root.get(key.value)).value(ids));
                     break;
                 case CATEGORYID:
-                    predicate.add(criteriaBuilder.equal(
-                            root.get("channels").get(key.value), keyword.get(key)
-                    ));
+                    strIds = (String) keyword.get(key);
+                    ids = Arrays.asList(strIds.split(","));
+
+                    predicate.add(criteriaBuilder.in(root.get("channels").get(key.value)).value(ids));
                     break;
                 case SEARCH:
                     Predicate likeName = criteriaBuilder.like(root.get("videoName"), "*" + keyword.get(key) + "*");

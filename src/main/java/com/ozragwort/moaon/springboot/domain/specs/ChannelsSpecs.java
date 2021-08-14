@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +45,10 @@ public class ChannelsSpecs {
             switch (key) {
                 case CHANNELID:
                 case CATEGORYID:
-                    predicate.add(criteriaBuilder.equal(
-                            root.get(key.value), keyword.get(key)
-                    ));
+                    String strIds = (String) keyword.get(key);
+                    List<String> ids = Arrays.asList(strIds.split(","));
+
+                    predicate.add(criteriaBuilder.in(root.get(key.value)).value(ids));
                     break;
                 case CHANNELNAME:
                     predicate.add(criteriaBuilder.like(
