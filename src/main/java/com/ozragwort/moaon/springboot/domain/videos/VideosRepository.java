@@ -11,18 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface VideosSnippetRepository extends JpaRepository<VideosSnippet, Long>, JpaSpecificationExecutor<VideosSnippet> {
+public interface VideosRepository extends JpaRepository<Videos, Long>, JpaSpecificationExecutor<Videos> {
 
-    Optional<List<VideosSnippet>> findAllByChannels(Channels channels);
+    Optional<List<Videos>> findAllByChannels(Channels channels);
 
-    Optional<VideosSnippet> findByVideoId(String videoId);
+    Optional<Videos> findByVideoId(String videoId);
 
     @Query(value =
             "SELECT DISTINCT(videos_tags_tags) " +
-            "FROM videos_tags " +
-            "WHERE videos_snippet_idx IN (SELECT videos_snippet_idx FROM videos_snippet WHERE channels_idx = :channelsIdx) " +
-            "GROUP BY videos_tags_tags " +
-            "ORDER BY COUNT(videos_tags_tags) DESC", nativeQuery = true)
+                    "FROM videos_tags " +
+                    "WHERE videos_idx IN (SELECT videos_idx FROM videos WHERE channels_idx = :channelsIdx) " +
+                    "GROUP BY videos_tags_tags " +
+                    "ORDER BY COUNT(videos_tags_tags) DESC", nativeQuery = true)
     Optional<List<String>> customFindTagsByChannels(@Param("channelsIdx") Long channelsIdx);
 
 }

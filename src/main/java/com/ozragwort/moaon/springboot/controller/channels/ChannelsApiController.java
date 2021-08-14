@@ -4,7 +4,7 @@ import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsUpdateRequestDto;
-import com.ozragwort.moaon.springboot.dto.videos.VideosSnippetResponseDto;
+import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.service.channels.ChannelsService;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
@@ -45,8 +45,10 @@ public class ChannelsApiController {
 
     @GetMapping("/channels/{channelId}")
     public ResponseEntity<ApiResult> findById(@PathVariable String channelId) {
-        youtubeChannelsService.refresh(channelId);
         ChannelsResponseDto channelsResponseDto = channelsService.findByChannelId(channelId);
+        if (channelsResponseDto != null) {
+            youtubeChannelsService.refresh(channelsResponseDto.getChannelId());
+        }
 
         ApiResult apiResult = new ApiResult().succeed(channelsResponseDto);
         return ResponseEntity.ok()
@@ -69,7 +71,7 @@ public class ChannelsApiController {
             Pageable pageable
     ) {
         youtubeChannelsService.refresh(channelId);
-        List<VideosSnippetResponseDto> videosSnippetResponseDtoList =
+        List<VideosResponseDto> videosSnippetResponseDtoList =
                 videosService.findAllByChannelsId(channelId, keyword, pageable);
 
         ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDtoList);

@@ -1,27 +1,31 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
+import com.ozragwort.moaon.springboot.domain.videos.Videos;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VideosSnippetSpecs {
+public class VideosSpecs {
 
-    public enum SnippetSearchKey {
+    public enum VideosSearchKey {
         VIDEOID("videoId"),
         CHANNELID("channels"),
         CATEGORYID("categories"),
         SEARCH(""),
         TAGS("tags"),
         SHORTS(""),
+        SCORE("score"),
         RANDOM(""),
         PAGE(""),SIZE(""),SORT("");
 
         private final String value;
 
-        SnippetSearchKey(String value) {
+        VideosSearchKey(String value) {
             this.value = value;
         }
 
@@ -30,10 +34,10 @@ public class VideosSnippetSpecs {
         }
     }
 
-    public static List<Predicate> getPredicateByKeyword(Map<SnippetSearchKey, Object> keyword, Root<VideosSnippet> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    public static List<Predicate> getPredicateByKeyword(Map<VideosSearchKey, Object> keyword, Root<Videos> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicate = new ArrayList<>();
 
-        for (SnippetSearchKey key : keyword.keySet()) {
+        for (VideosSearchKey key : keyword.keySet()) {
             switch (key) {
                 case VIDEOID:
                 case CHANNELID:
@@ -65,6 +69,11 @@ public class VideosSnippetSpecs {
 
                     predicate.add(criteriaBuilder.and(shortsName, shortsDescription));
                     predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("videoDuration"), 60));
+                    break;
+                case SCORE:
+                    predicate.add(criteriaBuilder.greaterThanOrEqualTo(
+                            root.get(key.value), Double.valueOf(keyword.get(key).toString())
+                    ));
                     break;
                 case RANDOM:
                     if (keyword.get(key).equals("true")) {

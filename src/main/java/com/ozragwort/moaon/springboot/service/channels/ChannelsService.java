@@ -4,8 +4,8 @@ import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippetRepository;
+import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsUpdateRequestDto;
@@ -29,7 +29,7 @@ public class ChannelsService {
 
     private final CategoriesRepository categoriesRepository;
     private final ChannelsRepository channelsRepository;
-    private final VideosSnippetRepository videosSnippetRepository;
+    private final VideosRepository videosRepository;
 
     @Transactional
     public ChannelsResponseDto save(ChannelsSaveRequestDto requestDto) {
@@ -122,7 +122,7 @@ public class ChannelsService {
 
         return channels == null
                 ? null
-                : videosSnippetRepository.customFindTagsByChannels(channels.getIdx())
+                : videosRepository.customFindTagsByChannels(channels.getIdx())
                         .orElse(null);
     }
 
@@ -131,7 +131,7 @@ public class ChannelsService {
         Channels channels = channelsRepository.findByChannelId(channelId)
                 .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + channelId));
 
-        List<VideosSnippet> videosSnippetList = videosSnippetRepository.findAllByChannels(channels)
+        List<Videos> videosList = videosRepository.findAllByChannels(channels)
                 .orElseThrow(() -> new IllegalArgumentException("Can't delete Channel. Videos remain on Channel"));
 
         channelsRepository.delete(channels);

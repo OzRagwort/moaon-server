@@ -22,38 +22,29 @@ values (null, 1, 'testChannelId1', 'testChannelName1', 'testThumbnail1', 'testUp
        (null, 1, 'testChannelId8', 'testChannelName8', 'testThumbnail8', 'testUploadsList8', 0, 'testBannerUrl8'),
        (null, 1, 'testChannelId9', 'testChannelName9', 'testThumbnail9', 'testUploadsList9', 0, 'testBannerUrl9');
 
--- insert videos_snippet data
-insert into videos_snippet(
-                        videos_snippet_idx,
+-- insert videos data
+insert into videos(
+                        videos_idx,
                         channels_idx,
-                        videos_snippet_id,
-                        videos_snippet_name,
-                        videos_snippet_thumbnail,
-                        videos_snippet_description,
-                        videos_snippet_published_date,
-                        videos_snippet_duration)
-values (null, 1, 'testVideoId1', 'testVideoName1', 'testThumbnail1', 'testDescrption1', '2021-01-01 00:00:00.0', 120),
-       (null, 1, 'testVideoId2', 'testVideoName2', 'testThumbnail2', 'testDescrption2', '2021-01-01 00:00:00.0', 240),
-       (null, 1, 'testVideoId3', 'testVideoName3', 'testThumbnail3', 'testDescrption3', '2021-01-01 00:00:00.0', 360),
-       (null, 2, 'testVideoId4', 'testVideoName4', 'testThumbnail4', 'testDescrption4', '2021-01-01 00:00:00.0', 480);
-
--- insert videos_statistics data
-insert into videos_statistics(
-                        videos_statistics_idx,
-                        videos_snippet_idx,
-                        videos_statistics_view_count,
-                        videos_statistics_like_count,
-                        videos_statistics_dislike_count,
-                        videos_statistics_comment_count,
-                        videos_statistics_score)
-values (null, 1, 1, 1, 1, 1, 1),
-       (null, 2, 2, 2, 2, 2, 2),
-       (null, 3, 3, 3, 3, 3, 3),
-       (null, 4, 4, 4, 4, 4, 4);
+                        videos_id,
+                        videos_name,
+                        videos_thumbnail,
+                        videos_description,
+                        videos_published_date,
+                        videos_duration,
+                        videos_view_count,
+                        videos_like_count,
+                        videos_dislike_count,
+                        videos_comment_count,
+                        videos_score)
+values (null, 1, 'testVideoId1', 'testVideoName1', 'testThumbnail1', 'testDescrption1', '2021-01-01 00:00:00.0', 120, 1, 1, 1, 1, 1),
+       (null, 1, 'testVideoId2', 'testVideoName2', 'testThumbnail2', 'testDescrption2', '2021-01-01 00:00:00.0', 240, 2, 2, 2, 2, 2),
+       (null, 1, 'testVideoId3', 'testVideoName3', 'testThumbnail3', 'testDescrption3', '2021-01-01 00:00:00.0', 360, 3, 3, 3, 3, 3),
+       (null, 2, 'testVideoId4', 'testVideoName4', 'testThumbnail4', 'testDescrption4', '2021-01-01 00:00:00.0', 480, 4, 4, 4, 4, 4);
 
 -- insert videos_tags data
 insert into videos_tags(
-                        videos_snippet_idx,
+                        videos_idx,
                         videos_tags_tags)
 values (1, 'pet'),
        (1, 'cat'),

@@ -2,13 +2,12 @@ package com.ozragwort.moaon.springboot.service.youtube;
 
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatistics;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippetRepository;
-import com.ozragwort.moaon.springboot.domain.videos.VideosStatistics;
-import com.ozragwort.moaon.springboot.domain.videos.VideosStatisticsRepository;
+import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.util.youtube.YoutubeDataApi;
@@ -26,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,7 @@ public class YoutubeVideosService {
 
     private final EntityManagerFactory entityManagerFactory;
     private final ChannelsRepository channelsRepository;
-    private final VideosSnippetRepository videosSnippetRepository;
-    private final VideosStatisticsRepository videosStatisticsRepository;
+    private final VideosRepository videosRepository;
     private final YoutubeDataApi youtubeDataApi;
 
     @Transactional
@@ -52,23 +51,25 @@ public class YoutubeVideosService {
         if (videoListResponse.getItems().isEmpty()) {
             return null;
         } else {
-            VideosSnippet videosSnippet = videosSnippetRepository.save(responseToSnippet(videoListResponse));
-            VideosStatistics videosStatistics = videosStatisticsRepository.save(responseToStatistics(videoListResponse, videosSnippet));
+            Videos videos = videosRepository.save(responseToVideos(videoListResponse));
 
-            return new VideosResponseDto(videosSnippet, videosStatistics);
+            return new VideosResponseDto(videos);
         }
     }
 
     @Transactional
     public VideosResponseDto refresh(String videoId) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-        VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
+        Videos videos = videosRepository.findByVideoId(videoId)
+                .orElse(new Videos());
 
         VideoListResponse VideoListResponse = youtubeDataApi.getVideoListResponse(videoId, null);
 
-        return updateVideos(VideoListResponse, videosSnippet, videosStatistics);
+        if (VideoListResponse == null) {
+            return new VideosResponseDto(videos);
+        } else {
+            return new VideosResponseDto(updateVideos(VideoListResponse, videos));
+        }
+
     }
 
     @Transactional
@@ -79,40 +80,34 @@ public class YoutubeVideosService {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
 
-        CriteriaQuery<VideosSnippet> criteriaQuery = builder.createQuery(VideosSnippet.class);
+        CriteriaQuery<Videos> criteriaQuery = builder.createQuery(Videos.class);
 
-        Root<VideosSnippet> root = criteriaQuery.from(VideosSnippet.class);
+        Root<Videos> root = criteriaQuery.from(Videos.class);
         Map<SearchKey, Object> specKeys = makeSpeckKey(keyword);
-        List<Predicate> snippetPredicate = new ArrayList<>(getPredicateByKeyword
+        List<Predicate> predicate = new ArrayList<>(getPredicateByKeyword
                 (specKeys, root, criteriaQuery, builder));
 
         // 쿼리 실행
         criteriaQuery
                 .select(root)
-                .where(snippetPredicate.toArray(new Predicate[0]))
+                .where(predicate.toArray(new Predicate[0]))
                 .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
-        TypedQuery<VideosSnippet> query = em
+        TypedQuery<Videos> query = em
                 .createQuery(criteriaQuery)
                 .setFirstResult(page * size)
                 .setMaxResults(size);
 
         return query.getResultList().stream()
-                .map(videosSnippet -> {
-                    VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
-                            .orElseThrow(() -> new IllegalArgumentException(""));
-                    return new VideosResponseDto(videosSnippet, videosStatistics);
-                }).collect(Collectors.toList());
+                .map(VideosResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public void delete(String videoId) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-        VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
+        Videos videos = videosRepository.findByVideoId(videoId)
                 .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
 
-        videosStatisticsRepository.delete(videosStatistics);
-        videosSnippetRepository.delete(videosSnippet);
+        videosRepository.delete(videos);
     }
 
 
@@ -134,72 +129,67 @@ public class YoutubeVideosService {
         return searchKeyword;
     }
 
-    private VideosSnippet responseToSnippet(VideoListResponse videoListResponse) {
+    private Videos responseToVideos(VideoListResponse videoListResponse) {
         Video item = videoListResponse.getItems().get(0);
+        VideoSnippet snippet = item.getSnippet();
+        VideoStatistics statistics = item.getStatistics();
+
         Channels channels = channelsRepository.findByChannelId(item.getSnippet().getChannelId())
                 .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + item.getSnippet().getChannelId()));
 
-        return VideosSnippet.builder()
-                .channels(channels)
-                .videoId(item.getId())
-                .videoName(item.getSnippet().getTitle())
-                .videoDescription(item.getSnippet().getDescription())
-                .videoThumbnail(item.getSnippet().getThumbnails().getMedium().getUrl())
-                .videoPublishedDate(
-                        StringToUTCDateTime(item.getSnippet().getPublishedAt())
-                )
-                .videoDuration(
-                        DurationStringToSecond(item.getContentDetails().getDuration())
-                )
-                .tags(item.getSnippet().getTags())
-                .build();
-    }
-
-    private VideosStatistics responseToStatistics(VideoListResponse videoListResponse, VideosSnippet videosSnippet) {
-        VideoStatistics youtubeData = videoListResponse.getItems().get(0).getStatistics();
-        int viveCount = youtubeData.getViewCount().intValue();
-        int likeCount = youtubeData.getLikeCount().intValue();
-        int dislikeCount = youtubeData.getDislikeCount().intValue();
-        int commentCount = youtubeData.getCommentCount().intValue();
+        String videoId = item.getId();
+        String videoName = snippet.getTitle();
+        String videoDescription = snippet.getDescription();
+        String videoThumbnail = snippet.getThumbnails().getMedium().getUrl();
+        LocalDateTime videoPublishedDate = StringToUTCDateTime(snippet.getPublishedAt());
+        long videoDuration = DurationStringToSecond(item.getContentDetails().getDuration());
+        int viveCount = statistics.getViewCount().intValue();
+        int likeCount = statistics.getLikeCount().intValue();
+        int dislikeCount = statistics.getDislikeCount().intValue();
+        int commentCount = statistics.getCommentCount().intValue();
         double score = calcScore(viveCount, likeCount, dislikeCount, commentCount);
+        List<String> tags = snippet.getTags();
 
-        return VideosStatistics.builder()
-                .videosSnippet(videosSnippet)
+        return Videos.builder()
+                .channels(channels)
+                .videoId(videoId)
+                .videoName(videoName)
+                .videoDescription(videoDescription)
+                .videoThumbnail(videoThumbnail)
+                .videoPublishedDate(videoPublishedDate)
+                .videoDuration(videoDuration)
                 .viewCount(viveCount)
                 .likeCount(likeCount)
                 .dislikeCount(dislikeCount)
                 .commentCount(commentCount)
                 .score(score)
+                .tags(tags)
                 .build();
     }
 
-    private VideosResponseDto updateVideos(VideoListResponse videoListResponse, VideosSnippet videosSnippet, VideosStatistics videosStatistics) {
-        VideosSnippet updateSnippet = responseToSnippet(videoListResponse);
-        VideosStatistics updateStatistics = responseToStatistics(videoListResponse, videosSnippet);
+    private Videos updateVideos(VideoListResponse videoListResponse, Videos videos) {
+        Videos response = responseToVideos(videoListResponse);
 
-        videosSnippet.update(
-                updateSnippet.getVideoName(),
-                updateSnippet.getVideoThumbnail(),
-                updateSnippet.getVideoDescription(),
-                updateSnippet.getVideoPublishedDate(),
-                updateSnippet.getVideoDuration(),
-                updateSnippet.getTags()
-        );
-
-        videosStatistics.update(
-                updateStatistics.getViewCount(),
-                updateStatistics.getLikeCount(),
-                updateStatistics.getDislikeCount(),
-                updateStatistics.getCommentCount(),
+        videos.update(
+                response.getVideoName(),
+                response.getVideoThumbnail(),
+                response.getVideoDescription(),
+                response.getVideoPublishedDate(),
+                response.getVideoDuration(),
+                response.getViewCount(),
+                response.getLikeCount(),
+                response.getDislikeCount(),
+                response.getCommentCount(),
                 calcScore(
-                        updateStatistics.getViewCount(),
-                        updateStatistics.getLikeCount(),
-                        updateStatistics.getDislikeCount(),
-                        updateStatistics.getCommentCount()
-                )
+                        response.getViewCount(),
+                        response.getLikeCount(),
+                        response.getDislikeCount(),
+                        response.getCommentCount()
+                ),
+                response.getTags()
         );
 
-        return new VideosResponseDto(videosSnippet, videosStatistics);
+        return videos;
     }
 
 }

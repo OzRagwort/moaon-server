@@ -56,23 +56,20 @@ public class VideosApiControllerTest {
         int likeCount = 2;
         int dislikeCount = 3;
         int commentCount = 4;
-        VideosSnippetSaveRequestDto snippet = new VideosSnippetSaveRequestDto(
-                channelId,
-                videosId,
-                videosName,
-                videosThumbnail,
-                videosDescription,
-                videosPublishedDate,
-                videosDuration,
-                tags
-        );
-        VideosStatisticsSaveRequestDto statistics = new VideosStatisticsSaveRequestDto(
-                viewCount,
-                likeCount,
-                dislikeCount,
-                commentCount
-        );
-        VideosSaveRequestDto requestDto = new VideosSaveRequestDto(snippet, statistics);
+        VideosSaveRequestDto requestDto = VideosSaveRequestDto.builder()
+                .channelId(channelId)
+                .videosId(videosId)
+                .videosName(videosName)
+                .videosThumbnail(videosThumbnail)
+                .videosDescription(videosDescription)
+                .videosPublishedDate(videosPublishedDate)
+                .videosDuration(videosDuration)
+                .viewCount(viewCount)
+                .likeCount(likeCount)
+                .dislikeCount(dislikeCount)
+                .commentCount(commentCount)
+                .tags(tags)
+                .build();
 
         String content = ToStringBuilder.reflectionToString(requestDto, ToStringStyle.JSON_STYLE);
 
@@ -114,21 +111,19 @@ public class VideosApiControllerTest {
         int likeCount = 2;
         int dislikeCount = 3;
         int commentCount = 4;
-        VideosSnippetUpdateRequestDto snippet = new VideosSnippetUpdateRequestDto(
+
+        VideosUpdateRequestDto requestDto = new VideosUpdateRequestDto(
                 videosName,
                 videosThumbnail,
                 videosDescription,
                 videosPublishedDate,
                 videosDuration,
-                tags
-        );
-        VideosStatisticsUpdateRequestDto statistics = new VideosStatisticsUpdateRequestDto(
                 viewCount,
                 likeCount,
                 dislikeCount,
-                commentCount
+                commentCount,
+                tags
         );
-        VideosUpdateRequestDto requestDto = new VideosUpdateRequestDto(snippet, statistics);
 
         String content = ToStringBuilder.reflectionToString(requestDto, ToStringStyle.JSON_STYLE);
 
@@ -188,31 +183,6 @@ public class VideosApiControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.response", is(hasSize(1))))
-                .andExpect(jsonPath("$.error", is(nullValue())))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("[Videos APi] videos의 statistics 조회")
-    public void findStatisticsByVideoIdTest() throws Exception {
-        // given
-        String videoId = "testVideoId4";
-
-        // when
-        ResultActions actions = mockMvc
-                .perform(get("/api/moaon/v2/videos/" + videoId + "/statistics")
-                        .contentType(MediaType.APPLICATION_JSON));
-
-        // then
-        actions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.response", is(notNullValue())))
-                .andExpect(jsonPath("$.response.viewCount", is(4)))
-                .andExpect(jsonPath("$.response.likeCount", is(4)))
-                .andExpect(jsonPath("$.response.dislikeCount", is(4)))
-                .andExpect(jsonPath("$.response.commentCount", is(4)))
                 .andExpect(jsonPath("$.error", is(nullValue())))
                 .andDo(print());
     }

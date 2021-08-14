@@ -1,7 +1,6 @@
 package com.ozragwort.moaon.springboot.dto.videos;
 
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
-import com.ozragwort.moaon.springboot.domain.videos.VideosStatistics;
+import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,21 +29,21 @@ public class VideosResponseDto {
     private int commentCount;
     private double score;
 
-    public VideosResponseDto(VideosSnippet videosSnippet, VideosStatistics videosStatistics) {
-        this.idx = videosSnippet.getIdx();
-        this.channels = new ChannelsResponseDto(videosSnippet.getChannels());
-        this.videoId = videosSnippet.getVideoId();
-        this.videoName = videosSnippet.getVideoName();
-        this.videoThumbnail = videosSnippet.getVideoThumbnail();
-        this.videoDescription = videosSnippet.getVideoDescription();
-        this.videoPublishedDate = videosSnippet.getVideoPublishedDate();
-        this.videoDuration = DurationSecondToString(videosSnippet.getVideoDuration());
-        this.tags = videosSnippet.getTags();
-        this.viewCount = videosStatistics.getViewCount();
-        this.likeCount = videosStatistics.getLikeCount();
-        this.dislikeCount = videosStatistics.getDislikeCount();
-        this.commentCount = videosStatistics.getCommentCount();
-        this.score = videosStatistics.getScore();
+    public VideosResponseDto(Videos videos) {
+        this.idx = videos.getIdx();
+        this.channels = new ChannelsResponseDto(videos.getChannels());
+        this.videoId = videos.getVideoId();
+        this.videoName = videos.getVideoName();
+        this.videoThumbnail = videos.getVideoThumbnail();
+        this.videoDescription = videos.getVideoDescription();
+        this.videoPublishedDate = videos.getVideoPublishedDate();
+        this.videoDuration = DurationSecondToString(videos.getVideoDuration());
+        this.tags = videos.getTags();
+        this.viewCount = videos.getViewCount();
+        this.likeCount = videos.getLikeCount();
+        this.dislikeCount = videos.getDislikeCount();
+        this.commentCount = videos.getCommentCount();
+        this.score = videos.getScore();
     }
 
 }

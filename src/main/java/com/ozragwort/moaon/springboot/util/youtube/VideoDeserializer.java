@@ -24,7 +24,7 @@ public class VideoDeserializer {
         videoListResponse.setPrevPageToken((String) jsonObject.get("prevPageToken"));
 
         return videoListResponse;
-}
+    }
 
     private PageInfo buildPageInfo(JSONObject jsonObject) {
         PageInfo pageInfo = new PageInfo();

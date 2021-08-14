@@ -42,20 +42,12 @@ public class VideosApiController {
 
     @GetMapping("/videos/{videoId}")
     public ResponseEntity<ApiResult> findById(@PathVariable String videoId) {
-        youtubeVideosService.refresh(videoId);
-        VideosSnippetResponseDto videosSnippetResponseDto = videosService.findByVideoId(videoId);
+        VideosResponseDto videosResponseDto = videosService.findByVideoId(videoId);
+        if (videosResponseDto != null) {
+            youtubeVideosService.refresh(videosResponseDto.getVideoId());
+        }
 
-        ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDto);
-        return ResponseEntity.ok()
-                .body(apiResult);
-    }
-
-    @GetMapping("/videos/{videoId}/statistics")
-    public ResponseEntity<ApiResult> findStatisticsById(@PathVariable String videoId) {
-        youtubeVideosService.refresh(videoId);
-        VideosStatisticsResponseDto videosStatisticsResponseDto = videosService.findStatisticsById(videoId);
-
-        ApiResult apiResult = new ApiResult().succeed(videosStatisticsResponseDto);
+        ApiResult apiResult = new ApiResult().succeed(videosResponseDto);
         return ResponseEntity.ok()
                 .body(apiResult);
     }
@@ -65,9 +57,9 @@ public class VideosApiController {
             @RequestParam(required = false) Map<String, Object> keyword,
             @PageableDefault(sort = "videoPublishedDate", direction = Sort.Direction.DESC) Pageable pageable
             ) {
-        List<VideosSnippetResponseDto> videosSnippetResponseDtoList = videosService.findAll(keyword, pageable);
+        List<VideosResponseDto> videosResponseDtoList = videosService.findAll(keyword, pageable);
 
-        ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDtoList);
+        ApiResult apiResult = new ApiResult().succeed(videosResponseDtoList);
         return ResponseEntity.ok()
                 .body(apiResult);
     }

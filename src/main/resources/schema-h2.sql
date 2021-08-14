@@ -52,46 +52,38 @@ categories_idx bigint,
 primary key (channels_idx)
 ) engine=InnoDB;
 
--- create table videos_snippet
-create table videos_snippet (
-videos_snippet_idx bigint not null auto_increment,
+-- create table videos
+create table videos (
+videos_idx bigint not null auto_increment,
 channels_idx bigint,
-videos_snippet_id varchar(255),
-videos_snippet_name varchar(255),
-videos_snippet_thumbnail varchar(255),
-videos_snippet_description TEXT,
-videos_snippet_published_date datetime(6),
-videos_snippet_duration bigint,
+videos_id varchar(255),
+videos_name varchar(255),
+videos_thumbnail varchar(255),
+videos_description TEXT,
+videos_published_date datetime(6),
+videos_duration bigint,
+videos_comment_count INT default 0,
+videos_dislike_count INT default 0,
+videos_like_count INT default 0,
+videos_view_count INT default 0,
+videos_score double precision,
 created_date datetime(6),
 modified_date datetime(6),
-primary key (videos_snippet_idx)
-) engine=InnoDB;
-
--- create table videos_statistics
-create table videos_statistics (
-videos_statistics_idx bigint not null auto_increment,
-videos_snippet_idx bigint,
-videos_statistics_comment_count INT default 0,
-videos_statistics_dislike_count INT default 0,
-videos_statistics_like_count INT default 0,
-videos_statistics_view_count INT default 0,
-videos_statistics_score double precision,
-primary key (videos_statistics_idx)
+primary key (videos_idx)
 ) engine=InnoDB;
 
 -- create table videos_tags
 create table videos_tags (
-videos_snippet_idx bigint not null,
+videos_idx bigint not null,
 videos_tags_tags varchar(255)
 ) engine=InnoDB;
 
 -- alter table add unique key
 alter table channels add constraint UK_3li78kasrcje8typ7y0aapllg unique (channels_id);
-alter table videos_snippet add constraint UK_6iorbpe7xk27mjsj7r66ybcd9 unique (videos_snippet_id);
-alter table videos_tags add constraint UKniaky705rcvep7jjcm04j9led unique (videos_snippet_idx, videos_tags_tags);
+alter table videos add constraint UK_6iorbpe7xk27mjsj7r66ybcd9 unique (videos_id);
+alter table videos_tags add constraint UKniaky705rcvep7jjcm04j9led unique (videos_idx, videos_tags_tags);
 
 -- alter table add foreign key
 alter table channels add constraint FKjxpru3n3vf6727lbtj757ocyi foreign key (categories_idx) references categories (categories_idx);
-alter table videos_snippet add constraint FKenmvo5x09qwxsd8vuerspug8x foreign key (channels_idx) references channels (channels_idx);
-alter table videos_statistics add constraint FKpfgyp78lql276ibppytpeab99 foreign key (videos_snippet_idx) references videos_snippet (videos_snippet_idx);
-alter table videos_tags add constraint FKccn51mw14ejj3x4wspdhykagn foreign key (videos_snippet_idx) references videos_snippet (videos_snippet_idx);
+alter table videos add constraint FKenmvo5x09qwxsd8vuerspug8x foreign key (channels_idx) references channels (channels_idx);
+alter table videos_tags add constraint FKccn51mw14ejj3x4wspdhykagn foreign key (videos_idx) references videos (videos_idx);

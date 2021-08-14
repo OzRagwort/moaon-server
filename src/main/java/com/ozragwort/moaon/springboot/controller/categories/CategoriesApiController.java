@@ -3,7 +3,7 @@ package com.ozragwort.moaon.springboot.controller.categories;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.categories.CategoriesResponseDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
-import com.ozragwort.moaon.springboot.dto.videos.VideosSnippetResponseDto;
+import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.service.categories.CategoriesService;
 import com.ozragwort.moaon.springboot.service.channels.ChannelsService;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
@@ -52,9 +52,9 @@ public class CategoriesApiController {
             @RequestParam(required = false) Map<String, Object> keyword,
             Pageable pageable
     ) {
-        List<VideosSnippetResponseDto> videosSnippetResponseDtoList = videosService.findAllByCategoriesId(idx, keyword, pageable);
+        List<VideosResponseDto> videosResponseDtoList = videosService.findAllByCategoriesId(idx, keyword, pageable);
 
-        ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDtoList);
+        ApiResult apiResult = new ApiResult().succeed(videosResponseDtoList);
         return ResponseEntity.ok()
                 .body(apiResult);
     }

@@ -1,6 +1,6 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
-import com.ozragwort.moaon.springboot.domain.videos.VideosSnippet;
+import com.ozragwort.moaon.springboot.domain.videos.Videos;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,7 +31,7 @@ public class AdminVideosSpecs {
         }
     }
 
-    public static List<Predicate> getPredicateByKeyword(Map<SearchKey, Object> keyword, Root<VideosSnippet> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    public static List<Predicate> getPredicateByKeyword(Map<SearchKey, Object> keyword, Root<Videos> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicate = new ArrayList<>();
 
         for (SearchKey key : keyword.keySet()) {

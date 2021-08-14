@@ -4,8 +4,7 @@ import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.specs.VideosSnippetSpecs;
-import com.ozragwort.moaon.springboot.domain.specs.VideosStatisticsSpecs;
+import com.ozragwort.moaon.springboot.domain.specs.VideosSpecs;
 import com.ozragwort.moaon.springboot.domain.videos.*;
 import com.ozragwort.moaon.springboot.dto.videos.*;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.ozragwort.moaon.springboot.domain.specs.VideosSnippetSpecs.SnippetSearchKey;
-import static com.ozragwort.moaon.springboot.domain.specs.VideosStatisticsSpecs.StatisticsSearchKey;
+import static com.ozragwort.moaon.springboot.domain.specs.VideosSpecs.VideosSearchKey;
 import static com.ozragwort.moaon.springboot.util.Calculation.calcScore;
 import static com.ozragwort.moaon.springboot.util.ConvertTo.DurationStringToSecond;
 import static com.ozragwort.moaon.springboot.util.ConvertTo.StringToUTCDateTime;
@@ -35,8 +33,7 @@ import static java.util.Objects.isNull;
 public class VideosService {
 
     private final EntityManagerFactory entityManagerFactory;
-    private final VideosSnippetRepository videosSnippetRepository;
-    private final VideosStatisticsRepository videosStatisticsRepository;
+    private final VideosRepository videosRepository;
     private final ChannelsRepository channelsRepository;
     private final CategoriesRepository categoriesRepository;
 
@@ -44,96 +41,74 @@ public class VideosService {
     public VideosResponseDto save(VideosSaveRequestDto requestDto) {
         checkArgument(
                 isNull(
-                        videosSnippetRepository.findByVideoId(requestDto.getSnippet().getVideosId()).orElse(null)
-                ), "Already saved. Video ID : " + requestDto.getSnippet().getVideosId()
+                        videosRepository.findByVideoId(requestDto.getVideosId()).orElse(null)
+                ), "Already saved. Video ID : " + requestDto.getVideosId()
         );
 
-        VideosSnippetSaveRequestDto snippetDto = requestDto.getSnippet();
-        VideosStatisticsSaveRequestDto statisticsDto = requestDto.getStatistics();
+        Channels channels = channelsRepository.findByChannelId(requestDto.getChannelId())
+                .orElseThrow(() -> new NoSuchElementException("No Channel found. Channel ID : " + requestDto.getChannelId()));
 
-        Channels channels = channelsRepository.findByChannelId(snippetDto.getChannelId())
-                .orElseThrow(() -> new NoSuchElementException("No Channel found. Channel ID : " + snippetDto.getChannelId()));
+        Videos savedVideo = videosRepository.save(requestDto.toEntity(channels));
 
-        VideosSnippet savedVideoSnippet = videosSnippetRepository.save(snippetDto.toEntity(channels));
-        VideosStatistics savedVideosStatistics = videosStatisticsRepository.save(statisticsDto.toEntity(savedVideoSnippet));
-
-        return new VideosResponseDto(savedVideoSnippet, savedVideosStatistics);
+        return new VideosResponseDto(savedVideo);
     }
 
     @Transactional
     public VideosResponseDto update(String videoId, VideosUpdateRequestDto requestDto) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-        VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
+        Videos videos = videosRepository.findByVideoId(videoId)
                 .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
 
-        VideosSnippetUpdateRequestDto snippetDto = requestDto.getSnippet();
-        VideosStatisticsUpdateRequestDto statisticsDto = requestDto.getStatistics();
+        double score = calcScore(requestDto.getViewCount(),
+                requestDto.getLikeCount(),
+                requestDto.getDislikeCount(),
+                requestDto.getCommentCount());
 
-        videosSnippet.update(
-                snippetDto.getVideosName(),
-                snippetDto.getVideosThumbnail(),
-                snippetDto.getVideosDescription(),
-                StringToUTCDateTime(snippetDto.getVideosPublishedDate()),
-                DurationStringToSecond(snippetDto.getVideosDuration()),
-                snippetDto.getTags()
+        videos.update(
+                requestDto.getVideosName(),
+                requestDto.getVideosThumbnail(),
+                requestDto.getVideosDescription(),
+                StringToUTCDateTime(requestDto.getVideosPublishedDate()),
+                DurationStringToSecond(requestDto.getVideosDuration()),
+                requestDto.getViewCount(),
+                requestDto.getLikeCount(),
+                requestDto.getDislikeCount(),
+                requestDto.getCommentCount(),
+                score,
+                requestDto.getTags()
         );
 
-        double score = calcScore(statisticsDto.getViewCount(),
-                statisticsDto.getLikeCount(),
-                statisticsDto.getDislikeCount(),
-                statisticsDto.getCommentCount());
-        videosStatistics.update(
-                statisticsDto.getViewCount(),
-                statisticsDto.getLikeCount(),
-                statisticsDto.getDislikeCount(),
-                statisticsDto.getCommentCount(),
-                score
-        );
-
-        return new VideosResponseDto(videosSnippet, videosStatistics);
+        return new VideosResponseDto(videos);
     }
 
     @Transactional
-    public VideosSnippetResponseDto findById(Long idx) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findById(idx)
+    public VideosResponseDto findById(Long idx) {
+        Videos videos = videosRepository.findById(idx)
                 .orElse(null);
 
-        return videosSnippet == null
+        return videos == null
                 ? null
-                : new VideosSnippetResponseDto(videosSnippet);
+                : new VideosResponseDto(videos);
     }
 
     @Transactional
-    public VideosSnippetResponseDto findByVideoId(String videoId) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
+    public VideosResponseDto findByVideoId(String videoId) {
+        Videos videos = videosRepository.findByVideoId(videoId)
                 .orElse(null);
 
-        return videosSnippet == null
+        return videos == null
                 ? null
-                : new VideosSnippetResponseDto(videosSnippet);
+                : new VideosResponseDto(videos);
     }
 
     @Transactional
-    public VideosStatisticsResponseDto findStatisticsById(String videoId) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-        VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-
-        return new VideosStatisticsResponseDto(videosStatistics);
-    }
-
-    @Transactional
-    public List<VideosSnippetResponseDto> findAll(Pageable pageable) {
-        return videosSnippetRepository.findAll(pageable).stream()
-                .map(VideosSnippetResponseDto::new)
+    public List<VideosResponseDto> findAll(Pageable pageable) {
+        return videosRepository.findAll(pageable).stream()
+                .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<VideosSnippetResponseDto> findAll(Map<String, Object> keyword, Pageable pageable) {
-        // 기본 설정
+    public List<VideosResponseDto> findAll(Map<String, Object> keyword, Pageable pageable) {
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
         EntityManager em = sessionFactory.createEntityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -141,50 +116,33 @@ public class VideosService {
         int size = pageable.getPageSize();
 
         // createQuery
-        CriteriaQuery<VideosSnippet> snippetCriteriaQuery = builder.createQuery(VideosSnippet.class);
-        CriteriaQuery<VideosStatistics> statisticsCriteriaQuery = builder.createQuery(VideosStatistics.class);
+        CriteriaQuery<Videos> criteriaQuery = builder.createQuery(Videos.class);
+
+        Root<Videos> Root = criteriaQuery.from(Videos.class);
 
         // snippet
-        Root<VideosSnippet> snippetRoot = snippetCriteriaQuery.from(VideosSnippet.class);
-        Map<SnippetSearchKey, Object> snippetKeyword = makeSnippetSpecKey(keyword);
-        List<Predicate> snippetPredicate = new ArrayList<>(VideosSnippetSpecs.getPredicateByKeyword
-                (snippetKeyword, snippetRoot, snippetCriteriaQuery, builder));
+        Map<VideosSearchKey, Object> videosKeyword = makeSpecKey(keyword);
+        List<Predicate> snippetPredicate = new ArrayList<>(VideosSpecs.getPredicateByKeyword
+                (videosKeyword, Root, criteriaQuery, builder));
 
-        // statistics 조건이 있는 경우
-        if (keyword.containsKey("score")) {
-            Root<VideosStatistics> statisticsRoot = statisticsCriteriaQuery.from(VideosStatistics.class);
-            Map<StatisticsSearchKey, Object> statisticsKeyword = makeStatisticsSpecKey(keyword);
-            Predicate[] statisticsPredicate = VideosStatisticsSpecs.getPredicateByKeyword
-                    (statisticsKeyword, statisticsRoot, statisticsCriteriaQuery, builder)
-                    .toArray(new Predicate[0]);
-            statisticsCriteriaQuery.where(statisticsPredicate);
-
-            TypedQuery<VideosStatistics> statisticsTypedQuery = em
-                    .createQuery(statisticsCriteriaQuery)
-                    .setFirstResult(page * size)
-                    .setMaxResults(size);
-            List<Long> idxs = statisticsTypedQuery.getResultList()
-                    .stream().map(VideosStatistics::getIdx).collect(Collectors.toList());
-            snippetPredicate.add(builder.in(snippetRoot.get("idx")).value(idxs));
-        }
 
         // 쿼리 실행
-        snippetCriteriaQuery
-                .select(snippetRoot)
+        criteriaQuery
+                .select(Root)
                 .where(snippetPredicate.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), snippetRoot, builder));
-        TypedQuery<VideosSnippet> query = em
-                .createQuery(snippetCriteriaQuery)
+                .orderBy(QueryUtils.toOrders(pageable.getSort(), Root, builder));
+        TypedQuery<Videos> query = em
+                .createQuery(criteriaQuery)
                 .setFirstResult(page * size)
                 .setMaxResults(size);
 
         return query.getResultList().stream()
-                .map(VideosSnippetResponseDto::new)
+                .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<VideosSnippetResponseDto> findAllByChannelsId(String channelId, Map<String, Object> keyword, Pageable pageable) {
+    public List<VideosResponseDto> findAllByChannelsId(String channelId, Map<String, Object> keyword, Pageable pageable) {
         if (keyword.containsKey("CHANNELID")) {
             if (keyword.get("CHANNELID") != channelId) {
                 throw new IllegalArgumentException("");
@@ -197,7 +155,7 @@ public class VideosService {
     }
 
     @Transactional
-    public List<VideosSnippetResponseDto> findAllByCategoriesId(Long categoriesId, Map<String, Object> keyword, Pageable pageable) {
+    public List<VideosResponseDto> findAllByCategoriesId(Long categoriesId, Map<String, Object> keyword, Pageable pageable) {
         if (keyword.containsKey("CATEGORYID")) {
             if (keyword.get("CATEGORYID") != categoriesId) {
                 throw new IllegalArgumentException("");
@@ -211,61 +169,40 @@ public class VideosService {
 
     @Transactional
     public void delete(String videoId) {
-        VideosSnippet videosSnippet = videosSnippetRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
-        VideosStatistics videosStatistics = videosStatisticsRepository.findByVideosSnippet(videosSnippet)
+        Videos videos = videosRepository.findByVideoId(videoId)
                 .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
 
-        videosStatisticsRepository.delete(videosStatistics);
-        videosSnippetRepository.delete(videosSnippet);
+        videosRepository.delete(videos);
     }
 
-    private Map<SnippetSearchKey, Object> makeSnippetSpecKey(Map<String, Object> keyword) {
-        Map<SnippetSearchKey, Object> searchKeyword = new HashMap<>();
+    private Map<VideosSearchKey, Object> makeSpecKey(Map<String, Object> keyword) {
+        Map<VideosSearchKey, Object> searchKeyword = new HashMap<>();
 
         List<String> searchKeys = new ArrayList<String>(){{
             this.addAll(
-                    Arrays.stream(SnippetSearchKey.values()).map(SnippetSearchKey::toString).collect(Collectors.toList())
+                    Arrays.stream(VideosSearchKey.values()).map(VideosSearchKey::toString).collect(Collectors.toList())
             );
         }};
 
         for (String key : keyword.keySet()) {
             if (searchKeys.contains(key.toUpperCase())) {
-                searchKeyword.put(SnippetSearchKey.valueOf(key.toUpperCase()), keyword.get(key));
+                searchKeyword.put(VideosSearchKey.valueOf(key.toUpperCase()), keyword.get(key));
             }
         }
 
-        if (searchKeyword.containsKey(SnippetSearchKey.CHANNELID)) {
-            Channels channels = channelsRepository.findByChannelId((String) searchKeyword.get(SnippetSearchKey.CHANNELID))
+        if (searchKeyword.containsKey(VideosSearchKey.CHANNELID)) {
+            Channels channels = channelsRepository.findByChannelId((String) searchKeyword.get(VideosSearchKey.CHANNELID))
                     .orElse(null);
-            searchKeyword.put(SnippetSearchKey.valueOf("CHANNELID"), channels);
+            searchKeyword.put(VideosSearchKey.valueOf("CHANNELID"), channels);
         }
-        if (searchKeyword.containsKey(SnippetSearchKey.CATEGORYID)) {
-            Categories categories = categoriesRepository.findById((Long) searchKeyword.get(SnippetSearchKey.CATEGORYID))
+        if (searchKeyword.containsKey(VideosSearchKey.CATEGORYID)) {
+            Categories categories = categoriesRepository.findById((Long) searchKeyword.get(VideosSearchKey.CATEGORYID))
                     .orElse(null);
-            searchKeyword.put(SnippetSearchKey.valueOf("CATEGORYID"), categories);
+            searchKeyword.put(VideosSearchKey.valueOf("CATEGORYID"), categories);
         }
-        if (searchKeyword.containsKey(SnippetSearchKey.TAGS)) {
-            List<String> tags = new ArrayList<String>(){{add((String) searchKeyword.get(SnippetSearchKey.TAGS));}};
-            searchKeyword.put(SnippetSearchKey.TAGS, tags);
-        }
-
-        return searchKeyword;
-    }
-
-    private Map<StatisticsSearchKey, Object> makeStatisticsSpecKey(Map<String, Object> keyword) {
-        Map<StatisticsSearchKey, Object> searchKeyword = new HashMap<>();
-
-        List<String> searchKeys = new ArrayList<String>(){{
-            this.addAll(
-                    Arrays.stream(StatisticsSearchKey.values()).map(StatisticsSearchKey::toString).collect(Collectors.toList())
-            );
-        }};
-
-        for (String key : keyword.keySet()) {
-            if (searchKeys.contains(key.toUpperCase())) {
-                searchKeyword.put(StatisticsSearchKey.valueOf(key.toUpperCase()), keyword.get(key));
-            }
+        if (searchKeyword.containsKey(VideosSearchKey.TAGS)) {
+            List<String> tags = new ArrayList<String>(){{add((String) searchKeyword.get(VideosSearchKey.TAGS));}};
+            searchKeyword.put(VideosSearchKey.TAGS, tags);
         }
 
         return searchKeyword;
