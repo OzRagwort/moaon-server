@@ -46,6 +46,15 @@ public class CategoriesApiController {
                 .body(apiResult);
     }
 
+    @GetMapping("/categories/{idx}/tags")
+    public ResponseEntity<ApiResult> findTagsById(@PathVariable Long idx, Pageable pageable) {
+        List<String> tags = videosService.findTagsByCategoryId(idx, pageable);
+
+        ApiResult apiResult = new ApiResult().succeed(tags);
+        return ResponseEntity.ok()
+                .body(apiResult);
+    }
+
     @GetMapping("/categories/{idx}/videos")
     public ResponseEntity<ApiResult> findVideosById(
             @PathVariable Long idx,

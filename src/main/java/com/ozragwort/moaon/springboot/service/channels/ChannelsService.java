@@ -122,7 +122,7 @@ public class ChannelsService {
 
         return channels == null
                 ? null
-                : videosRepository.customFindTagsByChannels(channels.getIdx())
+                : videosRepository.getTagsByChannelId(channels)
                         .orElse(null);
     }
 

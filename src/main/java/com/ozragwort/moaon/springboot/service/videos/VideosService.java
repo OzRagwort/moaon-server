@@ -138,6 +138,14 @@ public class VideosService {
     }
 
     @Transactional
+    public List<String> findTagsByCategoryId(Long idx, Pageable pageable) {
+        Categories categories = categoriesRepository.findById(idx)
+                .orElseThrow(() -> new NoSuchElementException("No Category found. Category ID : " + idx));
+
+        return videosRepository.getTagsByCategoryId(categories, pageable);
+    }
+
+    @Transactional
     public void delete(String videoId) {
         Videos videos = videosRepository.findByVideoId(videoId)
                 .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));

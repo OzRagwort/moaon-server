@@ -1,6 +1,8 @@
 package com.ozragwort.moaon.springboot.domain.videos;
 
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,12 +19,10 @@ public interface VideosRepository extends JpaRepository<Videos, Long>, JpaSpecif
 
     Optional<Videos> findByVideoId(String videoId);
 
-    @Query(value =
-            "SELECT DISTINCT(videos_tags_tags) " +
-                    "FROM videos_tags " +
-                    "WHERE videos_idx IN (SELECT videos_idx FROM videos WHERE channels_idx = :channelsIdx) " +
-                    "GROUP BY videos_tags_tags " +
-                    "ORDER BY COUNT(videos_tags_tags) DESC", nativeQuery = true)
-    Optional<List<String>> customFindTagsByChannels(@Param("channelsIdx") Long channelsIdx);
+    @Query("SELECT DISTINCT t FROM Videos p join p.tags t WHERE p.channels = :channels GROUP BY t ORDER BY count(t) DESC")
+    Optional<List<String>> getTagsByChannelId(@Param("channels") Channels channels);
+
+    @Query("SELECT DISTINCT t FROM Videos p join p.tags t WHERE p.channels.categories = :categories GROUP BY t ORDER BY count(t) DESC")
+    List<String> getTagsByCategoryId(@Param("categories") Categories categories, Pageable pageable);
 
 }
