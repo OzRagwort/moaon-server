@@ -1,6 +1,7 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,6 +33,13 @@ public class VideosSpecs {
         public String getValue() {
             return value;
         }
+    }
+
+    public static Specification<Videos> searchWith(Map<VideosSearchKey, Object> keyword) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicate = getPredicateByKeyword(keyword, root, query, criteriaBuilder);
+            return criteriaBuilder.and(predicate.toArray(new Predicate[0]));
+        };
     }
 
     public static List<Predicate> getPredicateByKeyword(Map<VideosSearchKey, Object> keyword, Root<Videos> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

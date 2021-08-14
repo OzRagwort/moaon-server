@@ -4,24 +4,19 @@ import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.specs.VideosSpecs;
 import com.ozragwort.moaon.springboot.domain.videos.*;
 import com.ozragwort.moaon.springboot.dto.videos.*;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.SessionFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.ozragwort.moaon.springboot.domain.specs.VideosSpecs.searchWith;
 import static com.ozragwort.moaon.springboot.domain.specs.VideosSpecs.VideosSearchKey;
 import static com.ozragwort.moaon.springboot.util.Calculation.calcScore;
 import static com.ozragwort.moaon.springboot.util.ConvertTo.DurationStringToSecond;
@@ -32,7 +27,6 @@ import static java.util.Objects.isNull;
 @Service
 public class VideosService {
 
-    private final EntityManagerFactory entityManagerFactory;
     private final VideosRepository videosRepository;
     private final ChannelsRepository channelsRepository;
     private final CategoriesRepository categoriesRepository;
@@ -109,34 +103,10 @@ public class VideosService {
 
     @Transactional
     public List<VideosResponseDto> findAll(Map<String, Object> keyword, Pageable pageable) {
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        EntityManager em = sessionFactory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
+        Map<VideosSearchKey, Object> searchKeyword = makeSpecKey(keyword);
 
-        // createQuery
-        CriteriaQuery<Videos> criteriaQuery = builder.createQuery(Videos.class);
-
-        Root<Videos> Root = criteriaQuery.from(Videos.class);
-
-        // snippet
-        Map<VideosSearchKey, Object> videosKeyword = makeSpecKey(keyword);
-        List<Predicate> snippetPredicate = new ArrayList<>(VideosSpecs.getPredicateByKeyword
-                (videosKeyword, Root, criteriaQuery, builder));
-
-
-        // 쿼리 실행
-        criteriaQuery
-                .select(Root)
-                .where(snippetPredicate.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), Root, builder));
-        TypedQuery<Videos> query = em
-                .createQuery(criteriaQuery)
-                .setFirstResult(page * size)
-                .setMaxResults(size);
-
-        return query.getResultList().stream()
+        Specification<Videos> videosSpecification = searchWith(searchKeyword);
+        return videosRepository.findAll(videosSpecification, pageable).stream()
                 .map(VideosResponseDto::new)
                 .collect(Collectors.toList());
     }
