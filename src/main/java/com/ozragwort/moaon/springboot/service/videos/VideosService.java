@@ -174,7 +174,7 @@ public class VideosService {
             searchKeyword.put(VideosSearchKey.valueOf("CHANNELID"), channels);
         }
         if (searchKeyword.containsKey(VideosSearchKey.CATEGORYID)) {
-            Categories categories = categoriesRepository.findById((Long) searchKeyword.get(VideosSearchKey.CATEGORYID))
+            Categories categories = categoriesRepository.findById(Long.parseLong(searchKeyword.get(VideosSearchKey.CATEGORYID).toString()))
                     .orElse(null);
             searchKeyword.put(VideosSearchKey.valueOf("CATEGORYID"), categories);
         }
