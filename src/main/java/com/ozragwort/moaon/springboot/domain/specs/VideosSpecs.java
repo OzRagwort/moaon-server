@@ -85,7 +85,7 @@ public class VideosSpecs {
                     predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("videoDuration"), 60));
                     break;
                 case SCORE:
-                    predicate.add(criteriaBuilder.lessThanOrEqualTo(
+                    predicate.add(criteriaBuilder.greaterThanOrEqualTo(
                             root.get(key.value), Double.valueOf(keyword.get(key).toString())
                     ));
                     break;
