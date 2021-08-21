@@ -1,5 +1,7 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
+import com.ozragwort.moaon.springboot.domain.categories.Categories;
+import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -46,23 +48,20 @@ public class VideosSpecs {
     public static List<Predicate> getPredicateByKeyword(Map<VideosSearchKey, Object> keyword, Root<Videos> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicate = new ArrayList<>();
 
-        String strIds = "";
-        List<String> ids = new ArrayList<>();
-
         for (VideosSearchKey key : keyword.keySet()) {
             switch (key) {
                 case VIDEOID:
-                case CHANNELID:
-                    strIds = (String) keyword.get(key);
-                    ids = Arrays.asList(strIds.split(","));
-
+                    String str = (String) keyword.get(key);
+                    List<String> ids = Arrays.asList(str.split(","));
                     predicate.add(criteriaBuilder.in(root.get(key.value)).value(ids));
                     break;
+                case CHANNELID:
+                    List<Channels> channelsList = (List<Channels>) keyword.get(key);
+                    predicate.add(criteriaBuilder.in(root.get(key.value)).value(channelsList));
+                    break;
                 case CATEGORYID:
-                    strIds = (String) keyword.get(key);
-                    ids = Arrays.asList(strIds.split(","));
-
-                    predicate.add(criteriaBuilder.in(root.get("channels").get(key.value)).value(ids));
+                    List<Categories> categoriesList = (List<Categories>) keyword.get(key);
+                    predicate.add(criteriaBuilder.in(root.get("channels").get(key.value)).value(categoriesList));
                     break;
                 case SEARCH:
                     Predicate likeName = criteriaBuilder.like(root.get("videoName"), "*" + keyword.get(key) + "*");

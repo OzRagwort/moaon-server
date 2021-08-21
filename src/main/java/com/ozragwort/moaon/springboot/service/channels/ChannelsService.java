@@ -91,9 +91,10 @@ public class ChannelsService {
         Map<SearchKey, Object> searchKeyword = makeSpecKey(keyword);
 
         if (searchKeyword.containsKey(SearchKey.CATEGORYID)) {
-            Categories categories = categoriesRepository.findById((Long) searchKeyword.get(SearchKey.CATEGORYID))
-                    .orElse(null);
-            searchKeyword.put(SearchKey.valueOf("CATEGORYID"), categories);
+            String str = (String) searchKeyword.get(SearchKey.CATEGORYID);
+            List<Categories> list = Arrays.stream(str.split(",")).map(s -> categoriesRepository.findById(Long.parseLong(s))
+                    .orElse(null)).collect(Collectors.toList());
+            searchKeyword.put(SearchKey.valueOf("CATEGORYID"), list);
         }
 
         Specification<Channels> channelsSpecification = searchWith(searchKeyword);

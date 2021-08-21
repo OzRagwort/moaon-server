@@ -169,14 +169,16 @@ public class VideosService {
         }
 
         if (searchKeyword.containsKey(VideosSearchKey.CHANNELID)) {
-            Channels channels = channelsRepository.findByChannelId((String) searchKeyword.get(VideosSearchKey.CHANNELID))
-                    .orElse(null);
-            searchKeyword.put(VideosSearchKey.valueOf("CHANNELID"), channels);
+            String str = (String) searchKeyword.get(VideosSearchKey.CHANNELID);
+            List<Channels> list = Arrays.stream(str.split(",")).map(s -> channelsRepository.findByChannelId(s)
+                    .orElse(null)).collect(Collectors.toList());
+            searchKeyword.put(VideosSearchKey.valueOf("CHANNELID"), list);
         }
         if (searchKeyword.containsKey(VideosSearchKey.CATEGORYID)) {
-            Categories categories = categoriesRepository.findById(Long.parseLong(searchKeyword.get(VideosSearchKey.CATEGORYID).toString()))
-                    .orElse(null);
-            searchKeyword.put(VideosSearchKey.valueOf("CATEGORYID"), categories);
+            String str = (String) searchKeyword.get(VideosSearchKey.CATEGORYID);
+            List<Categories> list = Arrays.stream(str.split(",")).map(s -> categoriesRepository.findById(Long.parseLong(s))
+                    .orElse(null)).collect(Collectors.toList());
+            searchKeyword.put(VideosSearchKey.valueOf("CATEGORYID"), list);
         }
         if (searchKeyword.containsKey(VideosSearchKey.TAGS)) {
             List<String> tags = new ArrayList<String>(){{add((String) searchKeyword.get(VideosSearchKey.TAGS));}};
