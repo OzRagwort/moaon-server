@@ -48,12 +48,11 @@ public class AdminVideosSpecs {
                     ));
                     break;
                 case SEARCH:
-                    Predicate likeName = criteriaBuilder.like(root.get("videoName"), "*" + keyword.get(key) + "*");
-                    Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), "*" + keyword.get(key) + "*");
+                    String value = "%" + keyword.get(key) + "%";
+                    Predicate likeName = criteriaBuilder.like(root.get("videoName"), value);
+                    Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), value);
 
-                    predicate.add(
-                            criteriaBuilder.and(likeName, likeDescription)
-                    );
+                    predicate.add(criteriaBuilder.or(likeName, likeDescription));
                     break;
                 case TAGS:
                     predicate.add(

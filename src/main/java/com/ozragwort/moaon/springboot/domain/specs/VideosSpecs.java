@@ -64,12 +64,11 @@ public class VideosSpecs {
                     predicate.add(criteriaBuilder.in(root.get("channels").get(key.value)).value(categoriesList));
                     break;
                 case SEARCH:
-                    Predicate likeName = criteriaBuilder.like(root.get("videoName"), "*" + keyword.get(key) + "*");
-                    Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), "*" + keyword.get(key) + "*");
+                    String value = "%" + keyword.get(key) + "%";
+                    Predicate likeName = criteriaBuilder.like(root.get("videoName"), value);
+                    Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), value);
 
-                    predicate.add(
-                            criteriaBuilder.and(likeName, likeDescription)
-                    );
+                    predicate.add(criteriaBuilder.or(likeName, likeDescription));
                     break;
                 case TAGS:
                     predicate.add(
@@ -77,11 +76,17 @@ public class VideosSpecs {
                     );
                     break;
                 case SHORTS:
-                    Predicate shortsName = criteriaBuilder.like(root.get("videoName"), "*#Shorts*");
-                    Predicate shortsDescription = criteriaBuilder.like(root.get("videoDescription"), "*#Shorts*");
+                    Predicate shorts = criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("videoName"), "%Shorts%"),
+                            criteriaBuilder.like(root.get("videoName"), "%shorts%"),
+                            criteriaBuilder.like(root.get("videoDescription"), "%Shorts%"),
+                            criteriaBuilder.like(root.get("videoDescription"), "%shorts%")
+                    );
+                    Predicate second = criteriaBuilder.lessThanOrEqualTo(root.get("videoDuration"), 60);
 
-                    predicate.add(criteriaBuilder.and(shortsName, shortsDescription));
-                    predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("videoDuration"), 60));
+                    predicate.add(
+                            criteriaBuilder.and(shorts, second)
+                    );
                     break;
                 case SCORE:
                     predicate.add(criteriaBuilder.greaterThanOrEqualTo(
