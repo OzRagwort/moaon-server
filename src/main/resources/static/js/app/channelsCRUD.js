@@ -55,7 +55,7 @@ var main = {
         var cid = $('#txt-channel-id').val();
         var category = $('#txt-category-idx').val();
 
-        var url = '/admin/channels/crud' +
+        var url = '/admin/channels/list' +
         '?maxResults=' + maxResults +
         '&page=' + page;
 
