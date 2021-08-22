@@ -20,7 +20,7 @@
                     <div class="col-sm-12 col-md-2">
                         <label class="container-fluid">
                             <select name="dataTables_entries" class="custom-select custom-select-lg form-control form-control-lg container-fluid"
-                                    id="select-video-maxResults">
+                                    id="select-video-size">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -98,7 +98,7 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-body">
-                                                    categoriesIdx : {{categoriesIdx}}<br>
+                                                    categoriesIdx : {{#channels}}{{#categories}}{{idx}}{{/categories}}{{/channels}}<br>
                                                     channelId : {{#channels}}{{channelId}} / {{channelName}}{{/channels}}
                                                 </div>
                                             </div>

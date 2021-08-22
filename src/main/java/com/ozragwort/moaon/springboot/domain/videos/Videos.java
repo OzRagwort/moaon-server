@@ -29,33 +29,34 @@ public class Videos extends BaseTimeEntity {
     @JoinColumn(name = "channels_idx")
     private Channels channels;
 
-    @Column(name = "video_id", unique = true)
+    @Column(name = "videos_id", unique = true)
     private String videoId;
 
-    @Column(name = "video_name")
+    @Column(name = "videos_name")
     private String videoName;
 
+    @Column(name = "videos_thumbnail")
     private String videoThumbnail;
 
-    @Column(name = "video_description", columnDefinition = "TEXT")
+    @Column(name = "videos_description", columnDefinition = "TEXT")
     private String videoDescription;
 
+    @Column(name = "videos_published_date")
     private LocalDateTime videoPublishedDate;
 
-    private String videoDuration;
+    @Column(name = "videos_duration")
+    private long videoDuration;
 
-    private boolean videoEmbeddable;
-
-    @Column(columnDefinition = "INT default 0")
+    @Column(name = "videos_view_count", columnDefinition = "INT default 0")
     private int viewCount;
 
-    @Column(columnDefinition = "INT default 0")
+    @Column(name = "videos_like_count", columnDefinition = "INT default 0")
     private int likeCount;
 
-    @Column(columnDefinition = "INT default 0")
+    @Column(name = "videos_dislike_count", columnDefinition = "INT default 0")
     private int dislikeCount;
 
-    @Column(columnDefinition = "INT default 0")
+    @Column(name = "videos_comment_count", columnDefinition = "INT default 0")
     private int commentCount;
 
     @Column(name = "videos_score")
@@ -64,20 +65,11 @@ public class Videos extends BaseTimeEntity {
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(
             name = "videos_tags",
-            joinColumns = @JoinColumn(name = "videos_tags_videos_idx"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_tags_videos_idx","videos_tags_tags"})
+            joinColumns = @JoinColumn(name = "videos_idx"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_idx", "videos_tags_tags"})
     )
     @Column(name = "videos_tags_tags")
     private List<String> tags;
-
-    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "videos_relations",
-            joinColumns = @JoinColumn(name = "videos_relations_videos_idx"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"videos_relations_videos_idx","videos_relations_related_videos"})
-    )
-    @Column(name = "videos_relations_related_videos")
-    private List<String> relatedVideos;
 
     @Builder
     public Videos(Channels channels,
@@ -86,8 +78,7 @@ public class Videos extends BaseTimeEntity {
                   String videoThumbnail,
                   String videoDescription,
                   LocalDateTime videoPublishedDate,
-                  String videoDuration,
-                  boolean videoEmbeddable,
+                  long videoDuration,
                   int viewCount,
                   int likeCount,
                   int dislikeCount,
@@ -101,7 +92,6 @@ public class Videos extends BaseTimeEntity {
         this.videoDescription = videoDescription;
         this.videoPublishedDate = videoPublishedDate;
         this.videoDuration = videoDuration;
-        this.videoEmbeddable = videoEmbeddable;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
@@ -110,27 +100,11 @@ public class Videos extends BaseTimeEntity {
         this.tags = tags;
     }
 
-    @Builder
-    public Videos(Channels channels,
-                  String videoId,
-                  String videoName,
-                  String videoThumbnail,
-                  String videoDescription,
-                  LocalDateTime videoPublishedDate) {
-        this.channels = channels;
-        this.videoId = videoId;
-        this.videoName = videoName;
-        this.videoThumbnail = videoThumbnail;
-        this.videoDescription = videoDescription;
-        this.videoPublishedDate = videoPublishedDate;
-    }
-
     public void update(String videoName,
                        String videoThumbnail,
                        String videoDescription,
                        LocalDateTime videoPublishedDate,
-                       String videoDuration,
-                       boolean videoEmbeddable,
+                       long videoDuration,
                        int viewCount,
                        int likeCount,
                        int dislikeCount,
@@ -142,7 +116,6 @@ public class Videos extends BaseTimeEntity {
         this.videoDescription = videoDescription;
         this.videoPublishedDate = videoPublishedDate;
         this.videoDuration = videoDuration;
-        this.videoEmbeddable = videoEmbeddable;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
@@ -150,10 +123,6 @@ public class Videos extends BaseTimeEntity {
         this.score = score;
         this.tags.clear();
         this.tags = tags;
-    }
-
-    public void addRelations(List<String> relatedVideos) {
-        this.relatedVideos.addAll(relatedVideos);
     }
 
 }
