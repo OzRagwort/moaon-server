@@ -1,0 +1,14 @@
+package com.ozragwort.moaon.springboot.domain.channels;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface ChannelsRepository extends JpaRepository<Channels, Long>, JpaSpecificationExecutor<Channels> {
+
+    Optional<Channels> findByChannelId(String channelId);
+
+}

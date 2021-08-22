@@ -21,13 +21,12 @@ var main = {
 
         $.ajax({
             type: 'POST',
-            url: '/api/moaon/v1/yt-videos',
+            url: '/admin/videos/crud',
             contentType: 'application/json; charset=utf-8',
             dataType: 'text',
             data: JSON.stringify(data)
         }).done(function() {
             alert('등록되었습니다.');
-            window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
@@ -38,25 +37,24 @@ var main = {
         };
 
         $.ajax({
-            type: 'POST',
-            url: '/api/moaon/v1/yt-videos'
+            type: 'PUT',
+            url: '/admin/videos/crud'
         }).done(function() {
             alert('영상 정보가 최신화되었습니다.');
-            window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
     },
     list : function() {
-        var maxResults = $('#select-video-maxResults').val();
-        var page = 1;
+        var size = $('#select-video-size').val();
+        var page = 0;
         var idx = $('#txt-video-idx').val();
         var vid = $('#txt-video-id').val();
         var cid = $('#txt-channel-idx').val();
         var category = $('#txt-category-idx').val();
 
         var url = '/admin/videos/list' +
-        '?maxResults=' + maxResults +
+        '?size=' + size +
         '&page=' + page;
 
         if (idx) {url = url + '&no=' + idx;}
@@ -67,15 +65,14 @@ var main = {
         window.location.href = url;
     },
     delete : function() {
-        var id = $('#deleteVideoIdx').val();
+        var id = $('#deleteVideoId').val();
 
         $.ajax({
             type: 'DELETE',
-            url: '/api/moaon/v1/videos/'+id,
+            url: '/admin/videos/crud/'+id,
             contentType: 'application/json; charset=utf-8'
         }).done(function() {
             alert('영상 정보가 삭제되었습니다.');
-            window.location.href = '/admin/videos/crud';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });

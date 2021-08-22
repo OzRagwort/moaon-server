@@ -5,7 +5,11 @@
 /build/classes/java/main/
 /build/classes/java/test/
 application-oauth.properties
+application-mail.properties
 /src/main/resources/json/
 /src/main/resources/application.yml
 /out
 !gradle/wrapper/gradle-wrapper.jar
+
+# flyway config
+/src/main/resources/db/flyway.conf
