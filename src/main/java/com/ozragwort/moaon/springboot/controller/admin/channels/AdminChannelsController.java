@@ -1,10 +1,12 @@
 package com.ozragwort.moaon.springboot.controller.admin.channels;
 
+import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsRequestRequestDto;
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
+import com.ozragwort.moaon.springboot.util.Email.EmailUtilImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.Map;
 public class AdminChannelsController {
 
     private final YoutubeChannelsService youtubeChannelsService;
+    private final EmailUtilImpl emailUtil;
 
     @PostMapping("/admin/channels/crud")
     public ResponseEntity<ApiResult> adminSaveChannel(@RequestBody AdminChannelsSaveRequestDto requestDto) {
@@ -30,6 +33,21 @@ public class AdminChannelsController {
                 ? new ApiResult().failed(new FailedResponse(400, "Invalid Channel ID : " + requestDto.getChannelId()))
                 : new ApiResult().succeed(responseDto);
 
+        return ResponseEntity.ok().body(apiResult);
+    }
+
+    @PostMapping("/admin/channels/requests")
+    public ResponseEntity<ApiResult> adminRequestsChannel(@RequestBody AdminChannelsRequestRequestDto requestDto) {
+        String app = requestDto.getAppName();
+        String content = requestDto.getContent();
+
+        emailUtil.sendEmail(
+                "ozragwort@gmail.com",
+                app + " 에서 채널 추천",
+                content
+        );
+
+        ApiResult apiResult = new ApiResult().succeed(true);
         return ResponseEntity.ok().body(apiResult);
     }
 
