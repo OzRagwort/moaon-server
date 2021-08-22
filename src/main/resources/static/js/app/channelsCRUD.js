@@ -49,14 +49,14 @@ var main = {
         });
     },
     list : function() {
-        var maxResults = $('#select-channel-maxResults').val();
-        var page = 1;
+        var size = $('#select-channel-size').val();
+        var page = 0;
         var idx = $('#txt-channel-idx').val();
         var cid = $('#txt-channel-id').val();
         var category = $('#txt-category-idx').val();
 
         var url = '/admin/channels/list' +
-        '?maxResults=' + maxResults +
+        '?size=' + size +
         '&page=' + page;
 
         if (idx) {url = url + '&no=' + idx;}
