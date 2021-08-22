@@ -1,8 +1,10 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
+import com.google.common.base.Predicates;
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
+import org.hibernate.query.criteria.internal.predicate.InPredicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -64,11 +66,18 @@ public class VideosSpecs {
                     predicate.add(criteriaBuilder.in(root.get("channels").get(key.value)).value(categoriesList));
                     break;
                 case SEARCH:
-                    String value = "%" + keyword.get(key) + "%";
-                    Predicate likeName = criteriaBuilder.like(root.get("videoName"), value);
-                    Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), value);
+                    String[] keywords = ((String) keyword.get(key)).split(" ");
+                    Predicate predicates = criteriaBuilder.equal(criteriaBuilder.literal(0),1);
 
-                    predicate.add(criteriaBuilder.or(likeName, likeDescription));
+                    for (String searchKey : keywords) {
+                        String value = "%" + searchKey + "%";
+                        Predicate likeName = criteriaBuilder.like(root.get("videoName"), value);
+                        Predicate likeDescription = criteriaBuilder.like(root.get("videoDescription"), value);
+                        Predicate like = criteriaBuilder.or(likeName, likeDescription);
+                        predicates = criteriaBuilder.or(like, predicates);
+                    }
+
+                    predicate.add(predicates);
                     break;
                 case TAGS:
                     predicate.add(
