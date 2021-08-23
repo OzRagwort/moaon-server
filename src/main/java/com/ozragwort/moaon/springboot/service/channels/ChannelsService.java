@@ -110,7 +110,7 @@ public class ChannelsService {
                 throw new IllegalArgumentException("Invalid arguments. categoryid : " + keyword.get("CATEGORYID"));
             }
         } else {
-            keyword.put("CATEGORYID", idx);
+            keyword.put("CATEGORYID", Long.toString(idx));
         }
 
         return findAll(keyword, pageable);

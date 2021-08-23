@@ -131,7 +131,7 @@ public class VideosService {
                 throw new IllegalArgumentException("");
             }
         } else {
-            keyword.put("CATEGORYID", categoriesId);
+            keyword.put("CATEGORYID", Long.toString(categoriesId));
         }
 
         return findAll(keyword, pageable);
