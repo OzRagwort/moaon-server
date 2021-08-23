@@ -19,6 +19,7 @@ import java.util.Map;
 public class VideosSpecs {
 
     public enum VideosSearchKey {
+        ID("idx"),
         VIDEOID("videoId"),
         CHANNELID("channels"),
         CATEGORYID("categories"),
@@ -52,6 +53,11 @@ public class VideosSpecs {
 
         for (VideosSearchKey key : keyword.keySet()) {
             switch (key) {
+                case ID:
+                    predicate.add(criteriaBuilder.equal(
+                            root.get(key.value), keyword.get(key)
+                    ));
+                    break;
                 case VIDEOID:
                     String str = (String) keyword.get(key);
                     List<String> ids = Arrays.asList(str.split(","));
