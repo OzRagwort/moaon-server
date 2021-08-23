@@ -22,7 +22,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.flywaydb.flyway'
 
 group 'com.ozragwort.moaon'
-version '2.0.0-release2'
+version '2.0.0-release3'
 
 repositories {
     mavenCentral()
