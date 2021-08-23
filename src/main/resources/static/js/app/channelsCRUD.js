@@ -59,9 +59,9 @@ var main = {
         '?size=' + size +
         '&page=' + page;
 
-        if (idx) {url = url + '&no=' + idx;}
-        if (cid) {url = url + '&id=' + cid;}
-        if (category) {url = url + '&category=' + category;}
+        if (idx) {url = url + '&id=' + idx;}
+        if (cid) {url = url + '&channelId=' + cid;}
+        if (category) {url = url + '&categoryId=' + category;}
 
         window.location.href = url;
     },

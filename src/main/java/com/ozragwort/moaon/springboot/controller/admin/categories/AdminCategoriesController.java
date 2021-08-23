@@ -3,7 +3,7 @@ package com.ozragwort.moaon.springboot.controller.admin.categories;
 import com.ozragwort.moaon.springboot.config.auth.LoginUser;
 import com.ozragwort.moaon.springboot.config.auth.dto.SessionUser;
 import com.ozragwort.moaon.springboot.dto.categories.CategoriesResponseDto;
-import com.ozragwort.moaon.springboot.service.youtube.YoutubeCategoriesService;
+import com.ozragwort.moaon.springboot.service.categories.CategoriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Controller
 public class AdminCategoriesController {
 
-    private final YoutubeCategoriesService youtubeCategoriesService;
+    private final CategoriesService categoriesService;
 
     @GetMapping("/admin/categories/list")
     public String adminFindCategory(Model model,
@@ -30,7 +30,7 @@ public class AdminCategoriesController {
             model.addAttribute("loginedUserName", user.getEmail());
         }
 
-        List<CategoriesResponseDto> categories = youtubeCategoriesService.findAll(keyword, pageable);
+        List<CategoriesResponseDto> categories = categoriesService.findAll(keyword, pageable);
 
         model.addAttribute("categoryList", categories);
 

@@ -13,6 +13,7 @@ import java.util.Map;
 public class ChannelsSpecs {
 
     public enum SearchKey {
+        ID("idx"),
         CATEGORYID("categories"),
         CHANNELID("channelId"),
         CHANNELNAME("channelName"),
@@ -44,6 +45,11 @@ public class ChannelsSpecs {
 
         for (SearchKey key : keyword.keySet()) {
             switch (key) {
+                case ID:
+                    predicate.add(criteriaBuilder.equal(
+                            root.get(key.value), keyword.get(key)
+                    ));
+                    break;
                 case CHANNELID:
                     String str = (String) keyword.get(key);
                     List<String> ids = Arrays.asList(str.split(","));
