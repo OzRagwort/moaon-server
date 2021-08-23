@@ -4,6 +4,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatistics;
+import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
@@ -12,25 +13,12 @@ import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.util.youtube.YoutubeDataApi;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.SessionFactory;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.ozragwort.moaon.springboot.domain.specs.AdminVideosSpecs.getPredicateByKeyword;
-import static com.ozragwort.moaon.springboot.domain.specs.AdminVideosSpecs.SearchKey;
 import static com.ozragwort.moaon.springboot.util.Calculation.calcScore;
 import static com.ozragwort.moaon.springboot.util.ConvertTo.DurationStringToSecond;
 import static com.ozragwort.moaon.springboot.util.ConvertTo.StringToUTCDateTime;
@@ -39,7 +27,6 @@ import static com.ozragwort.moaon.springboot.util.ConvertTo.StringToUTCDateTime;
 @Service
 public class YoutubeVideosService {
 
-    private final EntityManagerFactory entityManagerFactory;
     private final ChannelsRepository channelsRepository;
     private final VideosRepository videosRepository;
     private final YoutubeDataApi youtubeDataApi;
@@ -73,36 +60,6 @@ public class YoutubeVideosService {
     }
 
     @Transactional
-    public List<VideosResponseDto> findAll(Map<String, Object> keyword, Pageable pageable) {
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        EntityManager em = sessionFactory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
-
-        CriteriaQuery<Videos> criteriaQuery = builder.createQuery(Videos.class);
-
-        Root<Videos> root = criteriaQuery.from(Videos.class);
-        Map<SearchKey, Object> specKeys = makeSpeckKey(keyword);
-        List<Predicate> predicate = new ArrayList<>(getPredicateByKeyword
-                (specKeys, root, criteriaQuery, builder));
-
-        // 쿼리 실행
-        criteriaQuery
-                .select(root)
-                .where(predicate.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
-        TypedQuery<Videos> query = em
-                .createQuery(criteriaQuery)
-                .setFirstResult(page * size)
-                .setMaxResults(size);
-
-        return query.getResultList().stream()
-                .map(VideosResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
     public void delete(String videoId) {
         Videos videos = videosRepository.findByVideoId(videoId)
                 .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
@@ -110,24 +67,6 @@ public class YoutubeVideosService {
         videosRepository.delete(videos);
     }
 
-
-    private Map<SearchKey, Object> makeSpeckKey(Map<String, Object> keyword) {
-        Map<SearchKey, Object> searchKeyword = new HashMap<>();
-
-        List<String> searchKeys = new ArrayList<String>(){{
-            this.addAll(
-                    Arrays.stream(SearchKey.values()).map(SearchKey::toString).collect(Collectors.toList())
-            );
-        }};
-
-        for (String key : keyword.keySet()) {
-            if (searchKeys.contains(key.toUpperCase())) {
-                searchKeyword.put(SearchKey.valueOf(key.toUpperCase()), keyword.get(key));
-            }
-        }
-
-        return searchKeyword;
-    }
 
     private Videos responseToVideos(VideoListResponse videoListResponse) {
         Video item = videoListResponse.getItems().get(0);

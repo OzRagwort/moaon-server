@@ -1,6 +1,7 @@
 package com.ozragwort.moaon.springboot.domain.specs;
 
 import com.ozragwort.moaon.springboot.domain.categories.Categories;
+import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AdminCategoriesSpecs {
+public class CategoriesSpecs {
 
     public enum SearchKey {
         ID("idx"),
@@ -25,6 +26,13 @@ public class AdminCategoriesSpecs {
         public String getValue() {
             return value;
         }
+    }
+
+    public static Specification<Categories> searchWith(Map<SearchKey, Object> keyword) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicate = getPredicateByKeyword(keyword, root, query, criteriaBuilder);
+            return criteriaBuilder.and(predicate.toArray(new Predicate[0]));
+        };
     }
 
     public static List<Predicate> getPredicateByKeyword(Map<SearchKey, Object> keyword, Root<Categories> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

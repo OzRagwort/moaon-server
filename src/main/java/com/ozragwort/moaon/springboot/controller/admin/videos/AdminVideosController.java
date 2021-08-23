@@ -4,6 +4,7 @@ import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
+import com.ozragwort.moaon.springboot.service.videos.VideosService;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeVideosService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class AdminVideosController {
 
     private final YoutubeVideosService youtubeVideosService;
+    private final VideosService videosService;
 
     @PostMapping("/admin/videos/crud")
     public ResponseEntity<ApiResult> adminSaveVideo(@RequestBody AdminVideosSaveRequestDto requestDto) {
@@ -50,7 +52,7 @@ public class AdminVideosController {
     public String adminFindVideo(Model model,
                                  @RequestParam(required = false) Map<String, Object> keyword,
                                  Pageable pageable) {
-        List<VideosResponseDto> videosResponseDtoList = youtubeVideosService.findAll(keyword, pageable);
+        List<VideosResponseDto> videosResponseDtoList = videosService.findAll(keyword, pageable);
         model.addAttribute("videoList", videosResponseDtoList);
 
         return "admin/videoList";

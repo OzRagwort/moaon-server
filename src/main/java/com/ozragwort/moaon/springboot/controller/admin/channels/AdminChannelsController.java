@@ -5,6 +5,7 @@ import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
+import com.ozragwort.moaon.springboot.service.channels.ChannelsService;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
 import com.ozragwort.moaon.springboot.util.Email.EmailUtilImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class AdminChannelsController {
 
     private final YoutubeChannelsService youtubeChannelsService;
+    private final ChannelsService channelsService;
     private final EmailUtilImpl emailUtil;
 
     @PostMapping("/admin/channels/crud")
@@ -77,7 +79,7 @@ public class AdminChannelsController {
     public String adminFindChannel(Model model,
                                    @RequestParam(required = false) Map<String, Object> keyword,
                                    Pageable pageable) {
-        List<ChannelsResponseDto> channels = youtubeChannelsService.findAll(keyword, pageable);
+        List<ChannelsResponseDto> channels = channelsService.findAll(keyword, pageable);
         model.addAttribute("channelList", channels);
 
         return "admin/channelList";

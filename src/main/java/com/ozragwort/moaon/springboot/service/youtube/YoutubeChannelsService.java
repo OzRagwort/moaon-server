@@ -6,7 +6,6 @@ import com.ozragwort.moaon.springboot.domain.categories.Categories;
 import com.ozragwort.moaon.springboot.domain.categories.CategoriesRepository;
 import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
-import com.ozragwort.moaon.springboot.domain.specs.AdminChannelsSpecs;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
@@ -15,31 +14,17 @@ import com.ozragwort.moaon.springboot.dto.videos.*;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
 import com.ozragwort.moaon.springboot.util.youtube.YoutubeDataApi;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.SessionFactory;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.ozragwort.moaon.springboot.domain.specs.AdminChannelsSpecs.getPredicateByKeyword;
-import static com.ozragwort.moaon.springboot.domain.specs.AdminChannelsSpecs.SearchKey;
 
 @RequiredArgsConstructor
 @Service
 public class YoutubeChannelsService {
 
-    private final EntityManagerFactory entityManagerFactory;
     private final CategoriesRepository categoriesRepository;
     private final ChannelsRepository channelsRepository;
     private final VideosRepository videosRepository;
@@ -111,35 +96,6 @@ public class YoutubeChannelsService {
     }
 
     @Transactional
-    public List<ChannelsResponseDto> findAll(Map<String, Object> keyword, Pageable pageable) {
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        EntityManager em = sessionFactory.createEntityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
-
-        CriteriaQuery<Channels> criteriaQuery = builder.createQuery(Channels.class);
-
-        Root<Channels> root = criteriaQuery.from(Channels.class);
-        Map<AdminChannelsSpecs.SearchKey, Object> specKeys = makeSpeckKey(keyword);
-        List<Predicate> snippetPredicate = new ArrayList<>(getPredicateByKeyword
-                (specKeys, root, criteriaQuery, builder));
-
-        criteriaQuery
-                .select(root)
-                .where(snippetPredicate.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
-        TypedQuery<Channels> query = em
-                .createQuery(criteriaQuery)
-                .setFirstResult(page * size)
-                .setMaxResults(size);
-
-        return query.getResultList().stream()
-                .map(ChannelsResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
     public void delete(String channelId) {
         Optional<Channels> optionalChannels = channelsRepository.findByChannelId(channelId);
 
@@ -157,24 +113,6 @@ public class YoutubeChannelsService {
         }
     }
 
-
-    private Map<SearchKey, Object> makeSpeckKey(Map<String, Object> keyword) {
-        Map<SearchKey, Object> searchKeyword = new HashMap<>();
-
-        List<String> searchKeys = new ArrayList<String>(){{
-            this.addAll(
-                    Arrays.stream(SearchKey.values()).map(SearchKey::toString).collect(Collectors.toList())
-            );
-        }};
-
-        for (String key : keyword.keySet()) {
-            if (searchKeys.contains(key.toUpperCase())) {
-                searchKeyword.put(SearchKey.valueOf(key.toUpperCase()), keyword.get(key));
-            }
-        }
-
-        return searchKeyword;
-    }
 
     private Channels responseToEntity(ChannelListResponse channelListResponse, Long categoryId) {
         Categories categories = categoriesRepository.findById(categoryId)

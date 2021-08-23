@@ -69,8 +69,11 @@ public class CategoriesApiController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<ApiResult> findAll() {
-        List<CategoriesResponseDto> categoriesResponseDtoList = categoriesService.findAll();
+    public ResponseEntity<ApiResult> findAll(
+            @RequestParam(required = false) Map<String, Object> keyword,
+            Pageable pageable
+    ) {
+        List<CategoriesResponseDto> categoriesResponseDtoList = categoriesService.findAll(keyword, pageable);
 
         ApiResult apiResult = new ApiResult().succeed(categoriesResponseDtoList);
         return ResponseEntity.ok()
