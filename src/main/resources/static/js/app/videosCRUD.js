@@ -57,10 +57,10 @@ var main = {
         '?size=' + size +
         '&page=' + page;
 
-        if (idx) {url = url + '&no=' + idx;}
-        if (vid) {url = url + '&id=' + vid;}
-        if (cid) {url = url + '&channel=' + cid;}
-        if (category) {url = url + '&category=' + category;}
+        if (idx) {url = url + '&id=' + idx;}
+        if (vid) {url = url + '&videoId=' + vid;}
+        if (cid) {url = url + '&channelId=' + cid;}
+        if (category) {url = url + '&categoryId=' + category;}
 
         window.location.href = url;
     },
