@@ -7,8 +7,9 @@ var main = {
     },
     playlist : function() {
         var cid = $('#updatePlaylistId').val();
+        var key = $('#updatePlaylistSecretKey').val();
         var data = {
-            channelId : cid
+            secret : key
         };
 
         $.ajax({

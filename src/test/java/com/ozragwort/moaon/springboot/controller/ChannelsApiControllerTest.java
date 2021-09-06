@@ -156,7 +156,7 @@ public class ChannelsApiControllerTest {
 
     @Test
     @DisplayName("[Channels API] 특정 채널의 videos 조회")
-    public void findSnippetByChannelIdTest() throws Exception {
+    public void findByChannelIdTest() throws Exception {
         // given
         String channelId = "testChannelId1";
 
