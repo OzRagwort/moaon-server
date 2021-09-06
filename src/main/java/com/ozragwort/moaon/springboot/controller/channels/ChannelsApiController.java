@@ -71,10 +71,10 @@ public class ChannelsApiController {
             Pageable pageable
     ) {
         youtubeChannelsService.refresh(channelId);
-        List<VideosResponseDto> videosSnippetResponseDtoList =
+        List<VideosResponseDto> videosResponseDtoList =
                 videosService.findAllByChannelsId(channelId, keyword, pageable);
 
-        ApiResult apiResult = new ApiResult().succeed(videosSnippetResponseDtoList);
+        ApiResult apiResult = new ApiResult().succeed(videosResponseDtoList);
         return ResponseEntity.ok()
                 .body(apiResult);
     }
