@@ -47,7 +47,7 @@ public class ChannelsApiController {
     public ResponseEntity<ApiResult> findById(@PathVariable String channelId) {
         ChannelsResponseDto channelsResponseDto = channelsService.findByChannelId(channelId);
         if (channelsResponseDto != null) {
-            youtubeChannelsService.refresh(channelsResponseDto.getChannelId());
+            channelsResponseDto = youtubeChannelsService.refresh(channelsResponseDto.getChannelId());
         }
 
         ApiResult apiResult = new ApiResult().succeed(channelsResponseDto);
