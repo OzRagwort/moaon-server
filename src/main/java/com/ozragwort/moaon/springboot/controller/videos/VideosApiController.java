@@ -42,7 +42,7 @@ public class VideosApiController {
     public ResponseEntity<ApiResult> findById(@PathVariable String videoId) {
         VideosResponseDto videosResponseDto = videosService.findByVideoId(videoId);
         if (videosResponseDto != null) {
-            videosResponseDto = youtubeVideosService.refresh(videosResponseDto.getVideoId());
+            videosResponseDto = youtubeVideosService.refresh(videosResponseDto.getVideoId(), null);
         }
 
         ApiResult apiResult = new ApiResult().succeed(videosResponseDto);

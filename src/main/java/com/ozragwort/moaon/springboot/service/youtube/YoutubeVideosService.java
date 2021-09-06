@@ -9,6 +9,7 @@ import com.ozragwort.moaon.springboot.domain.channels.Channels;
 import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
+import com.ozragwort.moaon.springboot.dto.admin.AdminSecretKeyDto;
 import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.videos.VideosResponseDto;
 import com.ozragwort.moaon.springboot.util.youtube.YoutubeDataApi;
@@ -45,11 +46,14 @@ public class YoutubeVideosService {
     }
 
     @Transactional
-    public VideosResponseDto refresh(String videoId) {
+    public VideosResponseDto refresh(String videoId, AdminSecretKeyDto secret) {
         Videos videos = videosRepository.findByVideoId(videoId)
                 .orElse(new Videos());
 
-        VideoListResponse VideoListResponse = youtubeDataApi.getVideoListResponse(videoId, null);
+        String key = secret == null || secret.getSecret().length() == 0
+                ? null
+                : secret.getSecret();
+        VideoListResponse VideoListResponse = youtubeDataApi.getVideoListResponse(videoId, key);
 
         if (VideoListResponse == null) {
             return new VideosResponseDto(videos);

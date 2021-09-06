@@ -33,13 +33,12 @@ var main = {
     },
     update : function() {
         var data = {
-            categoryId: $('#updateChannelCategory').val(),
-            channelId: $('#updateChannelId').val()
+            secret: $('#updateSecretKey').val()
         };
 
         $.ajax({
-            type: 'POST',
-            url: '/admin/channels/crud',
+            type: 'PUT',
+            url: '/admin/channels/crud/' + $('#updateChannelId').val(),
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function() {

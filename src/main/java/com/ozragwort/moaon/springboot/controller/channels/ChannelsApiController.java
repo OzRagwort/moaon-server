@@ -47,7 +47,7 @@ public class ChannelsApiController {
     public ResponseEntity<ApiResult> findById(@PathVariable String channelId) {
         ChannelsResponseDto channelsResponseDto = channelsService.findByChannelId(channelId);
         if (channelsResponseDto != null) {
-            channelsResponseDto = youtubeChannelsService.refresh(channelsResponseDto.getChannelId());
+            channelsResponseDto = youtubeChannelsService.refresh(channelsResponseDto.getChannelId(), null);
         }
 
         ApiResult apiResult = new ApiResult().succeed(channelsResponseDto);
@@ -70,7 +70,7 @@ public class ChannelsApiController {
             @RequestParam(required = false) Map<String, Object> keyword,
             Pageable pageable
     ) {
-        youtubeChannelsService.refresh(channelId);
+        youtubeChannelsService.refresh(channelId, null);
         List<VideosResponseDto> videosResponseDtoList =
                 videosService.findAllByChannelsId(channelId, keyword, pageable);
 

@@ -1,5 +1,6 @@
 package com.ozragwort.moaon.springboot.controller.admin.videos;
 
+import com.ozragwort.moaon.springboot.dto.admin.AdminSecretKeyDto;
 import com.ozragwort.moaon.springboot.dto.admin.AdminVideosSaveRequestDto;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
@@ -36,8 +37,9 @@ public class AdminVideosController {
     }
 
     @PutMapping("/admin/videos/crud/{videoId}")
-    public ResponseEntity<ApiResult> adminRefreshVideo(@PathVariable String videoId) {
-        VideosResponseDto responseDto = youtubeVideosService.refresh(videoId);
+    public ResponseEntity<ApiResult> adminRefreshVideo(@PathVariable String videoId,
+                                                       @RequestBody(required = false) AdminSecretKeyDto secret) {
+        VideosResponseDto responseDto = youtubeVideosService.refresh(videoId, secret);
 
         ApiResult apiResult = new ApiResult().succeed(responseDto);
         return ResponseEntity.ok().body(apiResult);

@@ -2,6 +2,7 @@ package com.ozragwort.moaon.springboot.controller.admin.channels;
 
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsRequestRequestDto;
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
+import com.ozragwort.moaon.springboot.dto.admin.AdminSecretKeyDto;
 import com.ozragwort.moaon.springboot.dto.apiResult.ApiResult;
 import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
@@ -54,16 +55,18 @@ public class AdminChannelsController {
     }
 
     @PutMapping("/admin/channels/crud/{channelId}")
-    public ResponseEntity<ApiResult> adminRefreshChannel(@PathVariable String channelId) {
-        ChannelsResponseDto responseDto = youtubeChannelsService.refresh(channelId);
+    public ResponseEntity<ApiResult> adminRefreshChannel(@PathVariable String channelId,
+                                                         @RequestBody(required = false) AdminSecretKeyDto secret) {
+        ChannelsResponseDto responseDto = youtubeChannelsService.refresh(channelId, secret);
 
         ApiResult apiResult = new ApiResult().succeed(responseDto);
         return ResponseEntity.ok().body(apiResult);
     }
 
     @PutMapping("/admin/channels/crud/{channelId}/upload")
-    public ResponseEntity<ApiResult> uploadUpdate(@PathVariable String channelId) {
-        youtubeChannelsService.uploadUpdate(channelId);
+    public ResponseEntity<ApiResult> uploadUpdate(@PathVariable String channelId,
+                                                  @RequestBody(required = false) AdminSecretKeyDto secret) {
+        youtubeChannelsService.uploadUpdate(channelId, secret);
 
         ApiResult apiResult = new ApiResult().succeed(true);
         return ResponseEntity.ok()

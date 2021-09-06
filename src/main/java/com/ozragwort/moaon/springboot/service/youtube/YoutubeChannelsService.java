@@ -9,6 +9,7 @@ import com.ozragwort.moaon.springboot.domain.channels.ChannelsRepository;
 import com.ozragwort.moaon.springboot.domain.videos.Videos;
 import com.ozragwort.moaon.springboot.domain.videos.VideosRepository;
 import com.ozragwort.moaon.springboot.dto.admin.AdminChannelsSaveRequestDto;
+import com.ozragwort.moaon.springboot.dto.admin.AdminSecretKeyDto;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.dto.videos.*;
 import com.ozragwort.moaon.springboot.service.videos.VideosService;
@@ -45,11 +46,14 @@ public class YoutubeChannelsService {
     }
 
     @Transactional
-    public ChannelsResponseDto refresh(String channelId) {
+    public ChannelsResponseDto refresh(String channelId, AdminSecretKeyDto secret) {
         Channels channels = channelsRepository.findByChannelId(channelId)
                 .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + channelId));
 
-        ChannelListResponse channelListResponse = youtubeDataApi.getChannelListResponse(channelId, null);
+        String key = secret == null || secret.getSecret().length() == 0
+                ? null
+                : secret.getSecret();
+        ChannelListResponse channelListResponse = youtubeDataApi.getChannelListResponse(channelId, key);
 
         if (channelListResponse == null) {
             return new ChannelsResponseDto(channels);
@@ -60,11 +64,14 @@ public class YoutubeChannelsService {
     }
 
     @Transactional
-    public void uploadUpdate(String channelId) {
+    public void uploadUpdate(String channelId, AdminSecretKeyDto secret) {
         Channels channels = channelsRepository.findByChannelId(channelId)
                 .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + channelId));
 
-        List<PlaylistItemListResponse> playlistItemListResponse = youtubeDataApi.getPlaylistItemListResponse(channels.getUploadsList(), null);
+        String key = secret == null || secret.getSecret().length() == 0
+                ? null
+                : secret.getSecret();
+        List<PlaylistItemListResponse> playlistItemListResponse = youtubeDataApi.getPlaylistItemListResponse(channels.getUploadsList(), key);
 
         for (PlaylistItemListResponse itemListResponse : playlistItemListResponse) {
             itemListResponse.getItems().stream().map(playlistItem ->
@@ -89,7 +96,7 @@ public class YoutubeChannelsService {
                         if (videos == null) {
                             videosService.save(videosSaveRequestDto);
                         } else {
-                            youtubeVideosService.refresh(videosSaveRequestDto.getVideosId());
+                            youtubeVideosService.refresh(videosSaveRequestDto.getVideosId(), secret);
                         }
                     });
         }
