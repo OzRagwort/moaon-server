@@ -147,10 +147,12 @@ public class VideosService {
 
     @Transactional
     public void delete(String videoId) {
-        Videos videos = videosRepository.findByVideoId(videoId)
-                .orElseThrow(() -> new NoSuchElementException("No Videos found. Video ID : " + videoId));
+        Optional<Videos> optionalVideos = videosRepository.findByVideoId(videoId);
 
-        videosRepository.delete(videos);
+        if (optionalVideos.isPresent()) {
+            Videos videos = optionalVideos.get();
+            videosRepository.delete(videos);
+        }
     }
 
     private Map<VideosSearchKey, Object> makeSpecKey(Map<String, Object> keyword) {

@@ -129,13 +129,19 @@ public class ChannelsService {
 
     @Transactional
     public void delete(String channelId) {
-        Channels channels = channelsRepository.findByChannelId(channelId)
-                .orElseThrow(() -> new NoSuchElementException("No Channels found. Channel ID : " + channelId));
+        Optional<Channels> optionalChannels = channelsRepository.findByChannelId(channelId);
 
-        List<Videos> videosList = videosRepository.findAllByChannels(channels)
-                .orElseThrow(() -> new IllegalArgumentException("Can't delete Channel. Videos remain on Channel"));
+        if (optionalChannels.isPresent()) {
+            Channels channels = optionalChannels.get();
+            List<Videos> videosList = videosRepository.findAllByChannels(channels)
+                    .orElse(new ArrayList<>());
 
-        channelsRepository.delete(channels);
+            for (Videos video : videosList) {
+                videosRepository.delete(video);
+            }
+
+            channelsRepository.delete(channels);
+        }
     }
 
     private Map<SearchKey, Object> makeSpecKey(Map<String, Object> keyword) {
