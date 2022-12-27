@@ -13,3 +13,8 @@ application-mail.properties
 
 # flyway config
 /src/main/resources/db/flyway.conf
+
+### Docker ###
+docker/db/data/
+docker/db/init/*
+!docker/db/init/init.sql
