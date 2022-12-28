@@ -22,7 +22,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.flywaydb.flyway'
 
 group 'com.ozragwort.moaon'
-version '2.0.0-release4'
+version '2.0.0-release5'
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok')
 
     implementation('com.h2database:h2:1.4.199')
-    implementation('org.mariadb.jdbc:mariadb-java-client')
+    implementation('mysql:mysql-connector-java')
     implementation('org.springframework.session:spring-session-jdbc')
 
     implementation('com.google.code.gson:gson')
