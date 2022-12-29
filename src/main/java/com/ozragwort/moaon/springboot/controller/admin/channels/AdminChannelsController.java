@@ -8,24 +8,30 @@ import com.ozragwort.moaon.springboot.dto.apiResult.FailedResponse;
 import com.ozragwort.moaon.springboot.dto.channels.ChannelsResponseDto;
 import com.ozragwort.moaon.springboot.service.channels.ChannelsService;
 import com.ozragwort.moaon.springboot.service.youtube.YoutubeChannelsService;
-import com.ozragwort.moaon.springboot.util.Email.EmailUtilImpl;
+import com.ozragwort.moaon.springboot.util.Email.ChannelRecommendedEvent;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequiredArgsConstructor
 @Controller
 public class AdminChannelsController {
 
+    private final ApplicationEventPublisher publisher;
     private final YoutubeChannelsService youtubeChannelsService;
     private final ChannelsService channelsService;
-    private final EmailUtilImpl emailUtil;
 
     @PostMapping("/admin/channels/crud")
     public ResponseEntity<ApiResult> adminSaveChannel(@RequestBody AdminChannelsSaveRequestDto requestDto) {
@@ -41,14 +47,7 @@ public class AdminChannelsController {
 
     @PostMapping("/admin/channels/requests")
     public ResponseEntity<ApiResult> adminRequestsChannel(@RequestBody AdminChannelsRequestRequestDto requestDto) {
-        String app = requestDto.getAppName();
-        String content = requestDto.getContent();
-
-        emailUtil.sendEmail(
-                "ozragwort@gmail.com",
-                app + " 에서 채널 추천",
-                content
-        );
+        publisher.publishEvent(new ChannelRecommendedEvent(requestDto.getContent()));
 
         ApiResult apiResult = new ApiResult().succeed(true);
         return ResponseEntity.ok().body(apiResult);
